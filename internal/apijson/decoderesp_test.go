@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 	"testing"
 )
 

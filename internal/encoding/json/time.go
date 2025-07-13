@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/encoding/json/shims"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

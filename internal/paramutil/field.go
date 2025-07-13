@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

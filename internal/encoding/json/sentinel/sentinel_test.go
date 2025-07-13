@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/encoding/json/sentinel"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"

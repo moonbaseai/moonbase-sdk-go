@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc

@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	rj "github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	rj "github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 	"reflect"
 	"testing"
 )

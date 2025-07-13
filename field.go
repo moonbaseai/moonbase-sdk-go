@@ -1,7 +1,7 @@
 package moonbasesdk
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"io"
 	"time"
 )

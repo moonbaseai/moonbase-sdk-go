@@ -1,7 +1,7 @@
 package apiform
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"mime/multipart"
 	"reflect"
 )

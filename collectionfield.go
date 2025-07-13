@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 // CollectionFieldService contains methods and other services that help with

@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/moonbase-sdk-go
+module github.com/moonbaseai/moonbase-sdk-go
 
 go 1.21
 

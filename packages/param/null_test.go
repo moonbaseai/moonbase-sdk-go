@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"testing"
 )
 

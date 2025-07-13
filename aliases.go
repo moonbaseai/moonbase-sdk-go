@@ -3,8 +3,8 @@
 package moonbasesdk
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apierror"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apierror"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding

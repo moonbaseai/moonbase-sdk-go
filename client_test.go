@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go"
+	"github.com/moonbaseai/moonbase-sdk-go/internal"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 type closureTransport struct {

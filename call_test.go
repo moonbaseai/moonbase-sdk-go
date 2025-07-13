@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/testutil"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 func TestCallNewWithOptionalParams(t *testing.T) {

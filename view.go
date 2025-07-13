@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apiquery"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/pagination"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
-	"github.com/stainless-sdks/moonbase-sdk-go/shared/constant"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
 // ViewService contains methods and other services that help with interacting with
