@@ -99,7 +99,7 @@ type Program struct {
 	// The user-facing name of the program.
 	DisplayName string `json:"display_name"`
 	// The `ProgramTemplate` used for messages in this program.
-	ProgramTemplate ProgramTemplate `json:"program_template"`
+	ProgramTemplate *ProgramTemplate `json:"program_template"`
 	// For `broadcast` programs, the time the program is scheduled to send, as an RFC
 	// 3339 timestamp.
 	ScheduledAt time.Time `json:"scheduled_at" format:"date-time"`

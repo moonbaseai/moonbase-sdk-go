@@ -90,7 +90,7 @@ type ProgramTemplate struct {
 	// Time at which the object was created, as an RFC 3339 timestamp.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// The `Program` that uses this template.
-	Program Program `json:"program"`
+	Program *Program `json:"program"`
 	// Time at which the object was last updated, as an RFC 3339 timestamp.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
