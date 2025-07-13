@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 	"reflect"
 )
 

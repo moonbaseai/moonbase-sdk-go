@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"reflect"
 	"testing"
 )

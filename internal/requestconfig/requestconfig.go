@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apierror"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apiform"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apiquery"
+	"github.com/moonbaseai/moonbase-sdk-go/internal"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apierror"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiform"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

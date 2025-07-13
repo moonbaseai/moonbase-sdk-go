@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/moonbase-sdk-go/internal/encoding/json"
+	shimjson "github.com/moonbaseai/moonbase-sdk-go/internal/encoding/json"
 	"time"
 )
 
