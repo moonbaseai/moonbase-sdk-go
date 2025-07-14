@@ -17,7 +17,6 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -101,7 +100,7 @@ type Collection struct {
 	// Time at which the object was last updated, as an RFC 3339 timestamp.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// A list of saved `View` objects for presenting the collection's data.
-	Views []shared.View `json:"views"`
+	Views []any `json:"views"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
