@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestViewGetWithOptionalParams(t *testing.T) {
+func TestViewItemListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +25,13 @@ func TestViewGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Views.Get(
+	_, err := client.Views.Items.List(
 		context.TODO(),
 		"id",
-		moonbase.ViewGetParams{
-			Include: []string{"collection"},
+		moonbase.ViewItemListParams{
+			After:  moonbase.String("after"),
+			Before: moonbase.String("before"),
+			Limit:  moonbase.Int(1),
 		},
 	)
 	if err != nil {
