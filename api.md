@@ -185,11 +185,11 @@ Methods:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageSendResponse">ProgramMessageSendResponse</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageNewResponse">ProgramMessageNewResponse</a>
 
 Methods:
 
-- <code title="post /program_messages">client.ProgramMessages.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageService.Send">Send</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageSendParams">ProgramMessageSendParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageSendResponse">ProgramMessageSendResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /program_messages">client.ProgramMessages.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageNewParams">ProgramMessageNewParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ProgramMessageNewResponse">ProgramMessageNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # ProgramTemplates
 

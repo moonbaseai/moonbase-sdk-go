@@ -35,7 +35,7 @@ func NewProgramMessageService(opts ...option.RequestOption) (r ProgramMessageSer
 }
 
 // Sends a message using a program template.
-func (r *ProgramMessageService) Send(ctx context.Context, body ProgramMessageSendParams, opts ...option.RequestOption) (res *ProgramMessageSendResponse, err error) {
+func (r *ProgramMessageService) New(ctx context.Context, body ProgramMessageNewParams, opts ...option.RequestOption) (res *ProgramMessageNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "program_messages"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -43,13 +43,13 @@ func (r *ProgramMessageService) Send(ctx context.Context, body ProgramMessageSen
 }
 
 // Represents a single message sent as part of a `Program`.
-type ProgramMessageSendResponse struct {
+type ProgramMessageNewResponse struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// Time at which the message was created and enqueued for sending, as an RFC 3339
 	// timestamp.
-	CreatedAt time.Time                       `json:"created_at,required" format:"date-time"`
-	Links     ProgramMessageSendResponseLinks `json:"links,required"`
+	CreatedAt time.Time                      `json:"created_at,required" format:"date-time"`
+	Links     ProgramMessageNewResponseLinks `json:"links,required"`
 	// The `ProgramTemplate` used to generate this message.
 	ProgramTemplate ProgramTemplate `json:"program_template,required"`
 	// String representing the object’s type. Always `program_message` for this object.
@@ -70,12 +70,12 @@ type ProgramMessageSendResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProgramMessageSendResponse) RawJSON() string { return r.JSON.raw }
-func (r *ProgramMessageSendResponse) UnmarshalJSON(data []byte) error {
+func (r ProgramMessageNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *ProgramMessageNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProgramMessageSendResponseLinks struct {
+type ProgramMessageNewResponseLinks struct {
 	// A link to the `ProgramTemplate` used.
 	ProgramTemplate string `json:"program_template,required" format:"uri"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -87,14 +87,14 @@ type ProgramMessageSendResponseLinks struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ProgramMessageSendResponseLinks) RawJSON() string { return r.JSON.raw }
-func (r *ProgramMessageSendResponseLinks) UnmarshalJSON(data []byte) error {
+func (r ProgramMessageNewResponseLinks) RawJSON() string { return r.JSON.raw }
+func (r *ProgramMessageNewResponseLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ProgramMessageSendParams struct {
+type ProgramMessageNewParams struct {
 	// The person to send the message to.
-	Person ProgramMessageSendParamsPerson `json:"person,omitzero,required"`
+	Person ProgramMessageNewParamsPerson `json:"person,omitzero,required"`
 	// The ID of the `ProgramTemplate` to use for sending the message.
 	ProgramTemplateID string `json:"program_template_id,required"`
 	// Any custom Liquid variables to be interpolated into the message template.
@@ -102,26 +102,26 @@ type ProgramMessageSendParams struct {
 	paramObj
 }
 
-func (r ProgramMessageSendParams) MarshalJSON() (data []byte, err error) {
-	type shadow ProgramMessageSendParams
+func (r ProgramMessageNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow ProgramMessageNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ProgramMessageSendParams) UnmarshalJSON(data []byte) error {
+func (r *ProgramMessageNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The person to send the message to.
 //
 // The property Email is required.
-type ProgramMessageSendParamsPerson struct {
+type ProgramMessageNewParamsPerson struct {
 	Email string `json:"email,required" format:"email"`
 	paramObj
 }
 
-func (r ProgramMessageSendParamsPerson) MarshalJSON() (data []byte, err error) {
-	type shadow ProgramMessageSendParamsPerson
+func (r ProgramMessageNewParamsPerson) MarshalJSON() (data []byte, err error) {
+	type shadow ProgramMessageNewParamsPerson
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ProgramMessageSendParamsPerson) UnmarshalJSON(data []byte) error {
+func (r *ProgramMessageNewParamsPerson) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
