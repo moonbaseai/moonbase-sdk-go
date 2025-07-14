@@ -9,14 +9,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
-	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
-	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 )
 
 // ViewService contains methods and other services that help with interacting with
@@ -39,7 +37,7 @@ func NewViewService(opts ...option.RequestOption) (r ViewService) {
 }
 
 // Retrieves the details of an existing view.
-func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, opts ...option.RequestOption) (res *View, err error) {
+func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, opts ...option.RequestOption) (res *shared.View, err error) {
 	opts = append(r.Options[:], opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -76,72 +74,6 @@ func (r *ViewService) ListItems(ctx context.Context, id string, query ViewListIt
 func (r *ViewService) ListItemsAutoPaging(ctx context.Context, id string, query ViewListItemsParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Item] {
 	return pagination.NewCursorPageAutoPager(r.ListItems(ctx, id, query, opts...))
 }
-
-// A View represents a saved configuration for displaying items in a collection,
-// including filters and sorting rules.
-type View struct {
-	// Unique identifier for the object.
-	ID    string    `json:"id,required"`
-	Links ViewLinks `json:"links,required"`
-	// The name of the view.
-	Name string `json:"name,required"`
-	// String representing the object’s type. Always `view` for this object.
-	Type constant.View `json:"type,required"`
-	// The `Collection` this view belongs to.
-	Collection Collection `json:"collection"`
-	// The type of view, such as `table` or `board`.
-	//
-	// Any of "table", "board".
-	ViewType ViewViewType `json:"view_type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Links       respjson.Field
-		Name        respjson.Field
-		Type        respjson.Field
-		Collection  respjson.Field
-		ViewType    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r View) RawJSON() string { return r.JSON.raw }
-func (r *View) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ViewLinks struct {
-	// A link to the `Collection` this view belongs to.
-	Collection string `json:"collection,required" format:"uri"`
-	// A link to the list of `Item` objects that are visible in this view.
-	Items string `json:"items,required" format:"uri"`
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Collection  respjson.Field
-		Items       respjson.Field
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ViewLinks) RawJSON() string { return r.JSON.raw }
-func (r *ViewLinks) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The type of view, such as `table` or `board`.
-type ViewViewType string
-
-const (
-	ViewViewTypeTable ViewViewType = "table"
-	ViewViewTypeBoard ViewViewType = "board"
-)
 
 type ViewGetParams struct {
 	// Specifies which related objects to include in the response. Valid option is
