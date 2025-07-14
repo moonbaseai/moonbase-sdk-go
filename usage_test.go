@@ -24,7 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+	page, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
