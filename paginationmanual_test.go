@@ -24,14 +24,14 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{
+	page, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{
 		Limit: moonbasesdk.Int(20),
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, collection := range page.Data {
-		t.Logf("%+v\n", collection.ID)
+	for _, programTemplate := range page.Data {
+		t.Logf("%+v\n", programTemplate.ID)
 	}
 	// Prism mock isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -39,8 +39,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, collection := range page.Data {
-			t.Logf("%+v\n", collection.ID)
+		for _, programTemplate := range page.Data {
+			t.Logf("%+v\n", programTemplate.ID)
 		}
 	}
 }

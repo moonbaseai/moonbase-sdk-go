@@ -52,7 +52,7 @@ func main() {
 	client := moonbasesdk.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MOONBASE_API_KEY")
 	)
-	page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+	page, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -262,7 +262,7 @@ client := moonbasesdk.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Collections.List(context.TODO(), ...,
+client.ProgramTemplates.List(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -281,13 +281,13 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Collections.ListAutoPaging(context.TODO(), moonbasesdk.CollectionListParams{
+iter := client.ProgramTemplates.ListAutoPaging(context.TODO(), moonbasesdk.ProgramTemplateListParams{
 	Limit: moonbasesdk.Int(20),
 })
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	collection := iter.Current()
-	fmt.Printf("%+v\n", collection)
+	programTemplate := iter.Current()
+	fmt.Printf("%+v\n", programTemplate)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -298,12 +298,12 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{
+page, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{
 	Limit: moonbasesdk.Int(20),
 })
 for page != nil {
-	for _, collection := range page.Data {
-		fmt.Printf("%+v\n", collection)
+	for _, programTemplate := range page.Data {
+		fmt.Printf("%+v\n", programTemplate)
 	}
 	page, err = page.GetNextPage()
 }
@@ -322,14 +322,14 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+_, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{})
 if err != nil {
 	var apierr *moonbasesdk.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/collections": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/program_templates": 400 Bad Request { ... }
 }
 ```
 
@@ -347,9 +347,9 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Collections.List(
+client.ProgramTemplates.List(
 	ctx,
-	moonbasesdk.CollectionListParams{},
+	moonbasesdk.ProgramTemplateListParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -383,9 +383,9 @@ client := moonbasesdk.NewClient(
 )
 
 // Override per-request:
-client.Collections.List(
+client.ProgramTemplates.List(
 	context.TODO(),
-	moonbasesdk.CollectionListParams{},
+	moonbasesdk.ProgramTemplateListParams{},
 	option.WithMaxRetries(5),
 )
 ```
@@ -398,9 +398,9 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-page, err := client.Collections.List(
+page, err := client.ProgramTemplates.List(
 	context.TODO(),
-	moonbasesdk.CollectionListParams{},
+	moonbasesdk.ProgramTemplateListParams{},
 	option.WithResponseInto(&response),
 )
 if err != nil {
