@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -22,13 +22,13 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Calls.New(context.TODO(), moonbasesdk.CallNewParams{
-		Direction: moonbasesdk.CallNewParamsDirectionIncoming,
-		Participants: []moonbasesdk.CallNewParamsParticipant{{
+	_, err := client.Calls.New(context.TODO(), moonbase.CallNewParams{
+		Direction: moonbase.CallNewParamsDirectionIncoming,
+		Participants: []moonbase.CallNewParamsParticipant{{
 			Phone: "+14155551212",
 			Role:  "caller",
 		}, {
@@ -38,9 +38,9 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 		Provider:   "openphone",
 		ProviderID: "openphone_id_000000000002",
 		StartAt:    time.Now(),
-		Status:     moonbasesdk.CallNewParamsStatusCompleted,
-		AnsweredAt: moonbasesdk.Time(time.Now()),
-		EndAt:      moonbasesdk.Time(time.Now()),
+		Status:     moonbase.CallNewParamsStatusCompleted,
+		AnsweredAt: moonbase.Time(time.Now()),
+		EndAt:      moonbase.Time(time.Now()),
 		ProviderMetadata: map[string]any{
 			"answered_by":     "bar",
 			"user_id":         "bar",
@@ -49,7 +49,7 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 		},
 	})
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

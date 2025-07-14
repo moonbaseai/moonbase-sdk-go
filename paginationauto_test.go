@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -20,12 +20,12 @@ func TestAutoPagination(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.ProgramTemplates.ListAutoPaging(context.TODO(), moonbasesdk.ProgramTemplateListParams{
-		Limit: moonbasesdk.Int(20),
+	iter := client.ProgramTemplates.ListAutoPaging(context.TODO(), moonbase.ProgramTemplateListParams{
+		Limit: moonbase.Int(20),
 	})
 	// Prism mock isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {

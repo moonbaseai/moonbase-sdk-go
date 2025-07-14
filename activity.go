@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk
+package moonbase
 
 import (
 	"context"
@@ -195,22 +195,22 @@ func (ActivityActivityProgramMessageUnsubscribed) implActivityUnion() {}
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ActivityUnion.AsAny().(type) {
-//	case moonbasesdk.ActivityActivityCallOccurred:
-//	case moonbasesdk.ActivityActivityFormSubmitted:
-//	case moonbasesdk.ActivityActivityInboxMessageSent:
-//	case moonbasesdk.ActivityActivityItemCreated:
-//	case moonbasesdk.ActivityActivityItemMentioned:
-//	case moonbasesdk.ActivityActivityMeetingHeld:
-//	case moonbasesdk.ActivityActivityMeetingScheduled:
-//	case moonbasesdk.ActivityActivityNoteCreated:
-//	case moonbasesdk.ActivityActivityProgramMessageBounced:
-//	case moonbasesdk.ActivityActivityProgramMessageClicked:
-//	case moonbasesdk.ActivityActivityProgramMessageComplained:
-//	case moonbasesdk.ActivityActivityProgramMessageFailed:
-//	case moonbasesdk.ActivityActivityProgramMessageOpened:
-//	case moonbasesdk.ActivityActivityProgramMessageSent:
-//	case moonbasesdk.ActivityActivityProgramMessageShielded:
-//	case moonbasesdk.ActivityActivityProgramMessageUnsubscribed:
+//	case moonbase.ActivityActivityCallOccurred:
+//	case moonbase.ActivityActivityFormSubmitted:
+//	case moonbase.ActivityActivityInboxMessageSent:
+//	case moonbase.ActivityActivityItemCreated:
+//	case moonbase.ActivityActivityItemMentioned:
+//	case moonbase.ActivityActivityMeetingHeld:
+//	case moonbase.ActivityActivityMeetingScheduled:
+//	case moonbase.ActivityActivityNoteCreated:
+//	case moonbase.ActivityActivityProgramMessageBounced:
+//	case moonbase.ActivityActivityProgramMessageClicked:
+//	case moonbase.ActivityActivityProgramMessageComplained:
+//	case moonbase.ActivityActivityProgramMessageFailed:
+//	case moonbase.ActivityActivityProgramMessageOpened:
+//	case moonbase.ActivityActivityProgramMessageSent:
+//	case moonbase.ActivityActivityProgramMessageShielded:
+//	case moonbase.ActivityActivityProgramMessageUnsubscribed:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}

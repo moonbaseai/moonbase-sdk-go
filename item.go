@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk
+package moonbase
 
 import (
 	"context"
@@ -1060,8 +1060,8 @@ type fieldValueUnionParamProfile struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *moonbasesdk.SocialXValueProfileParam:
-//	case *moonbasesdk.SocialLinkedInValueProfileParam:
+//	case *moonbase.SocialXValueProfileParam:
+//	case *moonbase.SocialLinkedInValueProfileParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -2000,25 +2000,25 @@ func (RelationValue) implValueUnion()       {}
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ValueUnion.AsAny().(type) {
-//	case moonbasesdk.SingleLineTextValue:
-//	case moonbasesdk.MultiLineTextValue:
-//	case moonbasesdk.IntegerValue:
-//	case moonbasesdk.FloatValue:
-//	case moonbasesdk.MonetaryValue:
-//	case moonbasesdk.PercentageValue:
-//	case moonbasesdk.BooleanValue:
-//	case moonbasesdk.EmailValue:
-//	case moonbasesdk.URLValue:
-//	case moonbasesdk.DomainValue:
-//	case moonbasesdk.SocialXValue:
-//	case moonbasesdk.SocialLinkedInValue:
-//	case moonbasesdk.TelephoneNumber:
-//	case moonbasesdk.GeoValue:
-//	case moonbasesdk.DateValue:
-//	case moonbasesdk.DatetimeValue:
-//	case moonbasesdk.Choice:
-//	case moonbasesdk.FunnelStep:
-//	case moonbasesdk.RelationValue:
+//	case moonbase.SingleLineTextValue:
+//	case moonbase.MultiLineTextValue:
+//	case moonbase.IntegerValue:
+//	case moonbase.FloatValue:
+//	case moonbase.MonetaryValue:
+//	case moonbase.PercentageValue:
+//	case moonbase.BooleanValue:
+//	case moonbase.EmailValue:
+//	case moonbase.URLValue:
+//	case moonbase.DomainValue:
+//	case moonbase.SocialXValue:
+//	case moonbase.SocialLinkedInValue:
+//	case moonbase.TelephoneNumber:
+//	case moonbase.GeoValue:
+//	case moonbase.DateValue:
+//	case moonbase.DatetimeValue:
+//	case moonbase.Choice:
+//	case moonbase.FunnelStep:
+//	case moonbase.RelationValue:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2628,8 +2628,8 @@ type valueUnionParamProfile struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *moonbasesdk.SocialXValueProfileParam:
-//	case *moonbasesdk.SocialLinkedInValueProfileParam:
+//	case *moonbase.SocialXValueProfileParam:
+//	case *moonbase.SocialLinkedInValueProfileParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
