@@ -16,6 +16,7 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options            []option.RequestOption
+	Views              ViewService
 	Activities         ActivityService
 	Calls              CallService
 	Collections        CollectionService
@@ -31,7 +32,6 @@ type Client struct {
 	ProgramTemplates   ProgramTemplateService
 	Programs           ProgramService
 	Tagsets            TagsetService
-	Views              ViewService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,
@@ -56,6 +56,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
+	r.Views = NewViewService(opts...)
 	r.Activities = NewActivityService(opts...)
 	r.Calls = NewCallService(opts...)
 	r.Collections = NewCollectionService(opts...)
@@ -71,7 +72,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ProgramTemplates = NewProgramTemplateService(opts...)
 	r.Programs = NewProgramService(opts...)
 	r.Tagsets = NewTagsetService(opts...)
-	r.Views = NewViewService(opts...)
 
 	return
 }
