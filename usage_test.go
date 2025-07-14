@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -20,11 +20,11 @@ func TestUsage(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{})
+	page, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}

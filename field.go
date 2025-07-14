@@ -1,4 +1,4 @@
-package moonbasesdk
+package moonbase
 
 import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"

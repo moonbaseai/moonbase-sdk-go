@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -21,25 +21,25 @@ func TestItemNew(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.New(context.TODO(), moonbasesdk.ItemNewParams{
+	_, err := client.Items.New(context.TODO(), moonbase.ItemNewParams{
 		CollectionID: "1CR2QLsnhwrJX7Z33jnyGV",
-		Values: map[string]moonbasesdk.FieldValueUnionParam{
+		Values: map[string]moonbase.FieldValueUnionParam{
 			"name": {
-				OfSingleLineText: &moonbasesdk.SingleLineTextValueParam{
+				OfSingleLineText: &moonbase.SingleLineTextValueParam{
 					Text: "Aperture Science",
 				},
 			},
 			"ceo": {
-				OfRelation: &moonbasesdk.RelationValueParam{
-					Item: moonbasesdk.ItemParam{
+				OfRelation: &moonbase.RelationValueParam{
+					Item: moonbase.ItemParam{
 						ID: "1CR2QLtx9doK4wFiFB7VAS",
-						Values: map[string]moonbasesdk.FieldValueUnionParam{
+						Values: map[string]moonbase.FieldValueUnionParam{
 							"foo": {
-								OfSingleLineText: &moonbasesdk.SingleLineTextValueParam{
+								OfSingleLineText: &moonbase.SingleLineTextValueParam{
 									Text: "text",
 								},
 							},
@@ -50,7 +50,7 @@ func TestItemNew(t *testing.T) {
 		},
 	})
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -66,13 +66,13 @@ func TestItemGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.Get(context.TODO(), "id")
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -88,27 +88,27 @@ func TestItemUpdateWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.Update(
 		context.TODO(),
 		"id",
-		moonbasesdk.ItemUpdateParams{
-			Values: map[string]moonbasesdk.FieldValueUnionParam{
+		moonbase.ItemUpdateParams{
+			Values: map[string]moonbase.FieldValueUnionParam{
 				"foo": {
-					OfSingleLineText: &moonbasesdk.SingleLineTextValueParam{
+					OfSingleLineText: &moonbase.SingleLineTextValueParam{
 						Text: "text",
 					},
 				},
 			},
-			UpdateManyStrategy: moonbasesdk.ItemUpdateParamsUpdateManyStrategyReplace,
-			UpdateOneStrategy:  moonbasesdk.ItemUpdateParamsUpdateOneStrategyReplace,
+			UpdateManyStrategy: moonbase.ItemUpdateParamsUpdateManyStrategyReplace,
+			UpdateOneStrategy:  moonbase.ItemUpdateParamsUpdateOneStrategyReplace,
 		},
 	)
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -124,13 +124,13 @@ func TestItemDelete(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.Delete(context.TODO(), "id")
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -146,40 +146,40 @@ func TestItemUpsertWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.Upsert(context.TODO(), moonbasesdk.ItemUpsertParams{
+	_, err := client.Items.Upsert(context.TODO(), moonbase.ItemUpsertParams{
 		CollectionID: "1CR2QLbeMAqKQ6PvQu39pZ",
-		Identifiers: map[string]moonbasesdk.FieldValueUnionParam{
+		Identifiers: map[string]moonbase.FieldValueUnionParam{
 			"domain": {
-				OfArrayOfValues: []moonbasesdk.ValueUnionParam{},
+				OfArrayOfValues: []moonbase.ValueUnionParam{},
 			},
 		},
-		Values: map[string]moonbasesdk.FieldValueUnionParam{
+		Values: map[string]moonbase.FieldValueUnionParam{
 			"name": {
-				OfSingleLineText: &moonbasesdk.SingleLineTextValueParam{
+				OfSingleLineText: &moonbase.SingleLineTextValueParam{
 					Text: "Aperture Science",
 				},
 			},
 			"domain": {
-				OfArrayOfValues: []moonbasesdk.ValueUnionParam{},
+				OfArrayOfValues: []moonbase.ValueUnionParam{},
 			},
 			"linked_in": {
-				OfLinkedIn: &moonbasesdk.SocialLinkedInValueParam{
-					Profile: moonbasesdk.SocialLinkedInValueProfileParam{
-						URL:      moonbasesdk.String("https://linkedin.com/company/aperturescience"),
-						Username: moonbasesdk.String("username"),
+				OfLinkedIn: &moonbase.SocialLinkedInValueParam{
+					Profile: moonbase.SocialLinkedInValueProfileParam{
+						URL:      moonbase.String("https://linkedin.com/company/aperturescience"),
+						Username: moonbase.String("username"),
 					},
 				},
 			},
 		},
-		UpdateManyStrategy: moonbasesdk.ItemUpsertParamsUpdateManyStrategyReplace,
-		UpdateOneStrategy:  moonbasesdk.ItemUpsertParamsUpdateOneStrategyReplace,
+		UpdateManyStrategy: moonbase.ItemUpsertParamsUpdateManyStrategyReplace,
+		UpdateOneStrategy:  moonbase.ItemUpsertParamsUpdateOneStrategyReplace,
 	})
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

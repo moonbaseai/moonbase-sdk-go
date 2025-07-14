@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -21,19 +21,19 @@ func TestInboxMessageGetWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.InboxMessages.Get(
 		context.TODO(),
 		"id",
-		moonbasesdk.InboxMessageGetParams{
+		moonbase.InboxMessageGetParams{
 			Include: []string{"addresses"},
 		},
 	)
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -49,20 +49,20 @@ func TestInboxMessageListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.InboxMessages.List(context.TODO(), moonbasesdk.InboxMessageListParams{
-		After:        moonbasesdk.String("after"),
-		Before:       moonbasesdk.String("before"),
+	_, err := client.InboxMessages.List(context.TODO(), moonbase.InboxMessageListParams{
+		After:        moonbase.String("after"),
+		Before:       moonbase.String("before"),
 		Conversation: []string{"string"},
 		Inbox:        []string{"string"},
 		Include:      []string{"addresses"},
-		Limit:        moonbasesdk.Int(1),
+		Limit:        moonbase.Int(1),
 	})
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
