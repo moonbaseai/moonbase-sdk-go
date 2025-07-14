@@ -1,12 +1,12 @@
+# Shared Response Types
+
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared#View">View</a>
+
 # Views
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#View">View</a>
 
 Methods:
 
-- <code title="get /views/{id}">client.Views.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewGetParams">ViewGetParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#View">View</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /views/{id}">client.Views.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewGetParams">ViewGetParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared#View">View</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /views/{id}/items">client.Views.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewService.ListItems">ListItems</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ViewListItemsParams">ViewListItemsParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination#CursorPage">CursorPage</a>[<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbasesdk</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Item">Item</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Activities
