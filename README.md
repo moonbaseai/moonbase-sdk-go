@@ -2,7 +2,7 @@
 
 <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go"><img src="https://pkg.go.dev/badge/github.com/moonbaseai/moonbase-sdk-go.svg" alt="Go Reference"></a>
 
-The Moonbase Go library provides convenient access to the [Moonbase REST API](https://docs.moonbase.ai/api-reference/introduction)
+The Moonbase Go library provides convenient access to the Moonbase REST API
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
