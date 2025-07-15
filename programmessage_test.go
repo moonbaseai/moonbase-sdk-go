@@ -27,11 +27,11 @@ func TestProgramMessageNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
 		Person: moonbase.ProgramMessageNewParamsPerson{
-			Email: "person-71@example-71.com",
+			Email: "dev@stainless.com",
 		},
-		ProgramTemplateID: "1CR2QLhLQPX9WCiWH3cXCe",
+		ProgramTemplateID: "program_template_id",
 		CustomVariables: map[string]any{
-			"coupon_code": "bar",
+			"foo": "bar",
 		},
 	})
 	if err != nil {

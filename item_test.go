@@ -26,25 +26,11 @@ func TestItemNew(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.New(context.TODO(), moonbase.ItemNewParams{
-		CollectionID: "1CR2QLsnhwrJX7Z33jnyGV",
+		CollectionID: "collection_id",
 		Values: map[string]moonbase.FieldValueUnionParam{
-			"name": {
+			"foo": {
 				OfSingleLineText: &moonbase.SingleLineTextValueParam{
-					Text: "Aperture Science",
-				},
-			},
-			"ceo": {
-				OfRelation: &moonbase.RelationValueParam{
-					Item: moonbase.ItemParam{
-						ID: "1CR2QLtx9doK4wFiFB7VAS",
-						Values: map[string]moonbase.FieldValueUnionParam{
-							"foo": {
-								OfSingleLineText: &moonbase.SingleLineTextValueParam{
-									Text: "text",
-								},
-							},
-						},
-					},
+					Text: "text",
 				},
 			},
 		},
@@ -151,27 +137,18 @@ func TestItemUpsertWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.Upsert(context.TODO(), moonbase.ItemUpsertParams{
-		CollectionID: "1CR2QLbeMAqKQ6PvQu39pZ",
+		CollectionID: "collection_id",
 		Identifiers: map[string]moonbase.FieldValueUnionParam{
-			"domain": {
-				OfArrayOfValues: []moonbase.ValueUnionParam{},
+			"foo": {
+				OfSingleLineText: &moonbase.SingleLineTextValueParam{
+					Text: "text",
+				},
 			},
 		},
 		Values: map[string]moonbase.FieldValueUnionParam{
-			"name": {
+			"foo": {
 				OfSingleLineText: &moonbase.SingleLineTextValueParam{
-					Text: "Aperture Science",
-				},
-			},
-			"domain": {
-				OfArrayOfValues: []moonbase.ValueUnionParam{},
-			},
-			"linked_in": {
-				OfLinkedIn: &moonbase.SocialLinkedInValueParam{
-					Profile: moonbase.SocialLinkedInValueProfileParam{
-						URL:      moonbase.String("https://linkedin.com/company/aperturescience"),
-						Username: moonbase.String("username"),
-					},
+					Text: "text",
 				},
 			},
 		},
