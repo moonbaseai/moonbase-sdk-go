@@ -29,17 +29,23 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 	_, err := client.Calls.New(context.TODO(), moonbase.CallNewParams{
 		Direction: moonbase.CallNewParamsDirectionIncoming,
 		Participants: []moonbase.CallNewParamsParticipant{{
-			Phone: "phone",
+			Phone: "+14155551212",
 			Role:  "caller",
+		}, {
+			Phone: "+16505551212",
+			Role:  "callee",
 		}},
-		Provider:   "provider",
-		ProviderID: "provider_id",
+		Provider:   "openphone",
+		ProviderID: "openphone_id_000000000002",
 		StartAt:    time.Now(),
-		Status:     moonbase.CallNewParamsStatusQueued,
+		Status:     moonbase.CallNewParamsStatusCompleted,
 		AnsweredAt: moonbase.Time(time.Now()),
 		EndAt:      moonbase.Time(time.Now()),
 		ProviderMetadata: map[string]any{
-			"foo": "bar",
+			"answered_by":     "bar",
+			"user_id":         "bar",
+			"phone_number_id": "bar",
+			"conversation_id": "bar",
 		},
 	})
 	if err != nil {
