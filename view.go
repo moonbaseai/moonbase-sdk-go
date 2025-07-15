@@ -39,7 +39,7 @@ func NewViewService(opts ...option.RequestOption) (r ViewService) {
 }
 
 // Retrieves the details of an existing view.
-func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, opts ...option.RequestOption) (res *ViewGetResponse, err error) {
+func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, opts ...option.RequestOption) (res *View, err error) {
 	opts = append(r.Options[:], opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
@@ -52,10 +52,10 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 
 // A View represents a saved configuration for displaying items in a collection,
 // including filters and sorting rules.
-type ViewGetResponse struct {
+type View struct {
 	// Unique identifier for the object.
-	ID    string               `json:"id,required"`
-	Links ViewGetResponseLinks `json:"links,required"`
+	ID    string    `json:"id,required"`
+	Links ViewLinks `json:"links,required"`
 	// The name of the view.
 	Name string `json:"name,required"`
 	// String representing the object’s type. Always `view` for this object.
@@ -65,7 +65,7 @@ type ViewGetResponse struct {
 	// The type of view, such as `table` or `board`.
 	//
 	// Any of "table", "board".
-	ViewType ViewGetResponseViewType `json:"view_type"`
+	ViewType ViewViewType `json:"view_type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -80,12 +80,12 @@ type ViewGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ViewGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *ViewGetResponse) UnmarshalJSON(data []byte) error {
+func (r View) RawJSON() string { return r.JSON.raw }
+func (r *View) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ViewGetResponseLinks struct {
+type ViewLinks struct {
 	// A link to the `Collection` this view belongs to.
 	Collection string `json:"collection,required" format:"uri"`
 	// A link to the list of `Item` objects that are visible in this view.
@@ -103,17 +103,17 @@ type ViewGetResponseLinks struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ViewGetResponseLinks) RawJSON() string { return r.JSON.raw }
-func (r *ViewGetResponseLinks) UnmarshalJSON(data []byte) error {
+func (r ViewLinks) RawJSON() string { return r.JSON.raw }
+func (r *ViewLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of view, such as `table` or `board`.
-type ViewGetResponseViewType string
+type ViewViewType string
 
 const (
-	ViewGetResponseViewTypeTable ViewGetResponseViewType = "table"
-	ViewGetResponseViewTypeBoard ViewGetResponseViewType = "board"
+	ViewViewTypeTable ViewViewType = "table"
+	ViewViewTypeBoard ViewViewType = "board"
 )
 
 type ViewGetParams struct {

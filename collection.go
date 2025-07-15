@@ -100,7 +100,7 @@ type Collection struct {
 	// Time at which the object was last updated, as an RFC 3339 timestamp.
 	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// A list of saved `View` objects for presenting the collection's data.
-	Views []any `json:"views"`
+	Views []View `json:"views"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
