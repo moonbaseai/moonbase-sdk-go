@@ -26,21 +26,23 @@ func TestItemNew(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.New(context.TODO(), moonbase.ItemNewParams{
-		CollectionID: "1CR8ZUPSRgSsYUg8HVzSV6",
-		Values: map[string]moonbase.FieldValueUnionParam{
-			"name": {
-				OfSingleLineText: &moonbase.SingleLineTextValueParam{
-					Text: "Aperture Science",
+		ItemCreateParams: moonbase.ItemCreateParams{
+			CollectionID: "1CR8ZUPSRgSsYUg8HVzSV6",
+			Values: map[string]moonbase.FieldValueUnionParam{
+				"name": {
+					OfSingleLineText: &moonbase.SingleLineTextValueParam{
+						Text: "Aperture Science",
+					},
 				},
-			},
-			"ceo": {
-				OfRelation: &moonbase.RelationValueParam{
-					Item: moonbase.ItemParam{
-						ID: "1CR8ZUQk3g9D6v8bvQPh7U",
-						Values: map[string]moonbase.FieldValueUnionParam{
-							"foo": {
-								OfSingleLineText: &moonbase.SingleLineTextValueParam{
-									Text: "text",
+				"ceo": {
+					OfRelation: &moonbase.RelationValueParam{
+						Item: moonbase.ItemParam{
+							ID: "1CR8ZUQk3g9D6v8bvQPh7U",
+							Values: map[string]moonbase.FieldValueUnionParam{
+								"foo": {
+									OfSingleLineText: &moonbase.SingleLineTextValueParam{
+										Text: "text",
+									},
 								},
 							},
 						},
