@@ -52,11 +52,17 @@ func main() {
 	client := moonbase.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MOONBASE_API_KEY")
 	)
-	page, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{})
+	programMessage, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", page)
+	fmt.Printf("%+v\n", programMessage.ID)
 }
 
 ```
@@ -262,7 +268,7 @@ client := moonbase.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.ProgramTemplates.List(context.TODO(), ...,
+client.ProgramMessages.New(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -322,14 +328,20 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{})
+_, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
+	Person: moonbase.ProgramMessageNewParamsPerson{
+		Email: "user@example.com",
+	},
+	ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+	CustomVariables:   map[string]any{},
+})
 if err != nil {
 	var apierr *moonbase.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/program_templates": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/program_messages": 400 Bad Request { ... }
 }
 ```
 
@@ -347,9 +359,15 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.ProgramTemplates.List(
+client.ProgramMessages.New(
 	ctx,
-	moonbase.ProgramTemplateListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -383,9 +401,15 @@ client := moonbase.NewClient(
 )
 
 // Override per-request:
-client.ProgramTemplates.List(
+client.ProgramMessages.New(
 	context.TODO(),
-	moonbase.ProgramTemplateListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	option.WithMaxRetries(5),
 )
 ```
@@ -398,15 +422,21 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-page, err := client.ProgramTemplates.List(
+programMessage, err := client.ProgramMessages.New(
 	context.TODO(),
-	moonbase.ProgramTemplateListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", page)
+fmt.Printf("%+v\n", programMessage)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
