@@ -20,7 +20,7 @@ or products provided by Moonbase, please follow the respective company's securit
 
 ### Moonbase Terms and Policies
 
-Please contact support@moonbase.ai for any questions or concerns regarding the security of our services.
+Please contact security@moonbase.ai for any questions or concerns regarding the security of our services.
 
 ---
 
