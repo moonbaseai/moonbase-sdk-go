@@ -1373,25 +1373,6 @@ func (r *ItemParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Parameters for creating an `Item`.
-//
-// The properties CollectionID, Values are required.
-type ItemCreateParams struct {
-	// The ID of the `Collection` to create the item in.
-	CollectionID string `json:"collection_id,required"`
-	// A hash where keys are the `ref` of a `Field` and values are the data to be set.
-	Values map[string]FieldValueUnionParam `json:"values,omitzero,required"`
-	paramObj
-}
-
-func (r ItemCreateParams) MarshalJSON() (data []byte, err error) {
-	type shadow ItemCreateParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ItemCreateParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Monetary or currency value
 type MonetaryValue struct {
 	Amount MonetaryValueAmount          `json:"amount,required"`
@@ -2702,16 +2683,19 @@ func init() {
 }
 
 type ItemNewParams struct {
-	// Parameters for creating an `Item`.
-	ItemCreateParams ItemCreateParams
+	// The ID of the `Collection` to create the item in.
+	CollectionID string `json:"collection_id,required"`
+	// A hash where keys are the `ref` of a `Field` and values are the data to be set.
+	Values map[string]FieldValueUnionParam `json:"values,omitzero,required"`
 	paramObj
 }
 
 func (r ItemNewParams) MarshalJSON() (data []byte, err error) {
-	return json.Marshal(r.ItemCreateParams)
+	type shadow ItemNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ItemNewParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.ItemCreateParams)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type ItemUpdateParams struct {
