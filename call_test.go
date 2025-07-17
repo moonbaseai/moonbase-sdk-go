@@ -36,7 +36,7 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:   "openphone",
-		ProviderID: "openphone_id_000000000001",
+		ProviderID: "openphone_id_000000000002",
 		StartAt:    time.Now(),
 		Status:     moonbase.CallNewParamsStatusCompleted,
 		AnsweredAt: moonbase.Time(time.Now()),
