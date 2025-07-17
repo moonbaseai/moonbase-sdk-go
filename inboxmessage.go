@@ -82,12 +82,12 @@ type Address struct {
 	ID string `json:"id,required"`
 	// The email address.
 	Email string `json:"email,required"`
-	// A hash of related links.
-	Links AddressLinks `json:"links,required"`
 	// String representing the object’s type. Always `address` for this object.
 	Type constant.Address `json:"type,required"`
 	// Time at which the object was created, as an RFC 3339 timestamp.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	// A hash of related links.
+	Links AddressLinks `json:"links"`
 	// The role of the address in the message. Can be `from`, `reply_to`, `to`, `cc`,
 	// or `bcc`.
 	//
@@ -99,9 +99,9 @@ type Address struct {
 	JSON struct {
 		ID          respjson.Field
 		Email       respjson.Field
-		Links       respjson.Field
 		Type        respjson.Field
 		CreatedAt   respjson.Field
+		Links       respjson.Field
 		Role        respjson.Field
 		UpdatedAt   respjson.Field
 		ExtraFields map[string]respjson.Field
