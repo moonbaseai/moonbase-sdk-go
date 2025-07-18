@@ -1,15 +1,15 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/moonbase-sdk-go"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/testutil"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 func TestUsage(t *testing.T) {
@@ -20,13 +20,19 @@ func TestUsage(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+	programMessage, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", page)
+	t.Logf("%+v\n", programMessage.ID)
 }

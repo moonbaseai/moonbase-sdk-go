@@ -4,6 +4,7 @@ package moonbase_test
 
 import (
 	"context"
+	"errors"
 	"os"
 	"testing"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestManualPagination(t *testing.T) {
+func TestViewItemListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,23 +25,20 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{
-		Limit: moonbase.Int(20),
-	})
+	_, err := client.Views.Items.List(
+		context.TODO(),
+		"id",
+		moonbase.ViewItemListParams{
+			After:  moonbase.String("after"),
+			Before: moonbase.String("before"),
+			Limit:  moonbase.Int(1),
+		},
+	)
 	if err != nil {
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-	for _, programTemplate := range page.Data {
-		t.Logf("%+v\n", programTemplate.ID)
-	}
-	// Prism mock isn't going to give us real pagination
-	page, err = page.GetNextPage()
-	if err != nil {
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-	if page != nil {
-		for _, programTemplate := range page.Data {
-			t.Logf("%+v\n", programTemplate.ID)
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
 		}
+		t.Fatalf("err should be nil: %s", err.Error())
 	}
 }

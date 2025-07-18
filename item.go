@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk
+package moonbase
 
 import (
 	"context"
@@ -10,13 +10,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/paramutil"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
-	"github.com/stainless-sdks/moonbase-sdk-go/shared/constant"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/paramutil"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
 // ItemService contains methods and other services that help with interacting with
@@ -1060,8 +1060,8 @@ type fieldValueUnionParamProfile struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *moonbasesdk.SocialXValueProfileParam:
-//	case *moonbasesdk.SocialLinkedInValueProfileParam:
+//	case *moonbase.SocialXValueProfileParam:
+//	case *moonbase.SocialLinkedInValueProfileParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -1319,7 +1319,8 @@ type Item struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// String representing the object’s type. Always `item` for this object.
-	Type constant.Item `json:"type,required"`
+	Type  constant.Item `json:"type,required"`
+	Links ItemLinks     `json:"links"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
 	// that field.
 	Values map[string]FieldValueUnion `json:"values"`
@@ -1327,6 +1328,7 @@ type Item struct {
 	JSON struct {
 		ID          respjson.Field
 		Type        respjson.Field
+		Links       respjson.Field
 		Values      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1348,13 +1350,34 @@ func (r Item) ToParam() ItemParam {
 	return param.Override[ItemParam](json.RawMessage(r.RawJSON()))
 }
 
+type ItemLinks struct {
+	// A link to the `Collection` the item belongs to.
+	Collection string `json:"collection" format:"uri"`
+	// The canonical URL for this object.
+	Self string `json:"self" format:"uri"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Collection  respjson.Field
+		Self        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemLinks) RawJSON() string { return r.JSON.raw }
+func (r *ItemLinks) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // An Item represents a single record or row within a Collection. It holds a set of
 // `values` corresponding to the Collection's `fields`.
 //
 // The properties ID, Type are required.
 type ItemParam struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID    string         `json:"id,required"`
+	Links ItemLinksParam `json:"links,omitzero"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
 	// that field.
 	Values map[string]FieldValueUnionParam `json:"values,omitzero"`
@@ -1370,6 +1393,22 @@ func (r ItemParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ItemParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ItemLinksParam struct {
+	// A link to the `Collection` the item belongs to.
+	Collection param.Opt[string] `json:"collection,omitzero" format:"uri"`
+	// The canonical URL for this object.
+	Self param.Opt[string] `json:"self,omitzero" format:"uri"`
+	paramObj
+}
+
+func (r ItemLinksParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemLinksParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemLinksParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2000,25 +2039,25 @@ func (RelationValue) implValueUnion()       {}
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ValueUnion.AsAny().(type) {
-//	case moonbasesdk.SingleLineTextValue:
-//	case moonbasesdk.MultiLineTextValue:
-//	case moonbasesdk.IntegerValue:
-//	case moonbasesdk.FloatValue:
-//	case moonbasesdk.MonetaryValue:
-//	case moonbasesdk.PercentageValue:
-//	case moonbasesdk.BooleanValue:
-//	case moonbasesdk.EmailValue:
-//	case moonbasesdk.URLValue:
-//	case moonbasesdk.DomainValue:
-//	case moonbasesdk.SocialXValue:
-//	case moonbasesdk.SocialLinkedInValue:
-//	case moonbasesdk.TelephoneNumber:
-//	case moonbasesdk.GeoValue:
-//	case moonbasesdk.DateValue:
-//	case moonbasesdk.DatetimeValue:
-//	case moonbasesdk.Choice:
-//	case moonbasesdk.FunnelStep:
-//	case moonbasesdk.RelationValue:
+//	case moonbase.SingleLineTextValue:
+//	case moonbase.MultiLineTextValue:
+//	case moonbase.IntegerValue:
+//	case moonbase.FloatValue:
+//	case moonbase.MonetaryValue:
+//	case moonbase.PercentageValue:
+//	case moonbase.BooleanValue:
+//	case moonbase.EmailValue:
+//	case moonbase.URLValue:
+//	case moonbase.DomainValue:
+//	case moonbase.SocialXValue:
+//	case moonbase.SocialLinkedInValue:
+//	case moonbase.TelephoneNumber:
+//	case moonbase.GeoValue:
+//	case moonbase.DateValue:
+//	case moonbase.DatetimeValue:
+//	case moonbase.Choice:
+//	case moonbase.FunnelStep:
+//	case moonbase.RelationValue:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2628,8 +2667,8 @@ type valueUnionParamProfile struct{ any }
 // Use the following switch statement to get the type of the union:
 //
 //	switch u.AsAny().(type) {
-//	case *moonbasesdk.SocialXValueProfileParam:
-//	case *moonbasesdk.SocialLinkedInValueProfileParam:
+//	case *moonbase.SocialXValueProfileParam:
+//	case *moonbase.SocialLinkedInValueProfileParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}

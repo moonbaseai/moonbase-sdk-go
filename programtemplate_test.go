@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk_test
+package moonbase_test
 
 import (
 	"context"
@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/moonbase-sdk-go"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/testutil"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 func TestProgramTemplateGetWithOptionalParams(t *testing.T) {
@@ -21,19 +21,19 @@ func TestProgramTemplateGetWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.ProgramTemplates.Get(
 		context.TODO(),
 		"id",
-		moonbasesdk.ProgramTemplateGetParams{
+		moonbase.ProgramTemplateGetParams{
 			Include: []string{"program"},
 		},
 	)
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -49,18 +49,18 @@ func TestProgramTemplateListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.ProgramTemplates.List(context.TODO(), moonbasesdk.ProgramTemplateListParams{
-		After:   moonbasesdk.String("after"),
-		Before:  moonbasesdk.String("before"),
+	_, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{
+		After:   moonbase.String("after"),
+		Before:  moonbase.String("before"),
 		Include: []string{"program"},
-		Limit:   moonbasesdk.Int(1),
+		Limit:   moonbase.Int(1),
 	})
 	if err != nil {
-		var apierr *moonbasesdk.Error
+		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

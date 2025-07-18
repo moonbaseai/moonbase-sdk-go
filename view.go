@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk
+package moonbase
 
 import (
 	"context"
@@ -9,14 +9,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apiquery"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/pagination"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
-	"github.com/stainless-sdks/moonbase-sdk-go/shared/constant"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
 // ViewService contains methods and other services that help with interacting with
@@ -27,6 +25,7 @@ import (
 // the [NewViewService] method instead.
 type ViewService struct {
 	Options []option.RequestOption
+	Items   ViewItemService
 }
 
 // NewViewService generates a new service that applies the given options to each
@@ -35,6 +34,7 @@ type ViewService struct {
 func NewViewService(opts ...option.RequestOption) (r ViewService) {
 	r = ViewService{}
 	r.Options = opts
+	r.Items = NewViewItemService(opts...)
 	return
 }
 
@@ -48,33 +48,6 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 	path := fmt.Sprintf("views/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
-}
-
-// Returns a list of items that are part of the specified view.
-func (r *ViewService) ListItems(ctx context.Context, id string, query ViewListItemsParams, opts ...option.RequestOption) (res *pagination.CursorPage[Item], err error) {
-	var raw *http.Response
-	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	if id == "" {
-		err = errors.New("missing required id parameter")
-		return
-	}
-	path := fmt.Sprintf("views/%s/items", id)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Returns a list of items that are part of the specified view.
-func (r *ViewService) ListItemsAutoPaging(ctx context.Context, id string, query ViewListItemsParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Item] {
-	return pagination.NewCursorPageAutoPager(r.ListItems(ctx, id, query, opts...))
 }
 
 // A View represents a saved configuration for displaying items in a collection,
@@ -154,29 +127,6 @@ type ViewGetParams struct {
 
 // URLQuery serializes [ViewGetParams]'s query parameters as `url.Values`.
 func (r ViewGetParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type ViewListItemsParams struct {
-	// When specified, returns results starting immediately after the item identified
-	// by this cursor. Use the cursor value from the previous response's metadata to
-	// fetch the next page of results.
-	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	// When specified, returns results starting immediately before the item identified
-	// by this cursor. Use the cursor value from the response's metadata to fetch the
-	// previous page of results.
-	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
-	// to 20 if not specified.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [ViewListItemsParams]'s query parameters as `url.Values`.
-func (r ViewListItemsParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

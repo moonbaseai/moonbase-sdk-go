@@ -1,25 +1,33 @@
 # Moonbase Go API Library
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/moonbase-sdk-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/moonbase-sdk-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go"><img src="https://pkg.go.dev/badge/github.com/moonbaseai/moonbase-sdk-go.svg" alt="Go Reference"></a>
 
-The Moonbase Go library provides convenient access to the [Moonbase REST API](https://docs.moonbase.ai/api-reference/introduction)
+The Moonbase Go library provides convenient access to the Moonbase REST API
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
-	"github.com/stainless-sdks/moonbase-sdk-go" // imported as moonbasesdk
+	"github.com/moonbaseai/moonbase-sdk-go" // imported as moonbase
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
 
+<!-- x-release-please-start-version -->
+
 ```sh
-go get -u 'github.com/stainless-sdks/moonbase-sdk-go@v0.0.1-alpha.0'
+go get -u 'github.com/moonbaseai/moonbase-sdk-go@v0.1.0-alpha.1'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -36,32 +44,38 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stainless-sdks/moonbase-sdk-go"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
 func main() {
-	client := moonbasesdk.NewClient(
+	client := moonbase.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MOONBASE_API_KEY")
 	)
-	page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+	programMessage, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", page)
+	fmt.Printf("%+v\n", programMessage.ID)
 }
 
 ```
 
 ### Request fields
 
-The moonbasesdk library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
+The moonbase library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
 semantics from the Go 1.24+ `encoding/json` release for request fields.
 
 Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`json:"...,required"\`</code>. These
 fields are always serialized, even their zero values.
 
-Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `moonbasesdk.String(string)`, `moonbasesdk.Int(int64)`, etc.
+Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `moonbase.String(string)`, `moonbase.Int(int64)`, etc.
 
 Any `param.Opt[T]`, map, slice, struct or string enum uses the
 tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
@@ -69,17 +83,17 @@ tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
 The `param.IsOmitted(any)` function can confirm the presence of any `omitzero` field.
 
 ```go
-p := moonbasesdk.ExampleParams{
-	ID:   "id_xxx",                  // required property
-	Name: moonbasesdk.String("..."), // optional property
+p := moonbase.ExampleParams{
+	ID:   "id_xxx",               // required property
+	Name: moonbase.String("..."), // optional property
 
-	Point: moonbasesdk.Point{
-		X: 0,                  // required field will serialize as 0
-		Y: moonbasesdk.Int(1), // optional field will serialize as 1
+	Point: moonbase.Point{
+		X: 0,               // required field will serialize as 0
+		Y: moonbase.Int(1), // optional field will serialize as 1
 		// ... omitted non-required fields will not be serialized
 	},
 
-	Origin: moonbasesdk.Origin{}, // the zero value of [Origin] is considered omitted
+	Origin: moonbase.Origin{}, // the zero value of [Origin] is considered omitted
 }
 ```
 
@@ -108,7 +122,7 @@ p.SetExtraFields(map[string]any{
 })
 
 // Send a number instead of an object
-custom := param.Override[moonbasesdk.FooParams](12)
+custom := param.Override[moonbase.FooParams](12)
 ```
 
 ### Request unions
@@ -249,12 +263,12 @@ This library uses the functional options pattern. Functions defined in the
 requests. For example:
 
 ```go
-client := moonbasesdk.NewClient(
+client := moonbase.NewClient(
 	// Adds a header to every request made by the client
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Collections.List(context.TODO(), ...,
+client.ProgramMessages.New(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -264,7 +278,7 @@ client.Collections.List(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/moonbase-sdk-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/option).
 
 ### Pagination
 
@@ -273,13 +287,13 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Collections.ListAutoPaging(context.TODO(), moonbasesdk.CollectionListParams{
-	Limit: moonbasesdk.Int(20),
+iter := client.ProgramTemplates.ListAutoPaging(context.TODO(), moonbase.ProgramTemplateListParams{
+	Limit: moonbase.Int(20),
 })
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	collection := iter.Current()
-	fmt.Printf("%+v\n", collection)
+	programTemplate := iter.Current()
+	fmt.Printf("%+v\n", programTemplate)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -290,12 +304,12 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{
-	Limit: moonbasesdk.Int(20),
+page, err := client.ProgramTemplates.List(context.TODO(), moonbase.ProgramTemplateListParams{
+	Limit: moonbase.Int(20),
 })
 for page != nil {
-	for _, collection := range page.Data {
-		fmt.Printf("%+v\n", collection)
+	for _, programTemplate := range page.Data {
+		fmt.Printf("%+v\n", programTemplate)
 	}
 	page, err = page.GetNextPage()
 }
@@ -307,21 +321,27 @@ if err != nil {
 ### Errors
 
 When the API returns a non-success status code, we return an error with type
-`*moonbasesdk.Error`. This contains the `StatusCode`, `*http.Request`, and
+`*moonbase.Error`. This contains the `StatusCode`, `*http.Request`, and
 `*http.Response` values of the request, as well as the JSON of the error body
 (much like other response objects in the SDK).
 
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Collections.List(context.TODO(), moonbasesdk.CollectionListParams{})
+_, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
+	Person: moonbase.ProgramMessageNewParamsPerson{
+		Email: "user@example.com",
+	},
+	ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+	CustomVariables:   map[string]any{},
+})
 if err != nil {
-	var apierr *moonbasesdk.Error
+	var apierr *moonbase.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/collections": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/program_messages": 400 Bad Request { ... }
 }
 ```
 
@@ -339,9 +359,15 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Collections.List(
+client.ProgramMessages.New(
 	ctx,
-	moonbasesdk.CollectionListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -357,7 +383,7 @@ The file name and content-type can be customized by implementing `Name() string`
 string` on the run-time type of `io.Reader`. Note that `os.File` implements `Name() string`, so a
 file returned by `os.Open` will be sent with the file name on disk.
 
-We also provide a helper `moonbasesdk.File(reader io.Reader, filename string, contentType string)`
+We also provide a helper `moonbase.File(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
 
 ### Retries
@@ -370,14 +396,20 @@ You can use the `WithMaxRetries` option to configure or disable this:
 
 ```go
 // Configure the default for all requests:
-client := moonbasesdk.NewClient(
+client := moonbase.NewClient(
 	option.WithMaxRetries(0), // default is 2
 )
 
 // Override per-request:
-client.Collections.List(
+client.ProgramMessages.New(
 	context.TODO(),
-	moonbasesdk.CollectionListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	option.WithMaxRetries(5),
 )
 ```
@@ -390,15 +422,21 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-page, err := client.Collections.List(
+programMessage, err := client.ProgramMessages.New(
 	context.TODO(),
-	moonbasesdk.CollectionListParams{},
+	moonbase.ProgramMessageNewParams{
+		Person: moonbase.ProgramMessageNewParamsPerson{
+			Email: "user@example.com",
+		},
+		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
+		CustomVariables:   map[string]any{},
+	},
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", page)
+fmt.Printf("%+v\n", programMessage)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
@@ -439,7 +477,7 @@ or the `option.WithJSONSet()` methods.
 params := FooNewParams{
     ID:   "id_xxxx",
     Data: FooNewParamsData{
-        FirstName: moonbasesdk.String("John"),
+        FirstName: moonbase.String("John"),
     },
 }
 client.Foo.New(context.Background(), params, option.WithJSONSet("data.last_name", "Doe"))
@@ -474,7 +512,7 @@ func Logger(req *http.Request, next option.MiddlewareNext) (res *http.Response, 
     return res, err
 }
 
-client := moonbasesdk.NewClient(
+client := moonbase.NewClient(
 	option.WithMiddleware(Logger),
 )
 ```
@@ -499,7 +537,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/moonbase-sdk-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/moonbaseai/moonbase-sdk-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

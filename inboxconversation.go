@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package moonbasesdk
+package moonbase
 
 import (
 	"context"
@@ -10,14 +10,14 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/apiquery"
-	"github.com/stainless-sdks/moonbase-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/moonbase-sdk-go/option"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/pagination"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/param"
-	"github.com/stainless-sdks/moonbase-sdk-go/packages/respjson"
-	"github.com/stainless-sdks/moonbase-sdk-go/shared/constant"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
+	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
 // InboxConversationService contains methods and other services that help with
@@ -79,6 +79,10 @@ type InboxConversation struct {
 	// Unique identifier for the object.
 	ID    string                 `json:"id,required"`
 	Links InboxConversationLinks `json:"links,required"`
+	// The current state, which can be `unassigned`, `active`, `closed`, or `waiting`.
+	//
+	// Any of "unassigned", "active", "closed", "waiting".
+	State InboxConversationState `json:"state,required"`
 	// String representing the object’s type. Always `inbox_conversation` for this
 	// object.
 	Type constant.InboxConversation `json:"type,required"`
@@ -86,16 +90,12 @@ type InboxConversation struct {
 	Addresses []Address `json:"addresses"`
 	// `true` if the conversation appears to be part of a bulk mailing.
 	Bulk bool `json:"bulk"`
-	// `true` if the conversation is currently closed.
-	Closed bool `json:"closed"`
 	// Time at which the object was created, as an RFC 3339 timestamp.
 	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// Whether the conversation is marked for follow-up.
 	FollowUp bool `json:"follow_up"`
 	// `true` if a new draft reply to this conversation has been started.
 	NewDraftConversation bool `json:"new_draft_conversation"`
-	// `true` if the conversation is currently open.
-	Open bool `json:"open"`
 	// `true` if the conversation is marked as spam.
 	Spam bool `json:"spam"`
 	// The subject line of the conversation.
@@ -118,14 +118,13 @@ type InboxConversation struct {
 	JSON struct {
 		ID                   respjson.Field
 		Links                respjson.Field
+		State                respjson.Field
 		Type                 respjson.Field
 		Addresses            respjson.Field
 		Bulk                 respjson.Field
-		Closed               respjson.Field
 		CreatedAt            respjson.Field
 		FollowUp             respjson.Field
 		NewDraftConversation respjson.Field
-		Open                 respjson.Field
 		Spam                 respjson.Field
 		Subject              respjson.Field
 		Tags                 respjson.Field
@@ -167,6 +166,16 @@ func (r InboxConversationLinks) RawJSON() string { return r.JSON.raw }
 func (r *InboxConversationLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The current state, which can be `unassigned`, `active`, `closed`, or `waiting`.
+type InboxConversationState string
+
+const (
+	InboxConversationStateUnassigned InboxConversationState = "unassigned"
+	InboxConversationStateActive     InboxConversationState = "active"
+	InboxConversationStateClosed     InboxConversationState = "closed"
+	InboxConversationStateWaiting    InboxConversationState = "waiting"
+)
 
 // A Tag is a label that can be applied to `Conversation` objects for organization
 // and filtering.
