@@ -19,10 +19,10 @@ type paramUnion = param.APIUnion
 type paramObj = param.APIObject
 
 type CursorPageMeta struct {
-	Cursor CursorPageMetaCursor `json:"cursor"`
+	Cursors CursorPageMetaCursors `json:"cursors"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Cursor      respjson.Field
+		Cursors     respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -34,7 +34,7 @@ func (r *CursorPageMeta) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type CursorPageMetaCursor struct {
+type CursorPageMetaCursors struct {
 	Next string `json:"next"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -45,8 +45,8 @@ type CursorPageMetaCursor struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CursorPageMetaCursor) RawJSON() string { return r.JSON.raw }
-func (r *CursorPageMetaCursor) UnmarshalJSON(data []byte) error {
+func (r CursorPageMetaCursors) RawJSON() string { return r.JSON.raw }
+func (r *CursorPageMetaCursors) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -77,7 +77,7 @@ func (r *CursorPage[T]) GetNextPage() (res *CursorPage[T], err error) {
 	if len(r.Data) == 0 {
 		return nil, nil
 	}
-	next := r.Meta.Cursor.Next
+	next := r.Meta.Cursors.Next
 	if len(next) == 0 {
 		return nil, nil
 	}
