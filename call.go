@@ -190,6 +190,10 @@ type CallNewParams struct {
 	EndAt param.Opt[time.Time] `json:"end_at,omitzero" format:"date-time"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
+	// Any recordings associated with the call.
+	Recordings []CallNewParamsRecording `json:"recordings,omitzero"`
+	// A transcript of the call.
+	Transcript CallNewParamsTranscript `json:"transcript,omitzero"`
 	paramObj
 }
 
@@ -254,3 +258,67 @@ const (
 	CallNewParamsStatusForwarded  CallNewParamsStatus = "forwarded"
 	CallNewParamsStatusAbandoned  CallNewParamsStatus = "abandoned"
 )
+
+// Parameters for creating a `CallRecording` object.
+//
+// The properties ContentType, ProviderID, URL are required.
+type CallNewParamsRecording struct {
+	// The content type of the recording. Note that only `audio/mpeg` is supported at
+	// this time.
+	ContentType string `json:"content_type,required"`
+	// The unique identifier for the recording from the provider's system.
+	ProviderID string `json:"provider_id,required"`
+	// The URL pointing to the recording.
+	URL string `json:"url,required" format:"uri"`
+	paramObj
+}
+
+func (r CallNewParamsRecording) MarshalJSON() (data []byte, err error) {
+	type shadow CallNewParamsRecording
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallNewParamsRecording) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A transcript of the call.
+//
+// The property Cues is required.
+type CallNewParamsTranscript struct {
+	// A list of cues that identify the text spoken in specific time slices of the
+	// call.
+	Cues []CallNewParamsTranscriptCue `json:"cues,omitzero,required"`
+	paramObj
+}
+
+func (r CallNewParamsTranscript) MarshalJSON() (data []byte, err error) {
+	type shadow CallNewParamsTranscript
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallNewParamsTranscript) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating a `CallTranscriptCue` object to capture the text spoken
+// in a specific time slice.
+//
+// The properties From, Speaker, Text, To are required.
+type CallNewParamsTranscriptCue struct {
+	// The start time of the slice, in fractional seconds from the start of the call.
+	From float64 `json:"from,required"`
+	// The E.164 formatted phone number of the speaker.
+	Speaker string `json:"speaker,required"`
+	// The text spoken during the slice.
+	Text string `json:"text,required"`
+	// The end time of the slice, in fractional seconds from the start of the call.
+	To float64 `json:"to,required"`
+	paramObj
+}
+
+func (r CallNewParamsTranscriptCue) MarshalJSON() (data []byte, err error) {
+	type shadow CallNewParamsTranscriptCue
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallNewParamsTranscriptCue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}

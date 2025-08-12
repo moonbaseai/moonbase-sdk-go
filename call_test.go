@@ -36,7 +36,7 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:   "openphone",
-		ProviderID: "openphone_id_000000000002",
+		ProviderID: "openphone_id_000000000006",
 		StartAt:    time.Now(),
 		Status:     moonbase.CallNewParamsStatusCompleted,
 		AnsweredAt: moonbase.Time(time.Now()),
@@ -46,6 +46,19 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			"user_id":         "bar",
 			"phone_number_id": "bar",
 			"conversation_id": "bar",
+		},
+		Recordings: []moonbase.CallNewParamsRecording{{
+			ContentType: "content_type",
+			ProviderID:  "provider_id",
+			URL:         "https://example.com",
+		}},
+		Transcript: moonbase.CallNewParamsTranscript{
+			Cues: []moonbase.CallNewParamsTranscriptCue{{
+				From:    0,
+				Speaker: "speaker",
+				Text:    "text",
+				To:      0,
+			}},
 		},
 	})
 	if err != nil {
