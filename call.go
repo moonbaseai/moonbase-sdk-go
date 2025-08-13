@@ -42,6 +42,14 @@ func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...optio
 	return
 }
 
+// Find and update an existing phone call, or create a new one.
+func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ...option.RequestOption) (res *Call, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "calls/upsert"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // The Call object represents a phone call that has been logged in the system. It
 // contains details about the participants, timing, and outcome of the call.
 type Call struct {
@@ -320,5 +328,163 @@ func (r CallNewParamsTranscriptCue) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *CallNewParamsTranscriptCue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CallUpsertParams struct {
+	// The direction of the call, either `incoming` or `outgoing`.
+	//
+	// Any of "incoming", "outgoing".
+	Direction CallUpsertParamsDirection `json:"direction,omitzero,required"`
+	// An array of participants involved in the call.
+	Participants []CallUpsertParamsParticipant `json:"participants,omitzero,required"`
+	// The name of the phone provider that handled the call (e.g., `openphone`).
+	Provider string `json:"provider,required"`
+	// The unique identifier for the call from the provider's system.
+	ProviderID string `json:"provider_id,required"`
+	// The time the call started, as an RFC 3339 timestamp.
+	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	// The status of the call.
+	//
+	// Any of "queued", "initiated", "ringing", "in_progress", "completed", "busy",
+	// "failed", "no_answer", "canceled", "missed", "answered", "forwarded",
+	// "abandoned".
+	Status CallUpsertParamsStatus `json:"status,omitzero,required"`
+	// The time the call was answered, as an RFC 3339 timestamp.
+	AnsweredAt param.Opt[time.Time] `json:"answered_at,omitzero" format:"date-time"`
+	// The time the call ended, as an RFC 3339 timestamp.
+	EndAt param.Opt[time.Time] `json:"end_at,omitzero" format:"date-time"`
+	// A hash of additional metadata from the provider.
+	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
+	// Any recordings associated with the call.
+	Recordings []CallUpsertParamsRecording `json:"recordings,omitzero"`
+	// A transcript of the call.
+	Transcript CallUpsertParamsTranscript `json:"transcript,omitzero"`
+	paramObj
+}
+
+func (r CallUpsertParams) MarshalJSON() (data []byte, err error) {
+	type shadow CallUpsertParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallUpsertParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The direction of the call, either `incoming` or `outgoing`.
+type CallUpsertParamsDirection string
+
+const (
+	CallUpsertParamsDirectionIncoming CallUpsertParamsDirection = "incoming"
+	CallUpsertParamsDirectionOutgoing CallUpsertParamsDirection = "outgoing"
+)
+
+// Parameters for creating a `Participant` object.
+//
+// The properties Phone, Role are required.
+type CallUpsertParamsParticipant struct {
+	// The E.164 formatted phone number of the participant.
+	Phone string `json:"phone,required"`
+	// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
+	//
+	// Any of "caller", "callee", "other".
+	Role string `json:"role,omitzero,required"`
+	paramObj
+}
+
+func (r CallUpsertParamsParticipant) MarshalJSON() (data []byte, err error) {
+	type shadow CallUpsertParamsParticipant
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallUpsertParamsParticipant) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[CallUpsertParamsParticipant](
+		"role", "caller", "callee", "other",
+	)
+}
+
+// The status of the call.
+type CallUpsertParamsStatus string
+
+const (
+	CallUpsertParamsStatusQueued     CallUpsertParamsStatus = "queued"
+	CallUpsertParamsStatusInitiated  CallUpsertParamsStatus = "initiated"
+	CallUpsertParamsStatusRinging    CallUpsertParamsStatus = "ringing"
+	CallUpsertParamsStatusInProgress CallUpsertParamsStatus = "in_progress"
+	CallUpsertParamsStatusCompleted  CallUpsertParamsStatus = "completed"
+	CallUpsertParamsStatusBusy       CallUpsertParamsStatus = "busy"
+	CallUpsertParamsStatusFailed     CallUpsertParamsStatus = "failed"
+	CallUpsertParamsStatusNoAnswer   CallUpsertParamsStatus = "no_answer"
+	CallUpsertParamsStatusCanceled   CallUpsertParamsStatus = "canceled"
+	CallUpsertParamsStatusMissed     CallUpsertParamsStatus = "missed"
+	CallUpsertParamsStatusAnswered   CallUpsertParamsStatus = "answered"
+	CallUpsertParamsStatusForwarded  CallUpsertParamsStatus = "forwarded"
+	CallUpsertParamsStatusAbandoned  CallUpsertParamsStatus = "abandoned"
+)
+
+// Parameters for creating a `CallRecording` object.
+//
+// The properties ContentType, ProviderID, URL are required.
+type CallUpsertParamsRecording struct {
+	// The content type of the recording. Note that only `audio/mpeg` is supported at
+	// this time.
+	ContentType string `json:"content_type,required"`
+	// The unique identifier for the recording from the provider's system.
+	ProviderID string `json:"provider_id,required"`
+	// The URL pointing to the recording.
+	URL string `json:"url,required" format:"uri"`
+	paramObj
+}
+
+func (r CallUpsertParamsRecording) MarshalJSON() (data []byte, err error) {
+	type shadow CallUpsertParamsRecording
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallUpsertParamsRecording) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A transcript of the call.
+//
+// The property Cues is required.
+type CallUpsertParamsTranscript struct {
+	// A list of cues that identify the text spoken in specific time slices of the
+	// call.
+	Cues []CallUpsertParamsTranscriptCue `json:"cues,omitzero,required"`
+	paramObj
+}
+
+func (r CallUpsertParamsTranscript) MarshalJSON() (data []byte, err error) {
+	type shadow CallUpsertParamsTranscript
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallUpsertParamsTranscript) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating a `CallTranscriptCue` object to capture the text spoken
+// in a specific time slice.
+//
+// The properties From, Speaker, Text, To are required.
+type CallUpsertParamsTranscriptCue struct {
+	// The start time of the slice, in fractional seconds from the start of the call.
+	From float64 `json:"from,required"`
+	// The E.164 formatted phone number of the speaker.
+	Speaker string `json:"speaker,required"`
+	// The text spoken during the slice.
+	Text string `json:"text,required"`
+	// The end time of the slice, in fractional seconds from the start of the call.
+	To float64 `json:"to,required"`
+	paramObj
+}
+
+func (r CallUpsertParamsTranscriptCue) MarshalJSON() (data []byte, err error) {
+	type shadow CallUpsertParamsTranscriptCue
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallUpsertParamsTranscriptCue) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
