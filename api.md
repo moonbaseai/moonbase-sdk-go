@@ -18,6 +18,7 @@ Response Types:
 Methods:
 
 - <code title="post /calls">client.Calls.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CallService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CallNewParams">CallNewParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Call">Call</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /calls/upsert">client.Calls.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CallService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CallUpsertParams">CallUpsertParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Call">Call</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Collections
 
