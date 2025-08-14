@@ -26,7 +26,7 @@ func TestItemNew(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.New(context.TODO(), moonbase.ItemNewParams{
-		CollectionID: "1CS2gt2uaMW7UusJVWubAd",
+		CollectionID: "1CS85UQugzqzvaQKUzWd5i",
 		Values: map[string]moonbase.FieldValueUnionParam{
 			"name": {
 				OfSingleLineText: &moonbase.SingleLineTextValueParam{
@@ -36,7 +36,7 @@ func TestItemNew(t *testing.T) {
 			"ceo": {
 				OfRelation: &moonbase.RelationValueParam{
 					Item: moonbase.ItemParam{
-						ID: "1CS2gt4AVHhvgfNcrZFHD5",
+						ID: "1CS85USCpnJbZ45XuXh6ht",
 						Links: moonbase.ItemLinksParam{
 							Collection: moonbase.String("https://example.com"),
 							Self:       moonbase.String("https://example.com"),
@@ -151,7 +151,7 @@ func TestItemUpsertWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Items.Upsert(context.TODO(), moonbase.ItemUpsertParams{
-		CollectionID: "1CS2gtGHjRNZyuPs4LNS7J",
+		CollectionID: "1CS85TFQuQZAyB8Q4jTrJq",
 		Identifiers: map[string]moonbase.FieldValueUnionParam{
 			"domain": {
 				OfArrayOfValues: []moonbase.ValueUnionParam{},
