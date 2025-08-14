@@ -23,6 +23,7 @@ type ActivityFormSubmitted string              // Always "activity/form_submitte
 type ActivityInboxMessageSent string           // Always "activity/inbox_message_sent"
 type ActivityItemCreated string                // Always "activity/item_created"
 type ActivityItemMentioned string              // Always "activity/item_mentioned"
+type ActivityItemMerged string                 // Always "activity/item_merged"
 type ActivityMeetingHeld string                // Always "activity/meeting_held"
 type ActivityMeetingScheduled string           // Always "activity/meeting_scheduled"
 type ActivityNoteCreated string                // Always "activity/note_created"
@@ -88,6 +89,7 @@ func (c ActivityInboxMessageSent) Default() ActivityInboxMessageSent {
 }
 func (c ActivityItemCreated) Default() ActivityItemCreated     { return "activity/item_created" }
 func (c ActivityItemMentioned) Default() ActivityItemMentioned { return "activity/item_mentioned" }
+func (c ActivityItemMerged) Default() ActivityItemMerged       { return "activity/item_merged" }
 func (c ActivityMeetingHeld) Default() ActivityMeetingHeld     { return "activity/meeting_held" }
 func (c ActivityMeetingScheduled) Default() ActivityMeetingScheduled {
 	return "activity/meeting_scheduled"
@@ -173,6 +175,7 @@ func (c ActivityFormSubmitted) MarshalJSON() ([]byte, error)              { retu
 func (c ActivityInboxMessageSent) MarshalJSON() ([]byte, error)           { return marshalString(c) }
 func (c ActivityItemCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ActivityItemMentioned) MarshalJSON() ([]byte, error)              { return marshalString(c) }
+func (c ActivityItemMerged) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
 func (c ActivityMeetingHeld) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ActivityMeetingScheduled) MarshalJSON() ([]byte, error)           { return marshalString(c) }
 func (c ActivityNoteCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }

@@ -117,7 +117,7 @@ func (r *ProgramTemplate) UnmarshalJSON(data []byte) error {
 type ProgramTemplateLinks struct {
 	// The canonical URL for this object.
 	Self string `json:"self,required" format:"uri"`
-	// A link to the `Program` using this template.
+	// The `Program` using this template.
 	Program string `json:"program" format:"uri"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
