@@ -42,11 +42,7 @@ func TestItemNew(t *testing.T) {
 							Self:       moonbase.String("https://example.com"),
 						},
 						Values: map[string]moonbase.FieldValueUnionParam{
-							"foo": {
-								OfSingleLineText: &moonbase.SingleLineTextValueParam{
-									Text: "text",
-								},
-							},
+							"foo": nil,
 						},
 					},
 				},
