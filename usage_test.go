@@ -24,11 +24,13 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Collections.List(context.TODO(), moonbase.CollectionListParams{
-		Limit: moonbase.Int(10),
-	})
+	collection, err := client.Collections.Get(
+		context.TODO(),
+		"organizations",
+		moonbase.CollectionGetParams{},
+	)
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", page)
+	t.Logf("%+v\n", collection.ID)
 }
