@@ -24,13 +24,13 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.ProgramTemplates.ListAutoPaging(context.TODO(), moonbase.ProgramTemplateListParams{
-		Limit: moonbase.Int(20),
+	iter := client.Collections.ListAutoPaging(context.TODO(), moonbase.CollectionListParams{
+		Limit: moonbase.Int(10),
 	})
 	// Prism mock isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
-		programTemplate := iter.Current()
-		t.Logf("%+v\n", programTemplate.ID)
+		collection := iter.Current()
+		t.Logf("%+v\n", collection.ID)
 	}
 	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

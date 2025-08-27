@@ -24,15 +24,11 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	programMessage, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
-		Person: moonbase.ProgramMessageNewParamsPerson{
-			Email: "user@example.com",
-		},
-		ProgramTemplateID: "MOONBASE_PROGRAM_TEMPLATE_ID",
-		CustomVariables:   map[string]any{},
+	page, err := client.Collections.List(context.TODO(), moonbase.CollectionListParams{
+		Limit: moonbase.Int(10),
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", programMessage.ID)
+	t.Logf("%+v\n", page)
 }
