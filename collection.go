@@ -1221,16 +1221,13 @@ type FieldValueUnion struct {
 	// This field is a union of [string], [string], [int64], [float64],
 	// [MonetaryValueData], [float64], [bool], [string], [string], [string],
 	// [SocialXValueData], [SocialLinkedInValueData], [string], [string], [time.Time],
-	// [time.Time], [ChoiceFieldOption], [FunnelStep]
+	// [time.Time], [ChoiceFieldOption], [FunnelStep], [ItemPointer]
 	Data FieldValueUnionData `json:"data"`
 	Type string              `json:"type"`
-	// This field is from variant [RelationValue].
-	Item ItemPointer `json:"item"`
 	JSON struct {
 		OfArrayOfValues respjson.Field
 		Data            respjson.Field
 		Type            respjson.Field
-		Item            respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -1376,7 +1373,9 @@ type FieldValueUnionData struct {
 	Name string `json:"name"`
 	// This field is from variant [FunnelStep].
 	StepType FunnelStepStepType `json:"step_type"`
-	JSON     struct {
+	// This field is from variant [ItemPointer].
+	Collection CollectionPointer `json:"collection"`
+	JSON       struct {
 		OfString     respjson.Field
 		OfInt        respjson.Field
 		OfFloat      respjson.Field
@@ -1391,6 +1390,7 @@ type FieldValueUnionData struct {
 		Type         respjson.Field
 		Name         respjson.Field
 		StepType     respjson.Field
+		Collection   respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -1517,13 +1517,13 @@ func FieldValueParamOfFunnelStep[T FunnelStepParam | shared.PointerParam](data T
 	return FieldValueParamUnion{OfFunnelStep: &variant}
 }
 
-func FieldValueParamOfRelation[T ItemPointerParam | shared.PointerParam](item T) FieldValueParamUnion {
+func FieldValueParamOfRelation[T ItemPointerParam | shared.PointerParam](data T) FieldValueParamUnion {
 	var variant RelationValueParam
-	switch v := any(item).(type) {
+	switch v := any(data).(type) {
 	case ItemPointerParam:
-		variant.Item.OfItemPointer = &v
+		variant.Data.OfItemPointer = &v
 	case shared.PointerParam:
-		variant.Item.OfPointer = &v
+		variant.Data.OfPointer = &v
 	}
 	return FieldValueParamUnion{OfRelation: &variant}
 }
@@ -1627,14 +1627,6 @@ func (u *FieldValueParamUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u FieldValueParamUnion) GetItem() *RelationValueParamItemUnion {
-	if vt := u.OfRelation; vt != nil {
-		return &vt.Item
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u FieldValueParamUnion) GetType() *string {
 	if vt := u.OfSingleLineText; vt != nil {
 		return (*string)(&vt.Type)
@@ -1718,6 +1710,8 @@ func (u FieldValueParamUnion) GetData() (res fieldValueParamUnionData) {
 		res.any = vt.Data.asAny()
 	} else if vt := u.OfFunnelStep; vt != nil {
 		res.any = vt.Data.asAny()
+	} else if vt := u.OfRelation; vt != nil {
+		res.any = vt.Data.asAny()
 	}
 	return
 }
@@ -1725,7 +1719,7 @@ func (u FieldValueParamUnion) GetData() (res fieldValueParamUnionData) {
 // Can have the runtime types [*string], [*int64], [*float64],
 // [*MonetaryValueDataParam], [*bool], [*FieldValueParamXData],
 // [*FieldValueParamLinkedInData], [*time.Time], [*ChoiceFieldOptionParam],
-// [*shared.PointerParam], [*FunnelStepParam]
+// [*shared.PointerParam], [*FunnelStepParam], [*ItemPointerParam]
 type fieldValueParamUnionData struct{ any }
 
 // Use the following switch statement to get the type of the union:
@@ -1742,6 +1736,7 @@ type fieldValueParamUnionData struct{ any }
 //	case *moonbase.ChoiceFieldOptionParam:
 //	case *shared.PointerParam:
 //	case *moonbase.FunnelStepParam:
+//	case *moonbase.ItemPointerParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -1793,6 +1788,15 @@ func (u fieldValueParamUnionData) GetStepType() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u fieldValueParamUnionData) GetCollection() *CollectionPointerParam {
+	switch vt := u.any.(type) {
+	case *RelationValueParamDataUnion:
+		return vt.GetCollection()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u fieldValueParamUnionData) GetURL() *string {
 	switch vt := u.any.(type) {
 	case *FieldValueParamXData:
@@ -1821,6 +1825,8 @@ func (u fieldValueParamUnionData) GetID() *string {
 		return vt.GetID()
 	case *FunnelStepValueParamDataUnion:
 		return vt.GetID()
+	case *RelationValueParamDataUnion:
+		return vt.GetID()
 	}
 	return nil
 }
@@ -1831,6 +1837,8 @@ func (u fieldValueParamUnionData) GetType() *string {
 	case *ChoiceValueParamDataUnion:
 		return vt.GetType()
 	case *FunnelStepValueParamDataUnion:
+		return vt.GetType()
+	case *RelationValueParamDataUnion:
 		return vt.GetType()
 	}
 	return nil
@@ -2901,13 +2909,12 @@ const (
 
 // Related item reference
 type RelationValue struct {
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Item ItemPointer            `json:"item,required"`
+	// A reference to another Moonbase item.
+	Data ItemPointer            `json:"data,required"`
 	Type constant.ValueRelation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Item        respjson.Field
+		Data        respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -2922,11 +2929,10 @@ func (r *RelationValue) UnmarshalJSON(data []byte) error {
 
 // Related item reference
 //
-// The properties Item, Type are required.
+// The properties Data, Type are required.
 type RelationValueParam struct {
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Item RelationValueParamItemUnion `json:"item,omitzero,required"`
+	// A reference to another Moonbase item.
+	Data RelationValueParamDataUnion `json:"data,omitzero,required"`
 	// This field can be elided, and will marshal its zero value as "value/relation".
 	Type constant.ValueRelation `json:"type,required"`
 	paramObj
@@ -2943,20 +2949,20 @@ func (r *RelationValueParam) UnmarshalJSON(data []byte) error {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type RelationValueParamItemUnion struct {
+type RelationValueParamDataUnion struct {
 	OfItemPointer *ItemPointerParam    `json:",omitzero,inline"`
 	OfPointer     *shared.PointerParam `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u RelationValueParamItemUnion) MarshalJSON() ([]byte, error) {
+func (u RelationValueParamDataUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfItemPointer, u.OfPointer)
 }
-func (u *RelationValueParamItemUnion) UnmarshalJSON(data []byte) error {
+func (u *RelationValueParamDataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *RelationValueParamItemUnion) asAny() any {
+func (u *RelationValueParamDataUnion) asAny() any {
 	if !param.IsOmitted(u.OfItemPointer) {
 		return u.OfItemPointer
 	} else if !param.IsOmitted(u.OfPointer) {
@@ -2966,7 +2972,7 @@ func (u *RelationValueParamItemUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u RelationValueParamItemUnion) GetCollection() *CollectionPointerParam {
+func (u RelationValueParamDataUnion) GetCollection() *CollectionPointerParam {
 	if vt := u.OfItemPointer; vt != nil {
 		return &vt.Collection
 	}
@@ -2974,7 +2980,7 @@ func (u RelationValueParamItemUnion) GetCollection() *CollectionPointerParam {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u RelationValueParamItemUnion) GetID() *string {
+func (u RelationValueParamDataUnion) GetID() *string {
 	if vt := u.OfItemPointer; vt != nil {
 		return (*string)(&vt.ID)
 	} else if vt := u.OfPointer; vt != nil {
@@ -2984,7 +2990,7 @@ func (u RelationValueParamItemUnion) GetID() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u RelationValueParamItemUnion) GetType() *string {
+func (u RelationValueParamDataUnion) GetType() *string {
 	if vt := u.OfItemPointer; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfPointer; vt != nil {
@@ -3629,7 +3635,7 @@ type ValueUnion struct {
 	// This field is a union of [string], [string], [int64], [float64],
 	// [MonetaryValueData], [float64], [bool], [string], [string], [string],
 	// [SocialXValueData], [SocialLinkedInValueData], [string], [string], [time.Time],
-	// [time.Time], [ChoiceFieldOption], [FunnelStep]
+	// [time.Time], [ChoiceFieldOption], [FunnelStep], [ItemPointer]
 	Data ValueUnionData `json:"data"`
 	// Any of "value/text/single_line", "value/text/multi_line",
 	// "value/number/unitless_integer", "value/number/unitless_float",
@@ -3639,12 +3645,9 @@ type ValueUnion struct {
 	// "value/date", "value/datetime", "value/choice", "value/funnel_step",
 	// "value/relation".
 	Type string `json:"type"`
-	// This field is from variant [RelationValue].
-	Item ItemPointer `json:"item"`
 	JSON struct {
 		Data respjson.Field
 		Type respjson.Field
-		Item respjson.Field
 		raw  string
 	} `json:"-"`
 }
@@ -3878,7 +3881,9 @@ type ValueUnionData struct {
 	Name string `json:"name"`
 	// This field is from variant [FunnelStep].
 	StepType FunnelStepStepType `json:"step_type"`
-	JSON     struct {
+	// This field is from variant [ItemPointer].
+	Collection CollectionPointer `json:"collection"`
+	JSON       struct {
 		OfString     respjson.Field
 		OfInt        respjson.Field
 		OfFloat      respjson.Field
@@ -3893,6 +3898,7 @@ type ValueUnionData struct {
 		Type         respjson.Field
 		Name         respjson.Field
 		StepType     respjson.Field
+		Collection   respjson.Field
 		raw          string
 	} `json:"-"`
 }
@@ -4019,13 +4025,13 @@ func ValueParamOfValueFunnelStep[T FunnelStepParam | shared.PointerParam](data T
 	return ValueParamUnion{OfValueFunnelStep: &valueFunnelStep}
 }
 
-func ValueParamOfValueRelation[T ItemPointerParam | shared.PointerParam](item T) ValueParamUnion {
+func ValueParamOfValueRelation[T ItemPointerParam | shared.PointerParam](data T) ValueParamUnion {
 	var valueRelation RelationValueParam
-	switch v := any(item).(type) {
+	switch v := any(data).(type) {
 	case ItemPointerParam:
-		valueRelation.Item.OfItemPointer = &v
+		valueRelation.Data.OfItemPointer = &v
 	case shared.PointerParam:
-		valueRelation.Item.OfPointer = &v
+		valueRelation.Data.OfPointer = &v
 	}
 	return ValueParamUnion{OfValueRelation: &valueRelation}
 }
@@ -4125,14 +4131,6 @@ func (u *ValueParamUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ValueParamUnion) GetItem() *RelationValueParamItemUnion {
-	if vt := u.OfValueRelation; vt != nil {
-		return &vt.Item
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ValueParamUnion) GetType() *string {
 	if vt := u.OfValueTextSingleLine; vt != nil {
 		return (*string)(&vt.Type)
@@ -4216,6 +4214,8 @@ func (u ValueParamUnion) GetData() (res valueParamUnionData) {
 		res.any = vt.Data.asAny()
 	} else if vt := u.OfValueFunnelStep; vt != nil {
 		res.any = vt.Data.asAny()
+	} else if vt := u.OfValueRelation; vt != nil {
+		res.any = vt.Data.asAny()
 	}
 	return
 }
@@ -4223,7 +4223,8 @@ func (u ValueParamUnion) GetData() (res valueParamUnionData) {
 // Can have the runtime types [*string], [*int64], [*float64],
 // [*MonetaryValueDataParam], [*bool], [*ValueParamValueUriSocialXData],
 // [*ValueParamValueUriSocialLinkedInData], [*time.Time],
-// [*ChoiceFieldOptionParam], [*shared.PointerParam], [*FunnelStepParam]
+// [*ChoiceFieldOptionParam], [*shared.PointerParam], [*FunnelStepParam],
+// [*ItemPointerParam]
 type valueParamUnionData struct{ any }
 
 // Use the following switch statement to get the type of the union:
@@ -4240,6 +4241,7 @@ type valueParamUnionData struct{ any }
 //	case *moonbase.ChoiceFieldOptionParam:
 //	case *shared.PointerParam:
 //	case *moonbase.FunnelStepParam:
+//	case *moonbase.ItemPointerParam:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -4291,6 +4293,15 @@ func (u valueParamUnionData) GetStepType() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u valueParamUnionData) GetCollection() *CollectionPointerParam {
+	switch vt := u.any.(type) {
+	case *RelationValueParamDataUnion:
+		return vt.GetCollection()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u valueParamUnionData) GetURL() *string {
 	switch vt := u.any.(type) {
 	case *ValueParamValueUriSocialXData:
@@ -4319,6 +4330,8 @@ func (u valueParamUnionData) GetID() *string {
 		return vt.GetID()
 	case *FunnelStepValueParamDataUnion:
 		return vt.GetID()
+	case *RelationValueParamDataUnion:
+		return vt.GetID()
 	}
 	return nil
 }
@@ -4329,6 +4342,8 @@ func (u valueParamUnionData) GetType() *string {
 	case *ChoiceValueParamDataUnion:
 		return vt.GetType()
 	case *FunnelStepValueParamDataUnion:
+		return vt.GetType()
+	case *RelationValueParamDataUnion:
 		return vt.GetType()
 	}
 	return nil

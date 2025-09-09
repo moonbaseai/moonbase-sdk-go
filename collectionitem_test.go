@@ -38,7 +38,7 @@ func TestCollectionItemNew(t *testing.T) {
 				},
 				"ceo": {
 					OfRelation: &moonbase.RelationValueParam{
-						Item: moonbase.RelationValueParamItemUnion{
+						Data: moonbase.RelationValueParamDataUnion{
 							OfPointer: &shared.PointerParam{
 								ID:   "1CLJt2v2rARKGD4MLziBCw",
 								Type: "item",
