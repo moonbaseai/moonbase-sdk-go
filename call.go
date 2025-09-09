@@ -12,6 +12,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -55,6 +56,8 @@ func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ..
 type Call struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The direction of the call, either `incoming` or `outgoing`.
 	//
 	// Any of "incoming", "outgoing".
@@ -65,41 +68,35 @@ type Call struct {
 	Provider string `json:"provider,required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id,required"`
-	// The time the call started, as an RFC 3339 timestamp.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
 	// The current status of the call.
-	//
-	// Any of "queued", "initiated", "ringing", "in_progress", "completed", "busy",
-	// "failed", "no_answer", "canceled", "missed", "answered", "forwarded",
-	// "abandoned".
-	Status CallStatus `json:"status,required"`
+	ProviderStatus string `json:"provider_status,required"`
+	// The time the call started, as an ISO 8601 timestamp in UTC.
+	StartAt time.Time `json:"start_at,required" format:"date-time"`
 	// String representing the object’s type. Always `call` for this object.
 	Type constant.Call `json:"type,required"`
-	// The time the call was answered, if available, as an RFC 3339 timestamp.
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// The time the call was answered, if available, as an ISO 8601 timestamp in UTC.
 	AnsweredAt time.Time `json:"answered_at" format:"date-time"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// The time the call ended, if available, as an RFC 3339 timestamp.
+	// The time the call ended, if available, as an ISO 8601 timestamp in UTC.
 	EndAt time.Time `json:"end_at" format:"date-time"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
+		CreatedAt        respjson.Field
 		Direction        respjson.Field
 		Participants     respjson.Field
 		Provider         respjson.Field
 		ProviderID       respjson.Field
+		ProviderStatus   respjson.Field
 		StartAt          respjson.Field
-		Status           respjson.Field
 		Type             respjson.Field
+		UpdatedAt        respjson.Field
 		AnsweredAt       respjson.Field
-		CreatedAt        respjson.Field
 		EndAt            respjson.Field
 		ProviderMetadata respjson.Field
-		UpdatedAt        respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
@@ -129,22 +126,23 @@ type CallParticipant struct {
 	//
 	// Any of "caller", "callee", "other".
 	Role string `json:"role,required"`
-	// String representing the object’s type. Always `participant` for this object.
-	Type constant.Participant `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	// String representing the object’s type. Always `call_participant` for this
+	// object.
+	Type constant.CallParticipant `json:"type,required"`
+	// A lightweight reference to another resource.
+	Organization shared.Pointer `json:"organization"`
+	// A lightweight reference to another resource.
+	Person shared.Pointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Phone       respjson.Field
-		Role        respjson.Field
-		Type        respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		Phone        respjson.Field
+		Role         respjson.Field
+		Type         respjson.Field
+		Organization respjson.Field
+		Person       respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -153,25 +151,6 @@ func (r CallParticipant) RawJSON() string { return r.JSON.raw }
 func (r *CallParticipant) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// The current status of the call.
-type CallStatus string
-
-const (
-	CallStatusQueued     CallStatus = "queued"
-	CallStatusInitiated  CallStatus = "initiated"
-	CallStatusRinging    CallStatus = "ringing"
-	CallStatusInProgress CallStatus = "in_progress"
-	CallStatusCompleted  CallStatus = "completed"
-	CallStatusBusy       CallStatus = "busy"
-	CallStatusFailed     CallStatus = "failed"
-	CallStatusNoAnswer   CallStatus = "no_answer"
-	CallStatusCanceled   CallStatus = "canceled"
-	CallStatusMissed     CallStatus = "missed"
-	CallStatusAnswered   CallStatus = "answered"
-	CallStatusForwarded  CallStatus = "forwarded"
-	CallStatusAbandoned  CallStatus = "abandoned"
-)
 
 type CallNewParams struct {
 	// The direction of the call, either `incoming` or `outgoing`.
@@ -184,17 +163,13 @@ type CallNewParams struct {
 	Provider string `json:"provider,required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id,required"`
-	// The time the call started, as an RFC 3339 timestamp.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
 	// The status of the call.
-	//
-	// Any of "queued", "initiated", "ringing", "in_progress", "completed", "busy",
-	// "failed", "no_answer", "canceled", "missed", "answered", "forwarded",
-	// "abandoned".
-	Status CallNewParamsStatus `json:"status,omitzero,required"`
-	// The time the call was answered, as an RFC 3339 timestamp.
+	ProviderStatus string `json:"provider_status,required"`
+	// The time the call started, as an ISO 8601 timestamp in UTC.
+	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	// The time the call was answered, as an ISO 8601 timestamp in UTC.
 	AnsweredAt param.Opt[time.Time] `json:"answered_at,omitzero" format:"date-time"`
-	// The time the call ended, as an RFC 3339 timestamp.
+	// The time the call ended, as an ISO 8601 timestamp in UTC.
 	EndAt param.Opt[time.Time] `json:"end_at,omitzero" format:"date-time"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
@@ -247,25 +222,6 @@ func init() {
 		"role", "caller", "callee", "other",
 	)
 }
-
-// The status of the call.
-type CallNewParamsStatus string
-
-const (
-	CallNewParamsStatusQueued     CallNewParamsStatus = "queued"
-	CallNewParamsStatusInitiated  CallNewParamsStatus = "initiated"
-	CallNewParamsStatusRinging    CallNewParamsStatus = "ringing"
-	CallNewParamsStatusInProgress CallNewParamsStatus = "in_progress"
-	CallNewParamsStatusCompleted  CallNewParamsStatus = "completed"
-	CallNewParamsStatusBusy       CallNewParamsStatus = "busy"
-	CallNewParamsStatusFailed     CallNewParamsStatus = "failed"
-	CallNewParamsStatusNoAnswer   CallNewParamsStatus = "no_answer"
-	CallNewParamsStatusCanceled   CallNewParamsStatus = "canceled"
-	CallNewParamsStatusMissed     CallNewParamsStatus = "missed"
-	CallNewParamsStatusAnswered   CallNewParamsStatus = "answered"
-	CallNewParamsStatusForwarded  CallNewParamsStatus = "forwarded"
-	CallNewParamsStatusAbandoned  CallNewParamsStatus = "abandoned"
-)
 
 // Parameters for creating a `CallRecording` object.
 //
@@ -342,17 +298,13 @@ type CallUpsertParams struct {
 	Provider string `json:"provider,required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id,required"`
-	// The time the call started, as an RFC 3339 timestamp.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
 	// The status of the call.
-	//
-	// Any of "queued", "initiated", "ringing", "in_progress", "completed", "busy",
-	// "failed", "no_answer", "canceled", "missed", "answered", "forwarded",
-	// "abandoned".
-	Status CallUpsertParamsStatus `json:"status,omitzero,required"`
-	// The time the call was answered, as an RFC 3339 timestamp.
+	ProviderStatus string `json:"provider_status,required"`
+	// The time the call started, as an ISO 8601 timestamp in UTC.
+	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	// The time the call was answered, as an ISO 8601 timestamp in UTC.
 	AnsweredAt param.Opt[time.Time] `json:"answered_at,omitzero" format:"date-time"`
-	// The time the call ended, as an RFC 3339 timestamp.
+	// The time the call ended, as an ISO 8601 timestamp in UTC.
 	EndAt param.Opt[time.Time] `json:"end_at,omitzero" format:"date-time"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
@@ -405,25 +357,6 @@ func init() {
 		"role", "caller", "callee", "other",
 	)
 }
-
-// The status of the call.
-type CallUpsertParamsStatus string
-
-const (
-	CallUpsertParamsStatusQueued     CallUpsertParamsStatus = "queued"
-	CallUpsertParamsStatusInitiated  CallUpsertParamsStatus = "initiated"
-	CallUpsertParamsStatusRinging    CallUpsertParamsStatus = "ringing"
-	CallUpsertParamsStatusInProgress CallUpsertParamsStatus = "in_progress"
-	CallUpsertParamsStatusCompleted  CallUpsertParamsStatus = "completed"
-	CallUpsertParamsStatusBusy       CallUpsertParamsStatus = "busy"
-	CallUpsertParamsStatusFailed     CallUpsertParamsStatus = "failed"
-	CallUpsertParamsStatusNoAnswer   CallUpsertParamsStatus = "no_answer"
-	CallUpsertParamsStatusCanceled   CallUpsertParamsStatus = "canceled"
-	CallUpsertParamsStatusMissed     CallUpsertParamsStatus = "missed"
-	CallUpsertParamsStatusAnswered   CallUpsertParamsStatus = "answered"
-	CallUpsertParamsStatusForwarded  CallUpsertParamsStatus = "forwarded"
-	CallUpsertParamsStatusAbandoned  CallUpsertParamsStatus = "abandoned"
-)
 
 // Parameters for creating a `CallRecording` object.
 //

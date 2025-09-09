@@ -35,15 +35,31 @@ type ActivityProgramMessageOpened string       // Always "activity/program_messa
 type ActivityProgramMessageSent string         // Always "activity/program_message_sent"
 type ActivityProgramMessageShielded string     // Always "activity/program_message_shielded"
 type ActivityProgramMessageUnsubscribed string // Always "activity/program_message_unsubscribed"
-type Address string                            // Always "address"
-type Attachment string                         // Always "attachment"
-type Attendee string                           // Always "attendee"
 type Call string                               // Always "call"
+type CallParticipant string                    // Always "call_participant"
+type ChoiceFieldOption string                  // Always "choice_field_option"
 type Collection string                         // Always "collection"
-type Currency string                           // Always "currency"
 type EmailMessage string                       // Always "email_message"
 type Error string                              // Always "error"
-type FieldOption string                        // Always "field_option"
+type FieldBoolean string                       // Always "field/boolean"
+type FieldChoice string                        // Always "field/choice"
+type FieldDate string                          // Always "field/date"
+type FieldDatetime string                      // Always "field/datetime"
+type FieldEmail string                         // Always "field/email"
+type FieldGeo string                           // Always "field/geo"
+type FieldNumberMonetary string                // Always "field/number/monetary"
+type FieldNumberPercentage string              // Always "field/number/percentage"
+type FieldNumberUnitlessFloat string           // Always "field/number/unitless_float"
+type FieldNumberUnitlessInteger string         // Always "field/number/unitless_integer"
+type FieldRelation string                      // Always "field/relation"
+type FieldStage string                         // Always "field/stage"
+type FieldTelephoneNumber string               // Always "field/telephone_number"
+type FieldTextMultiLine string                 // Always "field/text/multi_line"
+type FieldTextSingleLine string                // Always "field/text/single_line"
+type FieldUriDomain string                     // Always "field/uri/domain"
+type FieldUriSocialLinkedIn string             // Always "field/uri/social_linked_in"
+type FieldUriSocialX string                    // Always "field/uri/social_x"
+type FieldUriURL string                        // Always "field/uri/url"
 type File string                               // Always "file"
 type Form string                               // Always "form"
 type Funnel string                             // Always "funnel"
@@ -53,9 +69,11 @@ type InboxConversation string                  // Always "inbox_conversation"
 type Item string                               // Always "item"
 type List string                               // Always "list"
 type Meeting string                            // Always "meeting"
+type MeetingAttendee string                    // Always "meeting_attendee"
+type MeetingOrganizer string                   // Always "meeting_organizer"
+type MessageAddress string                     // Always "message_address"
+type MessageAttachment string                  // Always "message_attachment"
 type Note string                               // Always "note"
-type Organizer string                          // Always "organizer"
-type Participant string                        // Always "participant"
 type Program string                            // Always "program"
 type ProgramMessage string                     // Always "program_message"
 type ProgramTemplate string                    // Always "program_template"
@@ -81,6 +99,8 @@ type ValueUriSocialLinkedIn string             // Always "value/uri/social_linke
 type ValueUriSocialX string                    // Always "value/uri/social_x"
 type ValueUriURL string                        // Always "value/uri/url"
 type View string                               // Always "view"
+type WebhookEndpoint string                    // Always "webhook_endpoint"
+type WebhookSubscription string                // Always "webhook_subscription"
 
 func (c ActivityCallOccurred) Default() ActivityCallOccurred   { return "activity/call_occurred" }
 func (c ActivityFormSubmitted) Default() ActivityFormSubmitted { return "activity/form_submitted" }
@@ -119,41 +139,63 @@ func (c ActivityProgramMessageShielded) Default() ActivityProgramMessageShielded
 func (c ActivityProgramMessageUnsubscribed) Default() ActivityProgramMessageUnsubscribed {
 	return "activity/program_message_unsubscribed"
 }
-func (c Address) Default() Address                             { return "address" }
-func (c Attachment) Default() Attachment                       { return "attachment" }
-func (c Attendee) Default() Attendee                           { return "attendee" }
 func (c Call) Default() Call                                   { return "call" }
+func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
+func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
 func (c Collection) Default() Collection                       { return "collection" }
-func (c Currency) Default() Currency                           { return "currency" }
 func (c EmailMessage) Default() EmailMessage                   { return "email_message" }
 func (c Error) Default() Error                                 { return "error" }
-func (c FieldOption) Default() FieldOption                     { return "field_option" }
-func (c File) Default() File                                   { return "file" }
-func (c Form) Default() Form                                   { return "form" }
-func (c Funnel) Default() Funnel                               { return "funnel" }
-func (c FunnelStep) Default() FunnelStep                       { return "funnel_step" }
-func (c Inbox) Default() Inbox                                 { return "inbox" }
-func (c InboxConversation) Default() InboxConversation         { return "inbox_conversation" }
-func (c Item) Default() Item                                   { return "item" }
-func (c List) Default() List                                   { return "list" }
-func (c Meeting) Default() Meeting                             { return "meeting" }
-func (c Note) Default() Note                                   { return "note" }
-func (c Organizer) Default() Organizer                         { return "organizer" }
-func (c Participant) Default() Participant                     { return "participant" }
-func (c Program) Default() Program                             { return "program" }
-func (c ProgramMessage) Default() ProgramMessage               { return "program_message" }
-func (c ProgramTemplate) Default() ProgramTemplate             { return "program_template" }
-func (c Tag) Default() Tag                                     { return "tag" }
-func (c Tagset) Default() Tagset                               { return "tagset" }
-func (c ValueBoolean) Default() ValueBoolean                   { return "value/boolean" }
-func (c ValueChoice) Default() ValueChoice                     { return "value/choice" }
-func (c ValueDate) Default() ValueDate                         { return "value/date" }
-func (c ValueDatetime) Default() ValueDatetime                 { return "value/datetime" }
-func (c ValueEmail) Default() ValueEmail                       { return "value/email" }
-func (c ValueFunnelStep) Default() ValueFunnelStep             { return "value/funnel_step" }
-func (c ValueGeo) Default() ValueGeo                           { return "value/geo" }
-func (c ValueNumberMonetary) Default() ValueNumberMonetary     { return "value/number/monetary" }
-func (c ValueNumberPercentage) Default() ValueNumberPercentage { return "value/number/percentage" }
+func (c FieldBoolean) Default() FieldBoolean                   { return "field/boolean" }
+func (c FieldChoice) Default() FieldChoice                     { return "field/choice" }
+func (c FieldDate) Default() FieldDate                         { return "field/date" }
+func (c FieldDatetime) Default() FieldDatetime                 { return "field/datetime" }
+func (c FieldEmail) Default() FieldEmail                       { return "field/email" }
+func (c FieldGeo) Default() FieldGeo                           { return "field/geo" }
+func (c FieldNumberMonetary) Default() FieldNumberMonetary     { return "field/number/monetary" }
+func (c FieldNumberPercentage) Default() FieldNumberPercentage { return "field/number/percentage" }
+func (c FieldNumberUnitlessFloat) Default() FieldNumberUnitlessFloat {
+	return "field/number/unitless_float"
+}
+func (c FieldNumberUnitlessInteger) Default() FieldNumberUnitlessInteger {
+	return "field/number/unitless_integer"
+}
+func (c FieldRelation) Default() FieldRelation                   { return "field/relation" }
+func (c FieldStage) Default() FieldStage                         { return "field/stage" }
+func (c FieldTelephoneNumber) Default() FieldTelephoneNumber     { return "field/telephone_number" }
+func (c FieldTextMultiLine) Default() FieldTextMultiLine         { return "field/text/multi_line" }
+func (c FieldTextSingleLine) Default() FieldTextSingleLine       { return "field/text/single_line" }
+func (c FieldUriDomain) Default() FieldUriDomain                 { return "field/uri/domain" }
+func (c FieldUriSocialLinkedIn) Default() FieldUriSocialLinkedIn { return "field/uri/social_linked_in" }
+func (c FieldUriSocialX) Default() FieldUriSocialX               { return "field/uri/social_x" }
+func (c FieldUriURL) Default() FieldUriURL                       { return "field/uri/url" }
+func (c File) Default() File                                     { return "file" }
+func (c Form) Default() Form                                     { return "form" }
+func (c Funnel) Default() Funnel                                 { return "funnel" }
+func (c FunnelStep) Default() FunnelStep                         { return "funnel_step" }
+func (c Inbox) Default() Inbox                                   { return "inbox" }
+func (c InboxConversation) Default() InboxConversation           { return "inbox_conversation" }
+func (c Item) Default() Item                                     { return "item" }
+func (c List) Default() List                                     { return "list" }
+func (c Meeting) Default() Meeting                               { return "meeting" }
+func (c MeetingAttendee) Default() MeetingAttendee               { return "meeting_attendee" }
+func (c MeetingOrganizer) Default() MeetingOrganizer             { return "meeting_organizer" }
+func (c MessageAddress) Default() MessageAddress                 { return "message_address" }
+func (c MessageAttachment) Default() MessageAttachment           { return "message_attachment" }
+func (c Note) Default() Note                                     { return "note" }
+func (c Program) Default() Program                               { return "program" }
+func (c ProgramMessage) Default() ProgramMessage                 { return "program_message" }
+func (c ProgramTemplate) Default() ProgramTemplate               { return "program_template" }
+func (c Tag) Default() Tag                                       { return "tag" }
+func (c Tagset) Default() Tagset                                 { return "tagset" }
+func (c ValueBoolean) Default() ValueBoolean                     { return "value/boolean" }
+func (c ValueChoice) Default() ValueChoice                       { return "value/choice" }
+func (c ValueDate) Default() ValueDate                           { return "value/date" }
+func (c ValueDatetime) Default() ValueDatetime                   { return "value/datetime" }
+func (c ValueEmail) Default() ValueEmail                         { return "value/email" }
+func (c ValueFunnelStep) Default() ValueFunnelStep               { return "value/funnel_step" }
+func (c ValueGeo) Default() ValueGeo                             { return "value/geo" }
+func (c ValueNumberMonetary) Default() ValueNumberMonetary       { return "value/number/monetary" }
+func (c ValueNumberPercentage) Default() ValueNumberPercentage   { return "value/number/percentage" }
 func (c ValueNumberUnitlessFloat) Default() ValueNumberUnitlessFloat {
 	return "value/number/unitless_float"
 }
@@ -169,6 +211,8 @@ func (c ValueUriSocialLinkedIn) Default() ValueUriSocialLinkedIn { return "value
 func (c ValueUriSocialX) Default() ValueUriSocialX               { return "value/uri/social_x" }
 func (c ValueUriURL) Default() ValueUriURL                       { return "value/uri/url" }
 func (c View) Default() View                                     { return "view" }
+func (c WebhookEndpoint) Default() WebhookEndpoint               { return "webhook_endpoint" }
+func (c WebhookSubscription) Default() WebhookSubscription       { return "webhook_subscription" }
 
 func (c ActivityCallOccurred) MarshalJSON() ([]byte, error)               { return marshalString(c) }
 func (c ActivityFormSubmitted) MarshalJSON() ([]byte, error)              { return marshalString(c) }
@@ -187,15 +231,31 @@ func (c ActivityProgramMessageOpened) MarshalJSON() ([]byte, error)       { retu
 func (c ActivityProgramMessageSent) MarshalJSON() ([]byte, error)         { return marshalString(c) }
 func (c ActivityProgramMessageShielded) MarshalJSON() ([]byte, error)     { return marshalString(c) }
 func (c ActivityProgramMessageUnsubscribed) MarshalJSON() ([]byte, error) { return marshalString(c) }
-func (c Address) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
-func (c Attachment) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
-func (c Attendee) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c Call) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Collection) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
-func (c Currency) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c EmailMessage) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c Error) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
-func (c FieldOption) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
+func (c FieldBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
+func (c FieldChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
+func (c FieldDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
+func (c FieldDatetime) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
+func (c FieldEmail) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
+func (c FieldGeo) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c FieldNumberMonetary) MarshalJSON() ([]byte, error)                { return marshalString(c) }
+func (c FieldNumberPercentage) MarshalJSON() ([]byte, error)              { return marshalString(c) }
+func (c FieldNumberUnitlessFloat) MarshalJSON() ([]byte, error)           { return marshalString(c) }
+func (c FieldNumberUnitlessInteger) MarshalJSON() ([]byte, error)         { return marshalString(c) }
+func (c FieldRelation) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
+func (c FieldStage) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
+func (c FieldTelephoneNumber) MarshalJSON() ([]byte, error)               { return marshalString(c) }
+func (c FieldTextMultiLine) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
+func (c FieldTextSingleLine) MarshalJSON() ([]byte, error)                { return marshalString(c) }
+func (c FieldUriDomain) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
+func (c FieldUriSocialLinkedIn) MarshalJSON() ([]byte, error)             { return marshalString(c) }
+func (c FieldUriSocialX) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c FieldUriURL) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c File) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Form) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Funnel) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
@@ -205,9 +265,11 @@ func (c InboxConversation) MarshalJSON() ([]byte, error)                  { retu
 func (c Item) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c List) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Meeting) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
+func (c MeetingAttendee) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c MeetingOrganizer) MarshalJSON() ([]byte, error)                   { return marshalString(c) }
+func (c MessageAddress) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
+func (c MessageAttachment) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Note) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
-func (c Organizer) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
-func (c Participant) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c Program) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c ProgramMessage) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ProgramTemplate) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
@@ -233,6 +295,8 @@ func (c ValueUriSocialLinkedIn) MarshalJSON() ([]byte, error)             { retu
 func (c ValueUriSocialX) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ValueUriURL) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c View) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c WebhookEndpoint) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c WebhookSubscription) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 
 type constant[T any] interface {
 	Constant[T]

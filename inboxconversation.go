@@ -77,93 +77,75 @@ func (r *InboxConversationService) ListAutoPaging(ctx context.Context, query Inb
 // The Conversation object represents a thread of related messages.
 type InboxConversation struct {
 	// Unique identifier for the object.
-	ID    string                 `json:"id,required"`
-	Links InboxConversationLinks `json:"links,required"`
+	ID string `json:"id,required"`
+	// `true` if the conversation appears to be part of a bulk mailing.
+	Bulk bool `json:"bulk,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// `true` if a new draft reply to this conversation has been started.
+	Draft bool `json:"draft,required"`
+	// Whether the conversation is marked for follow-up.
+	FollowUp bool `json:"follow_up,required"`
+	// The time of the most recent activity in the conversation, as an ISO 8601
+	// timestamp in UTC.
+	LastMessageAt time.Time `json:"last_message_at,required" format:"date-time"`
+	// `true` if the conversation is marked as spam.
+	Spam bool `json:"spam,required"`
 	// The current state, which can be `unassigned`, `active`, `closed`, or `waiting`.
 	//
 	// Any of "unassigned", "active", "closed", "waiting".
 	State InboxConversationState `json:"state,required"`
+	// The subject line of the conversation.
+	Subject string `json:"subject,required"`
+	// A list of `Tag` objects applied to this conversation.
+	Tags []InboxConversationTag `json:"tags,required"`
+	// `true` if the conversation is in the trash.
+	Trash bool `json:"trash,required"`
 	// String representing the object’s type. Always `inbox_conversation` for this
 	// object.
 	Type constant.InboxConversation `json:"type,required"`
-	// A list of `Address` objects (participants) in this conversation.
-	Addresses []Address `json:"addresses"`
-	// `true` if the conversation appears to be part of a bulk mailing.
-	Bulk bool `json:"bulk"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Whether the conversation is marked for follow-up.
-	FollowUp bool `json:"follow_up"`
-	// `true` if a new draft reply to this conversation has been started.
-	NewDraftConversation bool `json:"new_draft_conversation"`
-	// `true` if the conversation is marked as spam.
-	Spam bool `json:"spam"`
-	// The subject line of the conversation.
-	Subject string `json:"subject"`
-	// A list of `Tag` objects applied to this conversation.
-	Tags []InboxConversationTag `json:"tags"`
-	// The time of the most recent activity in the conversation, as an RFC 3339
-	// timestamp.
-	Timestamp string `json:"timestamp"`
-	// `true` if the conversation is in the trash.
-	Trash bool `json:"trash"`
 	// `true` if the conversation contains unread messages.
-	Unread bool `json:"unread"`
+	Unread bool `json:"unread,required"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// The `Inbox` that this conversations belongs to.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Inbox Inbox `json:"inbox"`
+	// The `EmailMessage` objects that belong to this conversation.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Messages []EmailMessage `json:"messages"`
 	// If the conversation is snoozed, this is the time it will reappear in the inbox,
-	// as an RFC 3339 timestamp.
+	// as an ISO 8601 timestamp in UTC.
 	UnsnoozeAt time.Time `json:"unsnooze_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID                   respjson.Field
-		Links                respjson.Field
-		State                respjson.Field
-		Type                 respjson.Field
-		Addresses            respjson.Field
-		Bulk                 respjson.Field
-		CreatedAt            respjson.Field
-		FollowUp             respjson.Field
-		NewDraftConversation respjson.Field
-		Spam                 respjson.Field
-		Subject              respjson.Field
-		Tags                 respjson.Field
-		Timestamp            respjson.Field
-		Trash                respjson.Field
-		Unread               respjson.Field
-		UnsnoozeAt           respjson.Field
-		UpdatedAt            respjson.Field
-		ExtraFields          map[string]respjson.Field
-		raw                  string
+		ID            respjson.Field
+		Bulk          respjson.Field
+		CreatedAt     respjson.Field
+		Draft         respjson.Field
+		FollowUp      respjson.Field
+		LastMessageAt respjson.Field
+		Spam          respjson.Field
+		State         respjson.Field
+		Subject       respjson.Field
+		Tags          respjson.Field
+		Trash         respjson.Field
+		Type          respjson.Field
+		Unread        respjson.Field
+		UpdatedAt     respjson.Field
+		Inbox         respjson.Field
+		Messages      respjson.Field
+		UnsnoozeAt    respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r InboxConversation) RawJSON() string { return r.JSON.raw }
 func (r *InboxConversation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InboxConversationLinks struct {
-	// A link to the `Inbox` this conversation belongs to.
-	Inbox string `json:"inbox,required" format:"uri"`
-	// A link to the list of `Message` objects in this conversation.
-	Messages string `json:"messages,required" format:"uri"`
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Inbox       respjson.Field
-		Messages    respjson.Field
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InboxConversationLinks) RawJSON() string { return r.JSON.raw }
-func (r *InboxConversationLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -204,9 +186,9 @@ func (r *InboxConversationTag) UnmarshalJSON(data []byte) error {
 
 type InboxConversationGetParams struct {
 	// Specifies which related objects to include in the response. Valid options are
-	// `addresses` and `tags`.
+	// `inbox`, `messages`, and `messages.addresses`.
 	//
-	// Any of "addresses", "tags".
+	// Any of "inbox", "messages", "messages.addresses".
 	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
@@ -231,13 +213,12 @@ type InboxConversationListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter conversations by one or more inbox IDs.
-	Inbox []string `query:"inbox,omitzero" json:"-"`
+	Limit  param.Opt[int64]                  `query:"limit,omitzero" json:"-"`
+	Filter InboxConversationListParamsFilter `query:"filter,omitzero" json:"-"`
 	// Specifies which related objects to include in the response. Valid options are
-	// `addresses` and `tags`.
+	// `inbox`, `messages`, and `messages.addresses`.
 	//
-	// Any of "addresses", "tags".
+	// Any of "inbox", "messages", "messages.addresses".
 	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
@@ -245,6 +226,49 @@ type InboxConversationListParams struct {
 // URLQuery serializes [InboxConversationListParams]'s query parameters as
 // `url.Values`.
 func (r InboxConversationListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxConversationListParamsFilter struct {
+	ConversationID InboxConversationListParamsFilterConversationID `query:"conversation_id,omitzero" json:"-"`
+	InboxID        InboxConversationListParamsFilterInboxID        `query:"inbox_id,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxConversationListParamsFilter]'s query parameters as
+// `url.Values`.
+func (r InboxConversationListParamsFilter) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxConversationListParamsFilterConversationID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxConversationListParamsFilterConversationID]'s query
+// parameters as `url.Values`.
+func (r InboxConversationListParamsFilterConversationID) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxConversationListParamsFilterInboxID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxConversationListParamsFilterInboxID]'s query
+// parameters as `url.Values`.
+func (r InboxConversationListParamsFilterInboxID) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

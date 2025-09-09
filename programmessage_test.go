@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestProgramMessageNewWithOptionalParams(t *testing.T) {
+func TestProgramMessageSendWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +25,11 @@ func TestProgramMessageNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.ProgramMessages.New(context.TODO(), moonbase.ProgramMessageNewParams{
-		Person: moonbase.ProgramMessageNewParamsPerson{
-			Email: "person-57@example-57.com",
+	_, err := client.ProgramMessages.Send(context.TODO(), moonbase.ProgramMessageSendParams{
+		Person: moonbase.ProgramMessageSendParamsPerson{
+			Email: "person-18@example-18.com",
 		},
-		ProgramTemplateID: "1CSFjSwiF8LXS8a3ERBwp3",
+		ProgramTemplateID: "1CLJt2v1MsDbov8DBEEeWH",
 		CustomVariables: map[string]any{
 			"coupon_code": "bar",
 		},

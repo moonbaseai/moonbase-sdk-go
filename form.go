@@ -40,14 +40,14 @@ func NewFormService(opts ...option.RequestOption) (r FormService) {
 }
 
 // Retrieves the details of an existing form.
-func (r *FormService) Get(ctx context.Context, id string, query FormGetParams, opts ...option.RequestOption) (res *Form, err error) {
+func (r *FormService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Form, err error) {
 	opts = append(r.Options[:], opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
 	}
 	path := fmt.Sprintf("forms/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
@@ -81,33 +81,31 @@ type Form struct {
 	ID string `json:"id,required"`
 	// The `Collection` that submissions to this form are saved to.
 	Collection Collection `json:"collection,required"`
-	Links      FormLinks  `json:"links,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The name of the form, used as the title on its public page.
 	Name string `json:"name,required"`
+	// `true` if the form is available at a public URL.
+	PagesEnabled bool `json:"pages_enabled,required"`
 	// String representing the object’s type. Always `form` for this object.
 	Type constant.Form `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// `true` if the form is available at a public URL.
-	PagesEnabled bool `json:"pages_enabled"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// The public URL for the form, if `pages_enabled` is `true`.
 	PagesURL string `json:"pages_url" format:"uri"`
 	// An optional URL to redirect users to after a successful submission.
 	RedirectURL string `json:"redirect_url" format:"uri"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
 		Collection   respjson.Field
-		Links        respjson.Field
-		Name         respjson.Field
-		Type         respjson.Field
 		CreatedAt    respjson.Field
+		Name         respjson.Field
 		PagesEnabled respjson.Field
+		Type         respjson.Field
+		UpdatedAt    respjson.Field
 		PagesURL     respjson.Field
 		RedirectURL  respjson.Field
-		UpdatedAt    respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -117,43 +115,6 @@ type Form struct {
 func (r Form) RawJSON() string { return r.JSON.raw }
 func (r *Form) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-type FormLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// A link to the `Collection` where form submissions are saved.
-	Collection string `json:"collection" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self        respjson.Field
-		Collection  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r FormLinks) RawJSON() string { return r.JSON.raw }
-func (r *FormLinks) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type FormGetParams struct {
-	// Specifies which related objects to include in the response. Valid option is
-	// `collection.fields`.
-	//
-	// Any of "collection.fields".
-	Include []string `query:"include,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [FormGetParams]'s query parameters as `url.Values`.
-func (r FormGetParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
 }
 
 type FormListParams struct {
@@ -168,11 +129,6 @@ type FormListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Specifies which related objects to include in the response. Valid option is
-	// `collection.fields`.
-	//
-	// Any of "collection.fields".
-	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 

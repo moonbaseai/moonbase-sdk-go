@@ -78,28 +78,30 @@ func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, 
 type MoonbaseFile struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// A temporary, signed URL to download the file content. The URL expires after one
+	// hour.
+	DownloadURL string `json:"download_url,required" format:"uri"`
 	// The original filename of the uploaded file.
-	Filename string            `json:"filename,required"`
-	Links    MoonbaseFileLinks `json:"links,required"`
+	Filename string `json:"filename,required"`
 	// The display name of the file.
 	Name string `json:"name,required"`
 	// The size of the file in bytes.
 	Size float64 `json:"size,required"`
 	// String representing the object’s type. Always `file` for this object.
 	Type constant.File `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		CreatedAt   respjson.Field
+		DownloadURL respjson.Field
 		Filename    respjson.Field
-		Links       respjson.Field
 		Name        respjson.Field
 		Size        respjson.Field
 		Type        respjson.Field
-		CreatedAt   respjson.Field
 		UpdatedAt   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -109,27 +111,6 @@ type MoonbaseFile struct {
 // Returns the unmodified JSON received from the API
 func (r MoonbaseFile) RawJSON() string { return r.JSON.raw }
 func (r *MoonbaseFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type MoonbaseFileLinks struct {
-	// A temporary, signed URL to download the file content. The URL expires after one
-	// hour.
-	DownloadURL string `json:"download_url,required" format:"uri"`
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		DownloadURL respjson.Field
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MoonbaseFileLinks) RawJSON() string { return r.JSON.raw }
-func (r *MoonbaseFileLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

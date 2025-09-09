@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
@@ -54,26 +55,32 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 // including filters and sorting rules.
 type View struct {
 	// Unique identifier for the object.
-	ID    string    `json:"id,required"`
-	Links ViewLinks `json:"links,required"`
+	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The name of the view.
 	Name string `json:"name,required"`
 	// String representing the object’s type. Always `view` for this object.
 	Type constant.View `json:"type,required"`
-	// The `Collection` this view belongs to.
-	Collection Collection `json:"collection"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// The type of view, such as `table` or `board`.
 	//
 	// Any of "table", "board".
-	ViewType ViewViewType `json:"view_type"`
+	ViewType ViewViewType `json:"view_type,required"`
+	// The `Collection` this view belongs to.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Collection Collection `json:"collection"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Links       respjson.Field
+		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Type        respjson.Field
-		Collection  respjson.Field
+		UpdatedAt   respjson.Field
 		ViewType    respjson.Field
+		Collection  respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -82,29 +89,6 @@ type View struct {
 // Returns the unmodified JSON received from the API
 func (r View) RawJSON() string { return r.JSON.raw }
 func (r *View) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ViewLinks struct {
-	// A link to the `Collection` this view belongs to.
-	Collection string `json:"collection,required" format:"uri"`
-	// A link to the list of `Item` objects that are visible in this view.
-	Items string `json:"items,required" format:"uri"`
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Collection  respjson.Field
-		Items       respjson.Field
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ViewLinks) RawJSON() string { return r.JSON.raw }
-func (r *ViewLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

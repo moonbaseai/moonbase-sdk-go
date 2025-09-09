@@ -26,7 +26,7 @@ func TestUsage(t *testing.T) {
 	)
 	collection, err := client.Collections.Get(
 		context.TODO(),
-		"organizations",
+		"people",
 		moonbase.CollectionGetParams{},
 	)
 	if err != nil {

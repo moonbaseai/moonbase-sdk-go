@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestFormGetWithOptionalParams(t *testing.T) {
+func TestFormGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,13 +25,7 @@ func TestFormGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Forms.Get(
-		context.TODO(),
-		"id",
-		moonbase.FormGetParams{
-			Include: []string{"collection.fields"},
-		},
-	)
+	_, err := client.Forms.Get(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -54,10 +48,9 @@ func TestFormListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Forms.List(context.TODO(), moonbase.FormListParams{
-		After:   moonbase.String("after"),
-		Before:  moonbase.String("before"),
-		Include: []string{"collection.fields"},
-		Limit:   moonbase.Int(1),
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Limit:  moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

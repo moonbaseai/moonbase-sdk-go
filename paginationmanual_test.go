@@ -24,23 +24,27 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Collections.List(context.TODO(), moonbase.CollectionListParams{
-		Limit: moonbase.Int(10),
-	})
+	people, err := client.Collections.Items.List(
+		context.TODO(),
+		"people",
+		moonbase.CollectionItemListParams{
+			Limit: moonbase.Int(5),
+		},
+	)
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, collection := range page.Data {
-		t.Logf("%+v\n", collection.ID)
+	for _, item := range people.Data {
+		t.Logf("%+v\n", item.ID)
 	}
 	// Prism mock isn't going to give us real pagination
-	page, err = page.GetNextPage()
+	people, err = people.GetNextPage()
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	if page != nil {
-		for _, collection := range page.Data {
-			t.Logf("%+v\n", collection.ID)
+	if people != nil {
+		for _, item := range people.Data {
+			t.Logf("%+v\n", item.ID)
 		}
 	}
 }
