@@ -1,4 +1,4 @@
 configured_endpoints: 41
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/moonbase%2Fmoonbase-sdk-34edd129b15656775dce8d4c8c40d4634c60e5a955bda5c5748b579684ea50bb.yml
-openapi_spec_hash: d689ca2438907ca37175f3fd6e862821
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/moonbase%2Fmoonbase-sdk-f136a0a0ec247ea53b611e4b8276bc914f1c5cce3a58d7691c31f6c912b33a80.yml
+openapi_spec_hash: dbc2aa322e720eaee9e2379761cdc71f
 config_hash: a97ba6e25d52d6fc0a593de07e326a0b
