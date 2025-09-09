@@ -29,7 +29,7 @@ func TestCollectionGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.CollectionGetParams{
-			Include: []string{"fields"},
+			Include: []string{"views"},
 		},
 	)
 	if err != nil {

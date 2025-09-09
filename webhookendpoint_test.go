@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestItemNew(t *testing.T) {
+func TestWebhookEndpointNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,29 +25,14 @@ func TestItemNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.New(context.TODO(), moonbase.ItemNewParams{
-		CollectionID: "1CSFjSZ8CFA7HEEL1qjG5F",
-		Values: map[string]moonbase.FieldValueUnionParam{
-			"name": {
-				OfSingleLineText: &moonbase.SingleLineTextValueParam{
-					Text: "Aperture Science",
-				},
-			},
-			"ceo": {
-				OfRelation: &moonbase.RelationValueParam{
-					Item: moonbase.ItemParam{
-						ID: "1CSFjSaP5wygg3JJ8mS8qQ",
-						Links: moonbase.ItemLinksParam{
-							Collection: moonbase.String("https://example.com"),
-							Self:       moonbase.String("https://example.com"),
-						},
-						Values: map[string]moonbase.FieldValueUnionParam{
-							"foo": nil,
-						},
-					},
-				},
-			},
-		},
+	_, err := client.WebhookEndpoints.New(context.TODO(), moonbase.WebhookEndpointNewParams{
+		Status: moonbase.WebhookEndpointNewParamsStatusEnabled,
+		URL:    "https://example.com/webhook",
+		Subscriptions: []moonbase.WebhookEndpointNewParamsSubscription{{
+			EventType: "activity/item_created",
+		}, {
+			EventType: "activity/item_mentioned",
+		}},
 	})
 	if err != nil {
 		var apierr *moonbase.Error
@@ -58,7 +43,7 @@ func TestItemNew(t *testing.T) {
 	}
 }
 
-func TestItemGet(t *testing.T) {
+func TestWebhookEndpointGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -70,7 +55,7 @@ func TestItemGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.Get(context.TODO(), "id")
+	_, err := client.WebhookEndpoints.Get(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -80,7 +65,7 @@ func TestItemGet(t *testing.T) {
 	}
 }
 
-func TestItemUpdateWithOptionalParams(t *testing.T) {
+func TestWebhookEndpointUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -92,19 +77,16 @@ func TestItemUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.Update(
+	_, err := client.WebhookEndpoints.Update(
 		context.TODO(),
 		"id",
-		moonbase.ItemUpdateParams{
-			Values: map[string]moonbase.FieldValueUnionParam{
-				"name": {
-					OfSingleLineText: &moonbase.SingleLineTextValueParam{
-						Text: "Jony Appleseed",
-					},
-				},
-			},
-			UpdateManyStrategy: moonbase.ItemUpdateParamsUpdateManyStrategyReplace,
-			UpdateOneStrategy:  moonbase.ItemUpdateParamsUpdateOneStrategyReplace,
+		moonbase.WebhookEndpointUpdateParams{
+			Status: moonbase.WebhookEndpointUpdateParamsStatusDisabled,
+			Subscriptions: []moonbase.WebhookEndpointUpdateParamsSubscription{{
+				EventType: "activity/call_occurred",
+				ID:        moonbase.String("id"),
+			}},
+			URL: moonbase.String("https://updated.example.com"),
 		},
 	)
 	if err != nil {
@@ -116,7 +98,7 @@ func TestItemUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestItemDelete(t *testing.T) {
+func TestWebhookEndpointListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -128,56 +110,33 @@ func TestItemDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.Delete(context.TODO(), "id")
-	if err != nil {
-		var apierr *moonbase.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestItemUpsertWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := moonbase.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	_, err := client.Items.Upsert(context.TODO(), moonbase.ItemUpsertParams{
-		CollectionID: "1CSFjSEx3koQkGQebZLTZa",
-		Identifiers: map[string]moonbase.FieldValueUnionParam{
-			"domain": {
-				OfArrayOfValues: []moonbase.ValueUnionParam{},
-			},
-		},
-		Values: map[string]moonbase.FieldValueUnionParam{
-			"name": {
-				OfSingleLineText: &moonbase.SingleLineTextValueParam{
-					Text: "Aperture Science",
-				},
-			},
-			"domain": {
-				OfArrayOfValues: []moonbase.ValueUnionParam{},
-			},
-			"linked_in": {
-				OfLinkedIn: &moonbase.SocialLinkedInValueParam{
-					Profile: moonbase.SocialLinkedInValueProfileParam{
-						URL:      moonbase.String("https://linkedin.com/company/aperturescience"),
-						Username: moonbase.String("username"),
-					},
-				},
-			},
-		},
-		UpdateManyStrategy: moonbase.ItemUpsertParamsUpdateManyStrategyReplace,
-		UpdateOneStrategy:  moonbase.ItemUpsertParamsUpdateOneStrategyReplace,
+	_, err := client.WebhookEndpoints.List(context.TODO(), moonbase.WebhookEndpointListParams{
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Limit:  moonbase.Int(1),
 	})
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestWebhookEndpointDelete(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.WebhookEndpoints.Delete(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {

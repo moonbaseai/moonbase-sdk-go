@@ -16,22 +16,23 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options            []option.RequestOption
-	Activities         ActivityService
-	Calls              CallService
+	Funnels            FunnelService
 	Collections        CollectionService
-	Files              FileService
-	Forms              FormService
+	Views              ViewService
+	Inboxes            InboxService
 	InboxConversations InboxConversationService
 	InboxMessages      InboxMessageService
-	Inboxes            InboxService
-	Items              ItemService
+	Tagsets            TagsetService
+	Programs           ProgramService
+	ProgramTemplates   ProgramTemplateService
+	ProgramMessages    ProgramMessageService
+	Forms              FormService
+	Activities         ActivityService
+	Calls              CallService
+	Files              FileService
 	Meetings           MeetingService
 	Notes              NoteService
-	ProgramMessages    ProgramMessageService
-	ProgramTemplates   ProgramTemplateService
-	Programs           ProgramService
-	Tagsets            TagsetService
-	Views              ViewService
+	WebhookEndpoints   WebhookEndpointService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,
@@ -56,22 +57,23 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
-	r.Activities = NewActivityService(opts...)
-	r.Calls = NewCallService(opts...)
+	r.Funnels = NewFunnelService(opts...)
 	r.Collections = NewCollectionService(opts...)
-	r.Files = NewFileService(opts...)
-	r.Forms = NewFormService(opts...)
+	r.Views = NewViewService(opts...)
+	r.Inboxes = NewInboxService(opts...)
 	r.InboxConversations = NewInboxConversationService(opts...)
 	r.InboxMessages = NewInboxMessageService(opts...)
-	r.Inboxes = NewInboxService(opts...)
-	r.Items = NewItemService(opts...)
+	r.Tagsets = NewTagsetService(opts...)
+	r.Programs = NewProgramService(opts...)
+	r.ProgramTemplates = NewProgramTemplateService(opts...)
+	r.ProgramMessages = NewProgramMessageService(opts...)
+	r.Forms = NewFormService(opts...)
+	r.Activities = NewActivityService(opts...)
+	r.Calls = NewCallService(opts...)
+	r.Files = NewFileService(opts...)
 	r.Meetings = NewMeetingService(opts...)
 	r.Notes = NewNoteService(opts...)
-	r.ProgramMessages = NewProgramMessageService(opts...)
-	r.ProgramTemplates = NewProgramTemplateService(opts...)
-	r.Programs = NewProgramService(opts...)
-	r.Tagsets = NewTagsetService(opts...)
-	r.Views = NewViewService(opts...)
+	r.WebhookEndpoints = NewWebhookEndpointService(opts...)
 
 	return
 }

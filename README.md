@@ -58,7 +58,7 @@ func main() {
 	)
 	collection, err := client.Collections.Get(
 		context.TODO(),
-		"organizations",
+		"people",
 		moonbase.CollectionGetParams{},
 	)
 	if err != nil {
@@ -289,13 +289,17 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Collections.ListAutoPaging(context.TODO(), moonbase.CollectionListParams{
-	Limit: moonbase.Int(10),
-})
+iter := client.Collections.Items.ListAutoPaging(
+	context.TODO(),
+	"people",
+	moonbase.CollectionItemListParams{
+		Limit: moonbase.Int(5),
+	},
+)
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	collection := iter.Current()
-	fmt.Printf("%+v\n", collection)
+	item := iter.Current()
+	fmt.Printf("%+v\n", item)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -306,12 +310,16 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Collections.List(context.TODO(), moonbase.CollectionListParams{
-	Limit: moonbase.Int(10),
-})
+people, err := client.Collections.Items.List(
+	context.TODO(),
+	"people",
+	moonbase.CollectionItemListParams{
+		Limit: moonbase.Int(5),
+	},
+)
 for page != nil {
-	for _, collection := range page.Data {
-		fmt.Printf("%+v\n", collection)
+	for _, item := range page.Data {
+		fmt.Printf("%+v\n", item)
 	}
 	page, err = page.GetNextPage()
 }
@@ -332,7 +340,7 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 ```go
 _, err := client.Collections.Get(
 	context.TODO(),
-	"organizations",
+	"people",
 	moonbase.CollectionGetParams{},
 )
 if err != nil {
@@ -361,7 +369,7 @@ ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
 client.Collections.Get(
 	ctx,
-	"organizations",
+	"people",
 	moonbase.CollectionGetParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -398,7 +406,7 @@ client := moonbase.NewClient(
 // Override per-request:
 client.Collections.Get(
 	context.TODO(),
-	"organizations",
+	"people",
 	moonbase.CollectionGetParams{},
 	option.WithMaxRetries(5),
 )
@@ -414,7 +422,7 @@ you need to examine response headers, status codes, or other details.
 var response *http.Response
 collection, err := client.Collections.Get(
 	context.TODO(),
-	"organizations",
+	"people",
 	moonbase.CollectionGetParams{},
 	option.WithResponseInto(&response),
 )

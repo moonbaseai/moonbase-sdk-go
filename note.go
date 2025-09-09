@@ -17,6 +17,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -78,30 +79,28 @@ func (r *NoteService) ListAutoPaging(ctx context.Context, query NoteListParams, 
 // or summaries.
 type Note struct {
 	// Unique identifier for the object.
-	ID    string    `json:"id,required"`
-	Links NoteLinks `json:"links,required"`
+	ID string `json:"id,required"`
+	// The main content of the note.
+	Body shared.FormattedText `json:"body,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// String representing the object’s type. Always `note` for this object.
 	Type constant.Note `json:"type,required"`
-	// The main content of the note.
-	Body string `json:"body"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// A short, system-generated summary of the note's content.
 	Summary string `json:"summary"`
 	// An optional title for the note.
 	Title string `json:"title"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Links       respjson.Field
-		Type        respjson.Field
 		Body        respjson.Field
 		CreatedAt   respjson.Field
+		Type        respjson.Field
+		UpdatedAt   respjson.Field
 		Summary     respjson.Field
 		Title       respjson.Field
-		UpdatedAt   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -110,23 +109,6 @@ type Note struct {
 // Returns the unmodified JSON received from the API
 func (r Note) RawJSON() string { return r.JSON.raw }
 func (r *Note) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type NoteLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r NoteLinks) RawJSON() string { return r.JSON.raw }
-func (r *NoteLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

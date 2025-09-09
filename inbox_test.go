@@ -54,9 +54,10 @@ func TestInboxListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Inboxes.List(context.TODO(), moonbase.InboxListParams{
-		After:  moonbase.String("after"),
-		Before: moonbase.String("before"),
-		Limit:  moonbase.Int(1),
+		After:   moonbase.String("after"),
+		Before:  moonbase.String("before"),
+		Include: moonbase.InboxListParamsIncludeTagset,
+		Limit:   moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

@@ -17,6 +17,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -80,29 +81,29 @@ type ProgramTemplate struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// The body content of the email, which can include Liquid variables.
-	Body  string               `json:"body,required"`
-	Links ProgramTemplateLinks `json:"links,required"`
+	Body shared.FormattedText `json:"body,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The subject line of the email, which can include Liquid variables.
 	Subject string `json:"subject,required"`
 	// String representing the object’s type. Always `program_template` for this
 	// object.
 	Type constant.ProgramTemplate `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// The `Program` that uses this template.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Program *Program `json:"program"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		Body        respjson.Field
-		Links       respjson.Field
+		CreatedAt   respjson.Field
 		Subject     respjson.Field
 		Type        respjson.Field
-		CreatedAt   respjson.Field
-		Program     respjson.Field
 		UpdatedAt   respjson.Field
+		Program     respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -111,26 +112,6 @@ type ProgramTemplate struct {
 // Returns the unmodified JSON received from the API
 func (r ProgramTemplate) RawJSON() string { return r.JSON.raw }
 func (r *ProgramTemplate) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ProgramTemplateLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// The `Program` using this template.
-	Program string `json:"program" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self        respjson.Field
-		Program     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ProgramTemplateLinks) RawJSON() string { return r.JSON.raw }
-func (r *ProgramTemplateLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
