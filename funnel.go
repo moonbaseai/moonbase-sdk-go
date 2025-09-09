@@ -61,7 +61,11 @@ type FunnelStep struct {
 	ID string `json:"id,required"`
 	// The name of the step.
 	Name string `json:"name,required"`
-	// The type of step, which can be `active`, `success`, or `failure`.
+	// The status of the step in the funnel flow.
+	//
+	// - `active`: represents an in progress state within the funnel
+	// - `success`: completed successfully and exited the funnel
+	// - `failure`: exited the funnel without conversion
 	//
 	// Any of "active", "success", "failure".
 	StepType FunnelStepStepType `json:"step_type,required"`
@@ -93,7 +97,11 @@ func (r FunnelStep) ToParam() FunnelStepParam {
 	return param.Override[FunnelStepParam](json.RawMessage(r.RawJSON()))
 }
 
-// The type of step, which can be `active`, `success`, or `failure`.
+// The status of the step in the funnel flow.
+//
+// - `active`: represents an in progress state within the funnel
+// - `success`: completed successfully and exited the funnel
+// - `failure`: exited the funnel without conversion
 type FunnelStepStepType string
 
 const (
@@ -110,7 +118,11 @@ type FunnelStepParam struct {
 	ID string `json:"id,required"`
 	// The name of the step.
 	Name string `json:"name,required"`
-	// The type of step, which can be `active`, `success`, or `failure`.
+	// The status of the step in the funnel flow.
+	//
+	// - `active`: represents an in progress state within the funnel
+	// - `success`: completed successfully and exited the funnel
+	// - `failure`: exited the funnel without conversion
 	//
 	// Any of "active", "success", "failure".
 	StepType FunnelStepStepType `json:"step_type,omitzero,required"`
