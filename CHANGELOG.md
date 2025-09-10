@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2025-09-09)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** add upsert endpoint for Calls ([ed9cebf](https://github.com/moonbaseai/moonbase-sdk-go/commit/ed9cebf19eb9b608cfcdc223a573837bb9e3e76a))
+* **api:** example updates ([555a675](https://github.com/moonbaseai/moonbase-sdk-go/commit/555a675f764f6191b126965aa37638aab3a14275))
+* **api:** manual updates ([0a103e8](https://github.com/moonbaseai/moonbase-sdk-go/commit/0a103e81c6c2c488a6aa07e760552e4b506bb14e))
+* **api:** manual updates ([c0e6c48](https://github.com/moonbaseai/moonbase-sdk-go/commit/c0e6c48a59497dace54bdbac9773eb50cc766047))
+* **api:** update api ([7c2e6c6](https://github.com/moonbaseai/moonbase-sdk-go/commit/7c2e6c609e2ff58ffa8cd2804af019c09d1f6a13))
+* **api:** update api ([3955136](https://github.com/moonbaseai/moonbase-sdk-go/commit/39551364aa514a1659a9b0f71c04f8389961dacd))
+* **api:** update api ([0e2a55f](https://github.com/moonbaseai/moonbase-sdk-go/commit/0e2a55fb9923bab332d1e4d77df0fa870dff2743))
+* **api:** update api ([4bb3353](https://github.com/moonbaseai/moonbase-sdk-go/commit/4bb3353d00228b23186130a1641c4fdfcac10698))
+* **api:** update api ([3935b24](https://github.com/moonbaseai/moonbase-sdk-go/commit/3935b24b94b1618b27ede37e1e208d574a3f69bb))
+* **api:** update examples ([68f3fbf](https://github.com/moonbaseai/moonbase-sdk-go/commit/68f3fbffc1fa9d344bcd1140c5c46e60801571c7))
+* **client:** support optional json html escaping ([dd43aa6](https://github.com/moonbaseai/moonbase-sdk-go/commit/dd43aa60d6b11a4e73b825d9d5a10c7127c42625))
+
+
+### Bug Fixes
+
+* **client:** process custom base url ahead of time ([c7920a2](https://github.com/moonbaseai/moonbase-sdk-go/commit/c7920a250cd506e113853b5b426ade26ab4db153))
+* close body before retrying ([2a573bf](https://github.com/moonbaseai/moonbase-sdk-go/commit/2a573bf19be18079393c6b2f6630579afaea1644))
+* **internal:** unmarshal correctly when there are multiple discriminators ([0fa643d](https://github.com/moonbaseai/moonbase-sdk-go/commit/0fa643db59749a0739bd88469f31a0945229e9d9))
+
+
+### Chores
+
+* **internal:** codegen related update ([273f6f4](https://github.com/moonbaseai/moonbase-sdk-go/commit/273f6f4fa7383c69a694213e20f083ed7bedb65e))
+* **internal:** codegen related update ([0aec83a](https://github.com/moonbaseai/moonbase-sdk-go/commit/0aec83ad62d58c0c895761db318b99cd5cd1a93d))
+* **internal:** update comment in script ([435366b](https://github.com/moonbaseai/moonbase-sdk-go/commit/435366b558e67de00049c6cc91d9546ee59930dc))
+* update @stainless-api/prism-cli to v5.15.0 ([cc3a342](https://github.com/moonbaseai/moonbase-sdk-go/commit/cc3a34228df9a371ba34a70d91a593f1c3e166c8))
+
 ## 0.1.0-alpha.2 (2025-07-20)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)

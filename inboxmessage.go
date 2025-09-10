@@ -17,6 +17,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -81,48 +82,24 @@ type Address struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// The email address.
-	Email string `json:"email,required"`
-	// String representing the object’s type. Always `address` for this object.
-	Type constant.Address `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// A hash of related links.
-	Links AddressLinks `json:"links"`
+	Email string `json:"email,required" format:"email"`
 	// The role of the address in the message. Can be `from`, `reply_to`, `to`, `cc`,
 	// or `bcc`.
 	//
 	// Any of "from", "reply_to", "to", "cc", "bcc".
-	Role AddressRole `json:"role"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	Role AddressRole `json:"role,required"`
+	// String representing the object’s type. Always `message_address` for this object.
+	Type constant.MessageAddress `json:"type,required"`
+	// A lightweight reference to another resource.
+	Organization shared.Pointer `json:"organization"`
+	// A lightweight reference to another resource.
+	Person shared.Pointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Email       respjson.Field
-		Type        respjson.Field
-		CreatedAt   respjson.Field
-		Links       respjson.Field
-		Role        respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Address) RawJSON() string { return r.JSON.raw }
-func (r *Address) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A hash of related links.
-type AddressLinks struct {
-	// A link to the associated `Organization` item.
-	Organization string `json:"organization" format:"uri"`
-	// A link to the associated `Person` item.
-	Person string `json:"person" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
+		ID           respjson.Field
+		Email        respjson.Field
+		Role         respjson.Field
+		Type         respjson.Field
 		Organization respjson.Field
 		Person       respjson.Field
 		ExtraFields  map[string]respjson.Field
@@ -131,8 +108,8 @@ type AddressLinks struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AddressLinks) RawJSON() string { return r.JSON.raw }
-func (r *AddressLinks) UnmarshalJSON(data []byte) error {
+func (r Address) RawJSON() string { return r.JSON.raw }
+func (r *Address) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -151,62 +128,58 @@ const (
 // The Email Message object represents a single email within a `Conversation`.
 type EmailMessage struct {
 	// Unique identifier for the object.
-	ID    string            `json:"id,required"`
-	Links EmailMessageLinks `json:"links,required"`
-	// The globally unique `Message-ID` header of the email.
-	Rfc822MessageID string `json:"rfc822_message_id,required"`
+	ID string `json:"id,required"`
+	// Structured content that can be rendered in multiple formats, currently
+	// supporting Markdown.
+	Body shared.FormattedText `json:"body,required"`
+	// `true` if the message appears to be part of a bulk mailing.
+	Bulk bool `json:"bulk,required"`
+	// The time the message was received, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// `true` if the message is a draft that has not been sent.
+	Draft bool `json:"draft,required"`
+	// `true` if the message is classified as spam.
+	Spam bool `json:"spam,required"`
 	// The subject line of the email.
 	Subject string `json:"subject,required"`
+	// `true` if the message is in the trash.
+	Trash bool `json:"trash,required"`
 	// String representing the object’s type. Always `email_message` for this object.
 	Type constant.EmailMessage `json:"type,required"`
+	// `true` if the message has not been read.
+	Unread bool `json:"unread,required"`
 	// A list of `Address` objects associated with the message (sender and recipients).
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Addresses []Address `json:"addresses"`
 	// A list of `Attachment` objects on the message.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Attachments []EmailMessageAttachment `json:"attachments"`
-	// The HTML content of the email body.
-	BodyHTML string `json:"body_html"`
-	// The plain text content of the email body.
-	BodyPlain string `json:"body_plain"`
-	// `true` if the message appears to be part of a bulk mailing.
-	Bulk bool `json:"bulk"`
 	// The `Conversation` thread this message is part of.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Conversation InboxConversation `json:"conversation"`
-	// The time the message was received, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// `true` if the message is a draft that has not been sent.
-	Draft bool `json:"draft"`
-	// The `Message-ID` of the email this message is a reply to.
-	InReplyToRfc822MessageID string `json:"in_reply_to_rfc822_message_id"`
-	// `true` if the message is classified as spam.
-	Spam bool `json:"spam"`
 	// A concise, system-generated summary of the email content.
 	Summary string `json:"summary"`
-	// `true` if the message is in the trash.
-	Trash bool `json:"trash"`
-	// `true` if the message has not been read.
-	Unread bool `json:"unread"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID                       respjson.Field
-		Links                    respjson.Field
-		Rfc822MessageID          respjson.Field
-		Subject                  respjson.Field
-		Type                     respjson.Field
-		Addresses                respjson.Field
-		Attachments              respjson.Field
-		BodyHTML                 respjson.Field
-		BodyPlain                respjson.Field
-		Bulk                     respjson.Field
-		Conversation             respjson.Field
-		CreatedAt                respjson.Field
-		Draft                    respjson.Field
-		InReplyToRfc822MessageID respjson.Field
-		Spam                     respjson.Field
-		Summary                  respjson.Field
-		Trash                    respjson.Field
-		Unread                   respjson.Field
-		ExtraFields              map[string]respjson.Field
-		raw                      string
+		ID           respjson.Field
+		Body         respjson.Field
+		Bulk         respjson.Field
+		CreatedAt    respjson.Field
+		Draft        respjson.Field
+		Spam         respjson.Field
+		Subject      respjson.Field
+		Trash        respjson.Field
+		Type         respjson.Field
+		Unread       respjson.Field
+		Addresses    respjson.Field
+		Attachments  respjson.Field
+		Conversation respjson.Field
+		Summary      respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -216,52 +189,31 @@ func (r *EmailMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type EmailMessageLinks struct {
-	// A link to the `Conversation` this message belongs to.
-	Conversation string `json:"conversation,required" format:"uri"`
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Conversation respjson.Field
-		Self         respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r EmailMessageLinks) RawJSON() string { return r.JSON.raw }
-func (r *EmailMessageLinks) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // The Attachment object represents a file attached to a message. You can download
 // the file content via the `download_url`.
 type EmailMessageAttachment struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// A temporary, signed URL to download the file content. The URL expires after one
+	// hour.
+	DownloadURL string `json:"download_url,required" format:"uri"`
 	// The original name of the uploaded file, including its extension.
 	Filename string `json:"filename,required"`
-	// A hash of related links.
-	Links EmailMessageAttachmentLinks `json:"links,required"`
 	// The size of the file in bytes.
 	Size int64 `json:"size,required"`
-	// String representing the object’s type. Always `attachment` for this object.
-	Type constant.Attachment `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt string `json:"updated_at"`
+	// String representing the object’s type. Always `message_attachment` for this
+	// object.
+	Type constant.MessageAttachment `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		CreatedAt   respjson.Field
+		DownloadURL respjson.Field
 		Filename    respjson.Field
-		Links       respjson.Field
 		Size        respjson.Field
 		Type        respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -270,31 +222,6 @@ type EmailMessageAttachment struct {
 // Returns the unmodified JSON received from the API
 func (r EmailMessageAttachment) RawJSON() string { return r.JSON.raw }
 func (r *EmailMessageAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A hash of related links.
-type EmailMessageAttachmentLinks struct {
-	// A link to the `Conversation` this attachment belongs to.
-	Conversation string `json:"conversation,required" format:"uri"`
-	// A temporary, signed URL to download the file content. The URL expires after one
-	// hour.
-	DownloadURL string `json:"download_url,required" format:"uri"`
-	// A link to the `Message` this attachment belongs to.
-	Message string `json:"message,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Conversation respjson.Field
-		DownloadURL  respjson.Field
-		Message      respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r EmailMessageAttachmentLinks) RawJSON() string { return r.JSON.raw }
-func (r *EmailMessageAttachmentLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -326,11 +253,8 @@ type InboxMessageListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter messages by one or more conversation IDs.
-	Conversation []string `query:"conversation,omitzero" json:"-"`
-	// Filter messages by one or more inbox IDs.
-	Inbox []string `query:"inbox,omitzero" json:"-"`
+	Limit  param.Opt[int64]             `query:"limit,omitzero" json:"-"`
+	Filter InboxMessageListParamsFilter `query:"filter,omitzero" json:"-"`
 	// Specifies which related objects to include in the response. Valid options are
 	// `addresses`, `attachments`, and `conversation`.
 	//
@@ -341,6 +265,49 @@ type InboxMessageListParams struct {
 
 // URLQuery serializes [InboxMessageListParams]'s query parameters as `url.Values`.
 func (r InboxMessageListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxMessageListParamsFilter struct {
+	ConversationID InboxMessageListParamsFilterConversationID `query:"conversation_id,omitzero" json:"-"`
+	InboxID        InboxMessageListParamsFilterInboxID        `query:"inbox_id,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxMessageListParamsFilter]'s query parameters as
+// `url.Values`.
+func (r InboxMessageListParamsFilter) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxMessageListParamsFilterConversationID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxMessageListParamsFilterConversationID]'s query
+// parameters as `url.Values`.
+func (r InboxMessageListParamsFilterConversationID) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type InboxMessageListParamsFilterInboxID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [InboxMessageListParamsFilterInboxID]'s query parameters as
+// `url.Values`.
+func (r InboxMessageListParamsFilterInboxID) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

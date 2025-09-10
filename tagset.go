@@ -78,30 +78,28 @@ func (r *TagsetService) ListAutoPaging(ctx context.Context, query TagsetListPara
 // `Inbox`.
 type Tagset struct {
 	// Unique identifier for the object.
-	ID    string      `json:"id,required"`
-	Links TagsetLinks `json:"links,required"`
+	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The name of the tagset.
 	Name string `json:"name,required"`
+	// A list of `Tag` objects belonging to this tagset.
+	Tags []TagsetTag `json:"tags,required"`
 	// String representing the object’s type. Always `tagset` for this object.
 	Type constant.Tagset `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// An optional description of the tagset's purpose.
 	Description string `json:"description"`
-	// A list of `Tag` objects belonging to this tagset.
-	Tags []TagsetTag `json:"tags"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Links       respjson.Field
-		Name        respjson.Field
-		Type        respjson.Field
 		CreatedAt   respjson.Field
-		Description respjson.Field
+		Name        respjson.Field
 		Tags        respjson.Field
+		Type        respjson.Field
 		UpdatedAt   respjson.Field
+		Description respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -110,23 +108,6 @@ type Tagset struct {
 // Returns the unmodified JSON received from the API
 func (r Tagset) RawJSON() string { return r.JSON.raw }
 func (r *Tagset) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TagsetLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TagsetLinks) RawJSON() string { return r.JSON.raw }
-func (r *TagsetLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -77,28 +77,28 @@ func (r *InboxService) ListAutoPaging(ctx context.Context, query InboxListParams
 // The Inbox object represents a shared inbox for receiving and sending messages.
 type Inbox struct {
 	// Unique identifier for the object.
-	ID    string     `json:"id,required"`
-	Links InboxLinks `json:"links,required"`
+	ID string `json:"id,required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The display name of the inbox.
 	Name string `json:"name,required"`
 	// String representing the object’s type. Always `inbox` for this object.
 	Type constant.Inbox `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// The `Tagset` associated with this inbox, which defines the tags available for
 	// its conversations.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Tagset Tagset `json:"tagset"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Links       respjson.Field
+		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Type        respjson.Field
-		CreatedAt   respjson.Field
-		Tagset      respjson.Field
 		UpdatedAt   respjson.Field
+		Tagset      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -107,26 +107,6 @@ type Inbox struct {
 // Returns the unmodified JSON received from the API
 func (r Inbox) RawJSON() string { return r.JSON.raw }
 func (r *Inbox) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InboxLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// A link to the `Tagset` for this inbox.
-	Tagset string `json:"tagset" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self        respjson.Field
-		Tagset      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InboxLinks) RawJSON() string { return r.JSON.raw }
-func (r *InboxLinks) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -167,6 +147,8 @@ type InboxListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Any of "tagset".
+	Include InboxListParamsInclude `query:"include[],omitzero" json:"-"`
 	paramObj
 }
 
@@ -177,3 +159,9 @@ func (r InboxListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
+
+type InboxListParamsInclude string
+
+const (
+	InboxListParamsIncludeTagset InboxListParamsInclude = "tagset"
+)

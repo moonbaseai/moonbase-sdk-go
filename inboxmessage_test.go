@@ -54,12 +54,18 @@ func TestInboxMessageListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.InboxMessages.List(context.TODO(), moonbase.InboxMessageListParams{
-		After:        moonbase.String("after"),
-		Before:       moonbase.String("before"),
-		Conversation: []string{"string"},
-		Inbox:        []string{"string"},
-		Include:      []string{"addresses"},
-		Limit:        moonbase.Int(1),
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Filter: moonbase.InboxMessageListParamsFilter{
+			ConversationID: moonbase.InboxMessageListParamsFilterConversationID{
+				Eq: moonbase.String("eq"),
+			},
+			InboxID: moonbase.InboxMessageListParamsFilterInboxID{
+				Eq: moonbase.String("eq"),
+			},
+		},
+		Include: []string{"addresses"},
+		Limit:   moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

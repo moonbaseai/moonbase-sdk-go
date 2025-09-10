@@ -29,7 +29,7 @@ func TestInboxConversationGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.InboxConversationGetParams{
-			Include: []string{"addresses"},
+			Include: []string{"inbox"},
 		},
 	)
 	if err != nil {
@@ -54,10 +54,17 @@ func TestInboxConversationListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.InboxConversations.List(context.TODO(), moonbase.InboxConversationListParams{
-		After:   moonbase.String("after"),
-		Before:  moonbase.String("before"),
-		Inbox:   []string{"string"},
-		Include: []string{"addresses"},
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Filter: moonbase.InboxConversationListParamsFilter{
+			ConversationID: moonbase.InboxConversationListParamsFilterConversationID{
+				Eq: moonbase.String("eq"),
+			},
+			InboxID: moonbase.InboxConversationListParamsFilterInboxID{
+				Eq: moonbase.String("eq"),
+			},
+		},
+		Include: []string{"inbox"},
 		Limit:   moonbase.Int(1),
 	})
 	if err != nil {

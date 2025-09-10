@@ -17,6 +17,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -81,25 +82,23 @@ type Attendee struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// The email address of the attendee.
-	Email string `json:"email,required"`
-	// A hash of related links.
-	Links AttendeeLinks `json:"links,required"`
-	// String representing the object’s type. Always `attendee` for this object.
-	Type constant.Attendee `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	Email string `json:"email,required" format:"email"`
+	// String representing the object’s type. Always `meeting_attendee` for this
+	// object.
+	Type constant.MeetingAttendee `json:"type,required"`
+	// A lightweight reference to another resource.
+	Organization shared.Pointer `json:"organization"`
+	// A lightweight reference to another resource.
+	Person shared.Pointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Email       respjson.Field
-		Links       respjson.Field
-		Type        respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		Email        respjson.Field
+		Type         respjson.Field
+		Organization respjson.Field
+		Person       respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -109,51 +108,33 @@ func (r *Attendee) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A hash of related links.
-type AttendeeLinks struct {
-	// A link to the associated `Organization` item.
-	Organization string `json:"organization,required" format:"uri"`
-	// A link to the associated `Person` item.
-	Person string `json:"person,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Organization respjson.Field
-		Person       respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AttendeeLinks) RawJSON() string { return r.JSON.raw }
-func (r *AttendeeLinks) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // The Meeting object represents a calendar event. It includes details about the
 // participants, timing, and associated content like summaries and recordings.
 type Meeting struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
-	// The end time of the meeting, as an RFC 3339 timestamp.
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// The end time of the meeting, as an ISO 8601 timestamp in UTC.
 	EndAt time.Time `json:"end_at,required" format:"date-time"`
 	// The globally unique iCalendar UID for the meeting event.
-	ICalUid string       `json:"i_cal_uid,required"`
-	Links   MeetingLinks `json:"links,required"`
+	ICalUid string `json:"i_cal_uid,required"`
 	// The unique identifier for the meeting from the external calendar provider (e.g.,
 	// Google Calendar).
 	ProviderID string `json:"provider_id,required"`
-	// The start time of the meeting, as an RFC 3339 timestamp.
+	// The start time of the meeting, as an ISO 8601 timestamp in UTC.
 	StartAt time.Time `json:"start_at,required" format:"date-time"`
 	// The IANA time zone in which the meeting is scheduled (e.g.,
 	// `America/Los_Angeles`).
 	TimeZone string `json:"time_zone,required"`
 	// String representing the object’s type. Always `meeting` for this object.
 	Type constant.Meeting `json:"type,required"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
 	// A list of `Attendee` objects for the meeting.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Attendees []Attendee `json:"attendees"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
 	// A detailed description or agenda for the meeting.
 	Description string `json:"description"`
 	// The duration of the meeting in seconds.
@@ -161,40 +142,47 @@ type Meeting struct {
 	// The physical or virtual location of the meeting.
 	Location string `json:"location"`
 	// The `Organizer` of the meeting.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
 	Organizer Organizer `json:"organizer"`
 	// A URL to access the meeting in the external provider's system.
 	ProviderUri string `json:"provider_uri" format:"uri"`
+	// A temporary, signed URL to download the meeting recording. The URL expires after
+	// one hour.
+	RecordingURL string `json:"recording_url" format:"uri"`
 	// A summary or notes generated before the meeting.
 	SummaryAnte string `json:"summary_ante"`
 	// A summary or notes generated after the meeting.
 	SummaryPost string `json:"summary_post"`
 	// The title or subject of the meeting.
 	Title string `json:"title"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	// A temporary, signed URL to download the meeting transcript. The URL expires
+	// after one hour.
+	TranscriptURL string `json:"transcript_url" format:"uri"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		EndAt       respjson.Field
-		ICalUid     respjson.Field
-		Links       respjson.Field
-		ProviderID  respjson.Field
-		StartAt     respjson.Field
-		TimeZone    respjson.Field
-		Type        respjson.Field
-		Attendees   respjson.Field
-		CreatedAt   respjson.Field
-		Description respjson.Field
-		Duration    respjson.Field
-		Location    respjson.Field
-		Organizer   respjson.Field
-		ProviderUri respjson.Field
-		SummaryAnte respjson.Field
-		SummaryPost respjson.Field
-		Title       respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID            respjson.Field
+		CreatedAt     respjson.Field
+		EndAt         respjson.Field
+		ICalUid       respjson.Field
+		ProviderID    respjson.Field
+		StartAt       respjson.Field
+		TimeZone      respjson.Field
+		Type          respjson.Field
+		UpdatedAt     respjson.Field
+		Attendees     respjson.Field
+		Description   respjson.Field
+		Duration      respjson.Field
+		Location      respjson.Field
+		Organizer     respjson.Field
+		ProviderUri   respjson.Field
+		RecordingURL  respjson.Field
+		SummaryAnte   respjson.Field
+		SummaryPost   respjson.Field
+		Title         respjson.Field
+		TranscriptURL respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
 	} `json:"-"`
 }
 
@@ -204,76 +192,24 @@ func (r *Meeting) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MeetingLinks struct {
-	// The canonical URL for this object.
-	Self string `json:"self,required" format:"uri"`
-	// A link to an associated `Note` object.
-	Note string `json:"note" format:"uri"`
-	// A temporary, signed URL to download the meeting recording. The URL expires after
-	// one hour.
-	RecordingURL string `json:"recording_url" format:"uri"`
-	// A link to a long-form summary of the meeting.
-	Summary string `json:"summary" format:"uri"`
-	// A temporary, signed URL to download the meeting transcript. The URL expires
-	// after one hour.
-	TranscriptURL string `json:"transcript_url" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Self          respjson.Field
-		Note          respjson.Field
-		RecordingURL  respjson.Field
-		Summary       respjson.Field
-		TranscriptURL respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r MeetingLinks) RawJSON() string { return r.JSON.raw }
-func (r *MeetingLinks) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Represents the organizer of a meeting.
 type Organizer struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
 	// The email address of the organizer.
-	Email string         `json:"email,required"`
-	Links OrganizerLinks `json:"links,required"`
-	// String representing the object’s type. Always `organizer` for this object.
-	Type constant.Organizer `json:"type,required"`
-	// Time at which the object was created, as an RFC 3339 timestamp.
-	CreatedAt time.Time `json:"created_at" format:"date-time"`
-	// Time at which the object was last updated, as an RFC 3339 timestamp.
-	UpdatedAt time.Time `json:"updated_at" format:"date-time"`
+	Email string `json:"email,required" format:"email"`
+	// String representing the object’s type. Always `meeting_organizer` for this
+	// object.
+	Type constant.MeetingOrganizer `json:"type,required"`
+	// A lightweight reference to another resource.
+	Organization shared.Pointer `json:"organization"`
+	// A lightweight reference to another resource.
+	Person shared.Pointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Email       respjson.Field
-		Links       respjson.Field
-		Type        respjson.Field
-		CreatedAt   respjson.Field
-		UpdatedAt   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Organizer) RawJSON() string { return r.JSON.raw }
-func (r *Organizer) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type OrganizerLinks struct {
-	// A link to the associated `Organization` item.
-	Organization string `json:"organization,required" format:"uri"`
-	// A link to the associated `Person` item.
-	Person string `json:"person,required" format:"uri"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
+		ID           respjson.Field
+		Email        respjson.Field
+		Type         respjson.Field
 		Organization respjson.Field
 		Person       respjson.Field
 		ExtraFields  map[string]respjson.Field
@@ -282,8 +218,8 @@ type OrganizerLinks struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r OrganizerLinks) RawJSON() string { return r.JSON.raw }
-func (r *OrganizerLinks) UnmarshalJSON(data []byte) error {
+func (r Organizer) RawJSON() string { return r.JSON.raw }
+func (r *Organizer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
