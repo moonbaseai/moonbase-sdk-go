@@ -262,14 +262,14 @@ type ChoiceFieldOption struct {
 	// Unique identifier for the option.
 	ID string `json:"id,required"`
 	// The human-readable text displayed for this option.
-	Label string `json:"label,required"`
+	Name string `json:"name,required"`
 	// String representing the object’s type. Always `choice_field_option` for this
 	// object.
 	Type constant.ChoiceFieldOption `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Label       respjson.Field
+		Name        respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -293,12 +293,12 @@ func (r ChoiceFieldOption) ToParam() ChoiceFieldOptionParam {
 
 // Represents a single selectable option within a choice field.
 //
-// The properties ID, Label, Type are required.
+// The properties ID, Name, Type are required.
 type ChoiceFieldOptionParam struct {
 	// Unique identifier for the option.
 	ID string `json:"id,required"`
 	// The human-readable text displayed for this option.
-	Label string `json:"label,required"`
+	Name string `json:"name,required"`
 	// String representing the object’s type. Always `choice_field_option` for this
 	// object.
 	//
@@ -359,21 +359,21 @@ func (r *ChoiceValueParam) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ChoiceValueParamDataUnion struct {
-	OfChoiceFieldOption *ChoiceFieldOptionParam `json:",omitzero,inline"`
-	OfPointer           *shared.PointerParam    `json:",omitzero,inline"`
+	OfFieldOption *ChoiceFieldOptionParam `json:",omitzero,inline"`
+	OfPointer     *shared.PointerParam    `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ChoiceValueParamDataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfChoiceFieldOption, u.OfPointer)
+	return param.MarshalUnion(u, u.OfFieldOption, u.OfPointer)
 }
 func (u *ChoiceValueParamDataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *ChoiceValueParamDataUnion) asAny() any {
-	if !param.IsOmitted(u.OfChoiceFieldOption) {
-		return u.OfChoiceFieldOption
+	if !param.IsOmitted(u.OfFieldOption) {
+		return u.OfFieldOption
 	} else if !param.IsOmitted(u.OfPointer) {
 		return u.OfPointer
 	}
@@ -381,16 +381,16 @@ func (u *ChoiceValueParamDataUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ChoiceValueParamDataUnion) GetLabel() *string {
-	if vt := u.OfChoiceFieldOption; vt != nil {
-		return &vt.Label
+func (u ChoiceValueParamDataUnion) GetName() *string {
+	if vt := u.OfFieldOption; vt != nil {
+		return &vt.Name
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u ChoiceValueParamDataUnion) GetID() *string {
-	if vt := u.OfChoiceFieldOption; vt != nil {
+	if vt := u.OfFieldOption; vt != nil {
 		return (*string)(&vt.ID)
 	} else if vt := u.OfPointer; vt != nil {
 		return (*string)(&vt.ID)
@@ -400,7 +400,7 @@ func (u ChoiceValueParamDataUnion) GetID() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u ChoiceValueParamDataUnion) GetType() *string {
-	if vt := u.OfChoiceFieldOption; vt != nil {
+	if vt := u.OfFieldOption; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfPointer; vt != nil {
 		return (*string)(&vt.Type)
@@ -1366,11 +1366,8 @@ type FieldValueUnionData struct {
 	URL          string `json:"url"`
 	Username     string `json:"username"`
 	ID           string `json:"id"`
-	// This field is from variant [ChoiceFieldOption].
-	Label string `json:"label"`
-	Type  string `json:"type"`
-	// This field is from variant [FunnelStep].
-	Name string `json:"name"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
 	// This field is from variant [FunnelStep].
 	StepType FunnelStepStepType `json:"step_type"`
 	// This field is from variant [ItemPointer].
@@ -1386,9 +1383,8 @@ type FieldValueUnionData struct {
 		URL          respjson.Field
 		Username     respjson.Field
 		ID           respjson.Field
-		Label        respjson.Field
-		Type         respjson.Field
 		Name         respjson.Field
+		Type         respjson.Field
 		StepType     respjson.Field
 		Collection   respjson.Field
 		raw          string
@@ -1499,7 +1495,7 @@ func FieldValueParamOfChoice[T ChoiceFieldOptionParam | shared.PointerParam](dat
 	var variant ChoiceValueParam
 	switch v := any(data).(type) {
 	case ChoiceFieldOptionParam:
-		variant.Data.OfChoiceFieldOption = &v
+		variant.Data.OfFieldOption = &v
 	case shared.PointerParam:
 		variant.Data.OfPointer = &v
 	}
@@ -1761,24 +1757,6 @@ func (u fieldValueParamUnionData) GetInMinorUnits() *int64 {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u fieldValueParamUnionData) GetLabel() *string {
-	switch vt := u.any.(type) {
-	case *ChoiceValueParamDataUnion:
-		return vt.GetLabel()
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u fieldValueParamUnionData) GetName() *string {
-	switch vt := u.any.(type) {
-	case *FunnelStepValueParamDataUnion:
-		return vt.GetName()
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u fieldValueParamUnionData) GetStepType() *string {
 	switch vt := u.any.(type) {
 	case *FunnelStepValueParamDataUnion:
@@ -1827,6 +1805,17 @@ func (u fieldValueParamUnionData) GetID() *string {
 		return vt.GetID()
 	case *RelationValueParamDataUnion:
 		return vt.GetID()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u fieldValueParamUnionData) GetName() *string {
+	switch vt := u.any.(type) {
+	case *ChoiceValueParamDataUnion:
+		return vt.GetName()
+	case *FunnelStepValueParamDataUnion:
+		return vt.GetName()
 	}
 	return nil
 }
@@ -3874,11 +3863,8 @@ type ValueUnionData struct {
 	URL          string `json:"url"`
 	Username     string `json:"username"`
 	ID           string `json:"id"`
-	// This field is from variant [ChoiceFieldOption].
-	Label string `json:"label"`
-	Type  string `json:"type"`
-	// This field is from variant [FunnelStep].
-	Name string `json:"name"`
+	Name         string `json:"name"`
+	Type         string `json:"type"`
 	// This field is from variant [FunnelStep].
 	StepType FunnelStepStepType `json:"step_type"`
 	// This field is from variant [ItemPointer].
@@ -3894,9 +3880,8 @@ type ValueUnionData struct {
 		URL          respjson.Field
 		Username     respjson.Field
 		ID           respjson.Field
-		Label        respjson.Field
-		Type         respjson.Field
 		Name         respjson.Field
+		Type         respjson.Field
 		StepType     respjson.Field
 		Collection   respjson.Field
 		raw          string
@@ -4007,7 +3992,7 @@ func ValueParamOfValueChoice[T ChoiceFieldOptionParam | shared.PointerParam](dat
 	var valueChoice ChoiceValueParam
 	switch v := any(data).(type) {
 	case ChoiceFieldOptionParam:
-		valueChoice.Data.OfChoiceFieldOption = &v
+		valueChoice.Data.OfFieldOption = &v
 	case shared.PointerParam:
 		valueChoice.Data.OfPointer = &v
 	}
@@ -4266,24 +4251,6 @@ func (u valueParamUnionData) GetInMinorUnits() *int64 {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u valueParamUnionData) GetLabel() *string {
-	switch vt := u.any.(type) {
-	case *ChoiceValueParamDataUnion:
-		return vt.GetLabel()
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u valueParamUnionData) GetName() *string {
-	switch vt := u.any.(type) {
-	case *FunnelStepValueParamDataUnion:
-		return vt.GetName()
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u valueParamUnionData) GetStepType() *string {
 	switch vt := u.any.(type) {
 	case *FunnelStepValueParamDataUnion:
@@ -4332,6 +4299,17 @@ func (u valueParamUnionData) GetID() *string {
 		return vt.GetID()
 	case *RelationValueParamDataUnion:
 		return vt.GetID()
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u valueParamUnionData) GetName() *string {
+	switch vt := u.any.(type) {
+	case *ChoiceValueParamDataUnion:
+		return vt.GetName()
+	case *FunnelStepValueParamDataUnion:
+		return vt.GetName()
 	}
 	return nil
 }
