@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.1.0-alpha.4 (2025-09-12)
+
+Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
+
+### Features
+
+* Improve examples of API errors ([f9cf183](https://github.com/moonbaseai/moonbase-sdk-go/commit/f9cf1833e99d8324372f4bc38de0b5da13e48472))
+
+
+### Documentation
+
+* improve webhook endpoints examples ([5f7104f](https://github.com/moonbaseai/moonbase-sdk-go/commit/5f7104f06a0e55d0d4b99efbf0fba6ab86215b84))
+
+
+### Refactors
+
+* rename ChoiceFieldOption label to name for consistency ([b52ec31](https://github.com/moonbaseai/moonbase-sdk-go/commit/b52ec311ec1209339371db5bef24f2630bb21384))
+
 ## 0.1.0-alpha.3 (2025-09-09)
 
 Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
