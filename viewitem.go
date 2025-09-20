@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
@@ -38,7 +39,7 @@ func NewViewItemService(opts ...option.RequestOption) (r ViewItemService) {
 // Returns a list of items that are part of the specified view.
 func (r *ViewItemService) List(ctx context.Context, id string, query ViewItemListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Item], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")

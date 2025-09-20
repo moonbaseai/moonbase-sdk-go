@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -48,7 +49,7 @@ func NewCollectionService(opts ...option.RequestOption) (r CollectionService) {
 
 // Retrieves the details of an existing collection.
 func (r *CollectionService) Get(ctx context.Context, id string, query CollectionGetParams, opts ...option.RequestOption) (res *Collection, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -61,7 +62,7 @@ func (r *CollectionService) Get(ctx context.Context, id string, query Collection
 // Returns a list of your collections.
 func (r *CollectionService) List(ctx context.Context, query CollectionListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Collection], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "collections"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

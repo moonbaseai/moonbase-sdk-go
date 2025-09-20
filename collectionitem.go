@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
@@ -38,7 +39,7 @@ func NewCollectionItemService(opts ...option.RequestOption) (r CollectionItemSer
 
 // Creates a new item in a collection.
 func (r *CollectionItemService) New(ctx context.Context, collectionID string, body CollectionItemNewParams, opts ...option.RequestOption) (res *Item, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return
@@ -50,7 +51,7 @@ func (r *CollectionItemService) New(ctx context.Context, collectionID string, bo
 
 // Retrieves the details of an existing item.
 func (r *CollectionItemService) Get(ctx context.Context, id string, query CollectionItemGetParams, opts ...option.RequestOption) (res *Item, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return
@@ -72,7 +73,7 @@ func (r *CollectionItemService) Update(ctx context.Context, id string, params Co
 	if !param.IsOmitted(params.UpdateOneStrategy) {
 		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%s", params.UpdateOneStrategy)))
 	}
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return
@@ -89,7 +90,7 @@ func (r *CollectionItemService) Update(ctx context.Context, id string, params Co
 // Returns a list of items that are part of the collection.
 func (r *CollectionItemService) List(ctx context.Context, collectionID string, query CollectionItemListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Item], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
@@ -115,7 +116,7 @@ func (r *CollectionItemService) ListAutoPaging(ctx context.Context, collectionID
 
 // Permanently deletes an item.
 func (r *CollectionItemService) Delete(ctx context.Context, id string, body CollectionItemDeleteParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if body.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
@@ -138,7 +139,7 @@ func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string,
 	if !param.IsOmitted(params.UpdateOneStrategy) {
 		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%s", params.UpdateOneStrategy)))
 	}
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return

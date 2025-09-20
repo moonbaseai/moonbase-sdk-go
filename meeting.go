@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewMeetingService(opts ...option.RequestOption) (r MeetingService) {
 
 // Retrieves the details of an existing meeting.
 func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetParams, opts ...option.RequestOption) (res *Meeting, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -55,7 +56,7 @@ func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetPar
 // Returns a list of meetings.
 func (r *MeetingService) List(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Meeting], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "meetings"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

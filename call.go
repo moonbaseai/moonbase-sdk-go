@@ -5,6 +5,7 @@ package moonbase
 import (
 	"context"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -37,7 +38,7 @@ func NewCallService(opts ...option.RequestOption) (r CallService) {
 
 // Logs a phone call.
 func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...option.RequestOption) (res *Call, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "calls"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -45,7 +46,7 @@ func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...optio
 
 // Find and update an existing phone call, or create a new one.
 func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ...option.RequestOption) (res *Call, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "calls/upsert"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

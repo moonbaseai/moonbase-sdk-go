@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewInboxConversationService(opts ...option.RequestOption) (r InboxConversat
 
 // Retrieves the details of an existing conversation.
 func (r *InboxConversationService) Get(ctx context.Context, id string, query InboxConversationGetParams, opts ...option.RequestOption) (res *InboxConversation, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -54,7 +55,7 @@ func (r *InboxConversationService) Get(ctx context.Context, id string, query Inb
 // Returns a list of your conversations.
 func (r *InboxConversationService) List(ctx context.Context, query InboxConversationListParams, opts ...option.RequestOption) (res *pagination.CursorPage[InboxConversation], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "inbox_conversations"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

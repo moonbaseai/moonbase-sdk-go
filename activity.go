@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -43,7 +44,7 @@ func NewActivityService(opts ...option.RequestOption) (r ActivityService) {
 
 // Retrieves the details of an existing activity.
 func (r *ActivityService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *ActivityUnion, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -56,7 +57,7 @@ func (r *ActivityService) Get(ctx context.Context, id string, opts ...option.Req
 // Returns a list of activities.
 func (r *ActivityService) List(ctx context.Context, query ActivityListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ActivityUnion], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "activities"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
