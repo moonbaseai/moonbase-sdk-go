@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewNoteService(opts ...option.RequestOption) (r NoteService) {
 
 // Retrieves the details of an existing note.
 func (r *NoteService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Note, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -55,7 +56,7 @@ func (r *NoteService) Get(ctx context.Context, id string, opts ...option.Request
 // Returns a list of your notes.
 func (r *NoteService) List(ctx context.Context, query NoteListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Note], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "notes"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewTagsetService(opts ...option.RequestOption) (r TagsetService) {
 
 // Retrieves the details of an existing tagset.
 func (r *TagsetService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Tagset, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -54,7 +55,7 @@ func (r *TagsetService) Get(ctx context.Context, id string, opts ...option.Reque
 // Returns a list of your tagsets.
 func (r *TagsetService) List(ctx context.Context, query TagsetListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Tagset], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "tagsets"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
