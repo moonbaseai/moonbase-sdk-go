@@ -109,7 +109,7 @@ type Program struct {
 	// The `ProgramTemplate` used for messages in this program.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	ProgramTemplate ProgramTemplate `json:"program_template"`
+	ProgramTemplate *ProgramTemplate `json:"program_template"`
 	// For `broadcast` programs, the time the program is scheduled to send, as an ISO
 	// 8601 timestamp in UTC.
 	ScheduledAt time.Time `json:"scheduled_at" format:"date-time"`

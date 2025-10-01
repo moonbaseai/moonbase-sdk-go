@@ -95,7 +95,7 @@ type ProgramTemplate struct {
 	// The `Program` that uses this template.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Program Program `json:"program"`
+	Program *Program `json:"program"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

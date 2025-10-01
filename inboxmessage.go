@@ -160,7 +160,7 @@ type EmailMessage struct {
 	// The `Conversation` thread this message is part of.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Conversation InboxConversation `json:"conversation"`
+	Conversation *InboxConversation `json:"conversation"`
 	// A concise, system-generated summary of the email content.
 	Summary string `json:"summary"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
