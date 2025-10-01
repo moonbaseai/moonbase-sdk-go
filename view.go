@@ -72,7 +72,7 @@ type View struct {
 	// The `Collection` this view belongs to.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Collection Collection `json:"collection"`
+	Collection *Collection `json:"collection"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
