@@ -87,11 +87,11 @@ type Inbox struct {
 	Type constant.Inbox `json:"type,required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
-	// The `Tagset` associated with this inbox, which defines the tags available for
-	// its conversations.
+	// The list of `Tagset` objects associated with this inbox, which defines the tags
+	// available for its conversations.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Tagset Tagset `json:"tagset"`
+	Tagsets []Tagset `json:"tagsets"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -99,7 +99,7 @@ type Inbox struct {
 		Name        respjson.Field
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
-		Tagset      respjson.Field
+		Tagsets     respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -113,9 +113,9 @@ func (r *Inbox) UnmarshalJSON(data []byte) error {
 
 type InboxGetParams struct {
 	// Specifies which related objects to include in the response. Valid option is
-	// `tagset`.
+	// `tagsets`.
 	//
-	// Any of "tagset".
+	// Any of "tagsets".
 	Include InboxGetParamsInclude `query:"include[],omitzero" json:"-"`
 	paramObj
 }
@@ -129,11 +129,11 @@ func (r InboxGetParams) URLQuery() (v url.Values, err error) {
 }
 
 // Specifies which related objects to include in the response. Valid option is
-// `tagset`.
+// `tagsets`.
 type InboxGetParamsInclude string
 
 const (
-	InboxGetParamsIncludeTagset InboxGetParamsInclude = "tagset"
+	InboxGetParamsIncludeTagsets InboxGetParamsInclude = "tagsets"
 )
 
 type InboxListParams struct {
@@ -148,7 +148,7 @@ type InboxListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Any of "tagset".
+	// Any of "tagsets".
 	Include InboxListParamsInclude `query:"include[],omitzero" json:"-"`
 	paramObj
 }
@@ -164,5 +164,5 @@ func (r InboxListParams) URLQuery() (v url.Values, err error) {
 type InboxListParamsInclude string
 
 const (
-	InboxListParamsIncludeTagset InboxListParamsInclude = "tagset"
+	InboxListParamsIncludeTagsets InboxListParamsInclude = "tagsets"
 )
