@@ -53,6 +53,7 @@ func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetPar
 	return
 }
 
+// Adds a transcript or recording to an existing meeting.
 func (r *MeetingService) Update(ctx context.Context, id string, body MeetingUpdateParams, opts ...option.RequestOption) (res *Meeting, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -307,7 +308,9 @@ func (r MeetingGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type MeetingUpdateParams struct {
-	Recording  MeetingUpdateParamsRecording  `json:"recording,omitzero"`
+	// A video recording of the meeting.
+	Recording MeetingUpdateParamsRecording `json:"recording,omitzero"`
+	// The meeting transcript.
 	Transcript MeetingUpdateParamsTranscript `json:"transcript,omitzero"`
 	paramObj
 }
@@ -320,11 +323,17 @@ func (r *MeetingUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A video recording of the meeting.
+//
 // The properties ContentType, ProviderID, URL are required.
 type MeetingUpdateParamsRecording struct {
+	// The content type of the recording. Note that only `video/mp4` is supported at
+	// this time.
 	ContentType string `json:"content_type,required"`
-	ProviderID  string `json:"provider_id,required"`
-	URL         string `json:"url,required" format:"uri"`
+	// The unique identifier for the recording from the provider's system.
+	ProviderID string `json:"provider_id,required"`
+	// The URL pointing to the recording.
+	URL string `json:"url,required" format:"uri"`
 	paramObj
 }
 
@@ -336,11 +345,17 @@ func (r *MeetingUpdateParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The meeting transcript.
+//
 // The properties Cues, Provider, ProviderID are required.
 type MeetingUpdateParamsTranscript struct {
-	Cues       []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
-	Provider   string                             `json:"provider,required"`
-	ProviderID string                             `json:"provider_id,required"`
+	// A list of cues that identify the text spoken in specific time slices of the
+	// meeting.
+	Cues []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
+	// Identifies the source of the transcript.
+	Provider string `json:"provider,required"`
+	// The unique identifier for the transcript from the provider's system.
+	ProviderID string `json:"provider_id,required"`
 	paramObj
 }
 
@@ -352,12 +367,20 @@ func (r *MeetingUpdateParamsTranscript) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for creating a `MeetingTranscriptCue` object to capture the text
+// spoken in a specific time slice.
+//
 // The properties From, Speaker, Text, To are required.
 type MeetingUpdateParamsTranscriptCue struct {
-	From    float64 `json:"from,required"`
-	Speaker string  `json:"speaker,required"`
-	Text    string  `json:"text,required"`
-	To      float64 `json:"to,required"`
+	// The start time of the slice, in fractional seconds from the start of the
+	// meeting.
+	From float64 `json:"from,required"`
+	// The name of the person speaking.
+	Speaker string `json:"speaker,required"`
+	// The text spoken during the slice.
+	Text string `json:"text,required"`
+	// The end time of the slice, in fractional seconds from the start of the meeting.
+	To float64 `json:"to,required"`
 	paramObj
 }
 

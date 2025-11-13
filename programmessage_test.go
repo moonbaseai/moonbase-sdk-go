@@ -29,7 +29,7 @@ func TestProgramMessageSendWithOptionalParams(t *testing.T) {
 		Person: moonbase.ProgramMessageSendParamsPerson{
 			Email: "person-142@example-142.com",
 		},
-		ProgramTemplateID: "1CLJt2v1MsDbov8DBEEeWH",
+		ProgramTemplateID: "1CLJt2v1rdcqdM6vZpPpjq",
 		CustomVariables: map[string]any{
 			"coupon_code": "bar",
 		},
