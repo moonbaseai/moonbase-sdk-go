@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.0-alpha.5 (2025-11-13)
+
+Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
+
+### Features
+
+* Add PATCH /v0/meetings/{id} ([a29d08f](https://github.com/moonbaseai/moonbase-sdk-go/commit/a29d08f1740b2766d842010c68b696356afb9238))
+* **api:** manual updates ([a499647](https://github.com/moonbaseai/moonbase-sdk-go/commit/a499647162c655a3acfcb0348509500b536a6d58))
+* **api:** update api ([3bcd3bf](https://github.com/moonbaseai/moonbase-sdk-go/commit/3bcd3bf0bdb808bbcdac8af33a2331aa0e69ac73))
+* **client:** handle recursive schemas properly ([5e4732a](https://github.com/moonbaseai/moonbase-sdk-go/commit/5e4732a777f111e547a26b6a3afaf866f23a8273))
+
+
+### Bug Fixes
+
+* bugfix for setting JSON keys with special characters ([b8b63ec](https://github.com/moonbaseai/moonbase-sdk-go/commit/b8b63ec36047b22190d913a6995cef7b0c5e2b5b))
+* use slices.Concat instead of sometimes modifying r.Options ([4ea87ce](https://github.com/moonbaseai/moonbase-sdk-go/commit/4ea87ce0342fad87654de8a05094d6c247398097))
+
+
+### Chores
+
+* bump gjson version ([3cf4c58](https://github.com/moonbaseai/moonbase-sdk-go/commit/3cf4c583efcba2a05346bd3d2347392647155479))
+* bump minimum go version to 1.22 ([6d1a4d9](https://github.com/moonbaseai/moonbase-sdk-go/commit/6d1a4d9a1366bf323651433dc1cf9d8b4a782223))
+* do not install brew dependencies in ./scripts/bootstrap by default ([f9571b1](https://github.com/moonbaseai/moonbase-sdk-go/commit/f9571b17533ed06bdbd5592ad177028f9a08cc0c))
+* **internal:** grammar fix (it's -&gt; its) ([17d7fff](https://github.com/moonbaseai/moonbase-sdk-go/commit/17d7fff00a96cdbaba0810a7d963688e9cd97dcf))
+* update more docs for 1.22 ([2eb338c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2eb338c5fb52b2f9b7ba6be164365ea68e6a931e))
+
 ## 0.1.0-alpha.4 (2025-09-12)
 
 Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewViewService(opts ...option.RequestOption) (r ViewService) {
 
 // Retrieves the details of an existing view.
 func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, opts ...option.RequestOption) (res *View, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -71,7 +72,7 @@ type View struct {
 	// The `Collection` this view belongs to.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Collection Collection `json:"collection"`
+	Collection *Collection `json:"collection"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

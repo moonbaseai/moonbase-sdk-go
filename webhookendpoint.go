@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewWebhookEndpointService(opts ...option.RequestOption) (r WebhookEndpointS
 
 // Create a new endpoint.
 func (r *WebhookEndpointService) New(ctx context.Context, body WebhookEndpointNewParams, opts ...option.RequestOption) (res *Endpoint, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "webhook_endpoints"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -49,7 +50,7 @@ func (r *WebhookEndpointService) New(ctx context.Context, body WebhookEndpointNe
 
 // Retrieves the details of an existing endpoint.
 func (r *WebhookEndpointService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Endpoint, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -61,7 +62,7 @@ func (r *WebhookEndpointService) Get(ctx context.Context, id string, opts ...opt
 
 // Updates an endpoint.
 func (r *WebhookEndpointService) Update(ctx context.Context, id string, body WebhookEndpointUpdateParams, opts ...option.RequestOption) (res *Endpoint, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -74,7 +75,7 @@ func (r *WebhookEndpointService) Update(ctx context.Context, id string, body Web
 // Returns a list of endpoints.
 func (r *WebhookEndpointService) List(ctx context.Context, query WebhookEndpointListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Endpoint], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "webhook_endpoints"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -96,7 +97,7 @@ func (r *WebhookEndpointService) ListAutoPaging(ctx context.Context, query Webho
 
 // Permanently deletes an endpoint.
 func (r *WebhookEndpointService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")

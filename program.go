@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -41,7 +42,7 @@ func NewProgramService(opts ...option.RequestOption) (r ProgramService) {
 
 // Retrieves the details of an existing program.
 func (r *ProgramService) Get(ctx context.Context, id string, query ProgramGetParams, opts ...option.RequestOption) (res *Program, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -54,7 +55,7 @@ func (r *ProgramService) Get(ctx context.Context, id string, query ProgramGetPar
 // Returns a list of your marketing programs.
 func (r *ProgramService) List(ctx context.Context, query ProgramListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Program], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "programs"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

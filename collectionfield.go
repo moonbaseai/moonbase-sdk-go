@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
@@ -33,7 +34,7 @@ func NewCollectionFieldService(opts ...option.RequestOption) (r CollectionFieldS
 
 // Retrieves the details of a field in a collection.
 func (r *CollectionFieldService) Get(ctx context.Context, id string, query CollectionFieldGetParams, opts ...option.RequestOption) (res *FieldUnion, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return

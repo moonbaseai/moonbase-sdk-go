@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewProgramTemplateService(opts ...option.RequestOption) (r ProgramTemplateS
 
 // Retrieves the details of an existing program template.
 func (r *ProgramTemplateService) Get(ctx context.Context, id string, query ProgramTemplateGetParams, opts ...option.RequestOption) (res *ProgramTemplate, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -55,7 +56,7 @@ func (r *ProgramTemplateService) Get(ctx context.Context, id string, query Progr
 // Returns a list of your program templates.
 func (r *ProgramTemplateService) List(ctx context.Context, query ProgramTemplateListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ProgramTemplate], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "program_templates"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

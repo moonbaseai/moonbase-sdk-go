@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewMeetingService(opts ...option.RequestOption) (r MeetingService) {
 
 // Retrieves the details of an existing meeting.
 func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetParams, opts ...option.RequestOption) (res *Meeting, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -52,10 +53,21 @@ func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetPar
 	return
 }
 
+func (r *MeetingService) Update(ctx context.Context, id string, body MeetingUpdateParams, opts ...option.RequestOption) (res *Meeting, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("meetings/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return
+}
+
 // Returns a list of meetings.
 func (r *MeetingService) List(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Meeting], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "meetings"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -155,40 +167,94 @@ type Meeting struct {
 	// A summary or notes generated after the meeting.
 	SummaryPost string `json:"summary_post"`
 	// The title or subject of the meeting.
-	Title string `json:"title"`
-	// A temporary, signed URL to download the meeting transcript. The URL expires
-	// after one hour.
-	TranscriptURL string `json:"transcript_url" format:"uri"`
+	Title      string            `json:"title"`
+	Transcript MeetingTranscript `json:"transcript,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		CreatedAt     respjson.Field
-		EndAt         respjson.Field
-		ICalUid       respjson.Field
-		ProviderID    respjson.Field
-		StartAt       respjson.Field
-		TimeZone      respjson.Field
-		Type          respjson.Field
-		UpdatedAt     respjson.Field
-		Attendees     respjson.Field
-		Description   respjson.Field
-		Duration      respjson.Field
-		Location      respjson.Field
-		Organizer     respjson.Field
-		ProviderUri   respjson.Field
-		RecordingURL  respjson.Field
-		SummaryAnte   respjson.Field
-		SummaryPost   respjson.Field
-		Title         respjson.Field
-		TranscriptURL respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID           respjson.Field
+		CreatedAt    respjson.Field
+		EndAt        respjson.Field
+		ICalUid      respjson.Field
+		ProviderID   respjson.Field
+		StartAt      respjson.Field
+		TimeZone     respjson.Field
+		Type         respjson.Field
+		UpdatedAt    respjson.Field
+		Attendees    respjson.Field
+		Description  respjson.Field
+		Duration     respjson.Field
+		Location     respjson.Field
+		Organizer    respjson.Field
+		ProviderUri  respjson.Field
+		RecordingURL respjson.Field
+		SummaryAnte  respjson.Field
+		SummaryPost  respjson.Field
+		Title        respjson.Field
+		Transcript   respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r Meeting) RawJSON() string { return r.JSON.raw }
 func (r *Meeting) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type MeetingTranscript struct {
+	Cues []MeetingTranscriptCue `json:"cues,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Cues        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MeetingTranscript) RawJSON() string { return r.JSON.raw }
+func (r *MeetingTranscript) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type MeetingTranscriptCue struct {
+	From    float64                     `json:"from,required"`
+	Speaker MeetingTranscriptCueSpeaker `json:"speaker,required"`
+	Text    string                      `json:"text,required"`
+	To      float64                     `json:"to,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		From        respjson.Field
+		Speaker     respjson.Field
+		Text        respjson.Field
+		To          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MeetingTranscriptCue) RawJSON() string { return r.JSON.raw }
+func (r *MeetingTranscriptCue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type MeetingTranscriptCueSpeaker struct {
+	AttendeeID string `json:"attendee_id"`
+	Label      string `json:"label"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AttendeeID  respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MeetingTranscriptCueSpeaker) RawJSON() string { return r.JSON.raw }
+func (r *MeetingTranscriptCueSpeaker) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -227,7 +293,7 @@ type MeetingGetParams struct {
 	// Specifies which related objects to include in the response. Valid options are
 	// `organizer` and `attendees`.
 	//
-	// Any of "organizer", "attendees".
+	// Any of "organizer", "attendees", "transcript".
 	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
@@ -238,6 +304,69 @@ func (r MeetingGetParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type MeetingUpdateParams struct {
+	Recording  MeetingUpdateParamsRecording  `json:"recording,omitzero"`
+	Transcript MeetingUpdateParamsTranscript `json:"transcript,omitzero"`
+	paramObj
+}
+
+func (r MeetingUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow MeetingUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MeetingUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties ContentType, ProviderID, URL are required.
+type MeetingUpdateParamsRecording struct {
+	ContentType string `json:"content_type,required"`
+	ProviderID  string `json:"provider_id,required"`
+	URL         string `json:"url,required" format:"uri"`
+	paramObj
+}
+
+func (r MeetingUpdateParamsRecording) MarshalJSON() (data []byte, err error) {
+	type shadow MeetingUpdateParamsRecording
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MeetingUpdateParamsRecording) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Cues, Provider, ProviderID are required.
+type MeetingUpdateParamsTranscript struct {
+	Cues       []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
+	Provider   string                             `json:"provider,required"`
+	ProviderID string                             `json:"provider_id,required"`
+	paramObj
+}
+
+func (r MeetingUpdateParamsTranscript) MarshalJSON() (data []byte, err error) {
+	type shadow MeetingUpdateParamsTranscript
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MeetingUpdateParamsTranscript) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties From, Speaker, Text, To are required.
+type MeetingUpdateParamsTranscriptCue struct {
+	From    float64 `json:"from,required"`
+	Speaker string  `json:"speaker,required"`
+	Text    string  `json:"text,required"`
+	To      float64 `json:"to,required"`
+	paramObj
+}
+
+func (r MeetingUpdateParamsTranscriptCue) MarshalJSON() (data []byte, err error) {
+	type shadow MeetingUpdateParamsTranscriptCue
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MeetingUpdateParamsTranscriptCue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type MeetingListParams struct {
@@ -251,12 +380,41 @@ type MeetingListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	Limit  param.Opt[int64]        `query:"limit,omitzero" json:"-"`
+	Filter MeetingListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [MeetingListParams]'s query parameters as `url.Values`.
 func (r MeetingListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type MeetingListParamsFilter struct {
+	ICalUid MeetingListParamsFilterICalUid `query:"i_cal_uid,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [MeetingListParamsFilter]'s query parameters as
+// `url.Values`.
+func (r MeetingListParamsFilter) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type MeetingListParamsFilterICalUid struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [MeetingListParamsFilterICalUid]'s query parameters as
+// `url.Values`.
+func (r MeetingListParamsFilterICalUid) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

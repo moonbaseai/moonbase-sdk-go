@@ -5,6 +5,7 @@ package moonbase
 import (
 	"context"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -36,7 +37,7 @@ func NewProgramMessageService(opts ...option.RequestOption) (r ProgramMessageSer
 
 // Sends a message using a program template.
 func (r *ProgramMessageService) Send(ctx context.Context, body ProgramMessageSendParams, opts ...option.RequestOption) (res *ProgramMessage, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "program_messages"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

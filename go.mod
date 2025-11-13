@@ -1,9 +1,9 @@
 module github.com/moonbaseai/moonbase-sdk-go
 
-go 1.21
+go 1.22
 
 require (
-	github.com/tidwall/gjson v1.14.4
+	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/sjson v1.2.5
 )
 

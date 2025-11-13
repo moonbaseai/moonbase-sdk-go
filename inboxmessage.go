@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
@@ -42,7 +43,7 @@ func NewInboxMessageService(opts ...option.RequestOption) (r InboxMessageService
 
 // Retrieves the details of an existing message.
 func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMessageGetParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -55,7 +56,7 @@ func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMes
 // Returns a list of messages.
 func (r *InboxMessageService) List(ctx context.Context, query InboxMessageListParams, opts ...option.RequestOption) (res *pagination.CursorPage[EmailMessage], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "inbox_messages"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -159,7 +160,7 @@ type EmailMessage struct {
 	// The `Conversation` thread this message is part of.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Conversation InboxConversation `json:"conversation"`
+	Conversation *InboxConversation `json:"conversation"`
 	// A concise, system-generated summary of the email content.
 	Summary string `json:"summary"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

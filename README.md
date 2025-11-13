@@ -28,14 +28,14 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/moonbaseai/moonbase-sdk-go@v0.1.0-alpha.4'
+go get -u 'github.com/moonbaseai/moonbase-sdk-go@v0.1.0-alpha.5'
 ```
 
 <!-- x-release-please-end -->
 
 ## Requirements
 
-This library requires Go 1.18+.
+This library requires Go 1.22+.
 
 ## Usage
 
@@ -129,7 +129,7 @@ custom := param.Override[moonbase.FooParams](12)
 
 ### Request unions
 
-Unions are represented as a struct with fields prefixed by "Of" for each of it's variants,
+Unions are represented as a struct with fields prefixed by "Of" for each of its variants,
 only one field can be non-zero. The non-zero field will be serialized.
 
 Sub-properties of the union can be accessed via methods on the union struct.
@@ -388,6 +388,24 @@ file returned by `os.Open` will be sent with the file name on disk.
 
 We also provide a helper `moonbase.File(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
+
+```go
+// A file from the file system
+file, err := os.Open("/path/to/file")
+moonbase.FileUploadParams{
+	File: file,
+}
+
+// A file from a string
+moonbase.FileUploadParams{
+	File: strings.NewReader("my file contents"),
+}
+
+// With a custom filename and contentType
+moonbase.FileUploadParams{
+	File: moonbase.File(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
+}
+```
 
 ### Retries
 
