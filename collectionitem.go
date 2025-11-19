@@ -117,7 +117,7 @@ func (r *CollectionItemService) ListAutoPaging(ctx context.Context, collectionID
 // Permanently deletes an item.
 func (r *CollectionItemService) Delete(ctx context.Context, id string, body CollectionItemDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
 		return
