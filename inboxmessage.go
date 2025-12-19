@@ -41,6 +41,14 @@ func NewInboxMessageService(opts ...option.RequestOption) (r InboxMessageService
 	return
 }
 
+// Creates a new message draft.
+func (r *InboxMessageService) New(ctx context.Context, body InboxMessageNewParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "inbox_messages"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Retrieves the details of an existing message.
 func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMessageGetParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -223,6 +231,83 @@ type EmailMessageAttachment struct {
 // Returns the unmodified JSON received from the API
 func (r EmailMessageAttachment) RawJSON() string { return r.JSON.raw }
 func (r *EmailMessageAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type InboxMessageNewParams struct {
+	// The content of the email body in Markdown format.
+	Body string `json:"body,required"`
+	// The inbox to use for sending the email.
+	InboxID string `json:"inbox_id,required"`
+	// The ID of the conversation, if responding to an existing conversation.
+	ConversationID param.Opt[string] `json:"conversation_id,omitzero"`
+	// The subject line of the email.
+	Subject param.Opt[string] `json:"subject,omitzero"`
+	// A list of `Address` objects for the BCC recipients.
+	Bcc []InboxMessageNewParamsBcc `json:"bcc,omitzero"`
+	// A list of `Address` objects for the CC recipients.
+	Cc []InboxMessageNewParamsCc `json:"cc,omitzero"`
+	// A list of `Address` objects for the recipients.
+	To []InboxMessageNewParamsTo `json:"to,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsBcc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsBcc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsBcc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsBcc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsCc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsCc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsCc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsCc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsTo struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsTo) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsTo
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsTo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

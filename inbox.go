@@ -116,7 +116,7 @@ type InboxGetParams struct {
 	// `tagsets`.
 	//
 	// Any of "tagsets".
-	Include InboxGetParamsInclude `query:"include[],omitzero" json:"-"`
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
@@ -127,14 +127,6 @@ func (r InboxGetParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
-
-// Specifies which related objects to include in the response. Valid option is
-// `tagsets`.
-type InboxGetParamsInclude string
-
-const (
-	InboxGetParamsIncludeTagsets InboxGetParamsInclude = "tagsets"
-)
 
 type InboxListParams struct {
 	// When specified, returns results starting immediately after the item identified
@@ -149,7 +141,7 @@ type InboxListParams struct {
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Any of "tagsets".
-	Include InboxListParamsInclude `query:"include[],omitzero" json:"-"`
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 
@@ -160,9 +152,3 @@ func (r InboxListParams) URLQuery() (v url.Values, err error) {
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
-
-type InboxListParamsInclude string
-
-const (
-	InboxListParamsIncludeTagsets InboxListParamsInclude = "tagsets"
-)
