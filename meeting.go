@@ -154,6 +154,11 @@ type Meeting struct {
 	Duration float64 `json:"duration"`
 	// The physical or virtual location of the meeting.
 	Location string `json:"location"`
+	// Any personal notes taken during the meeting. It also includes the AI-generated
+	// pre-meeting briefing.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Note Note `json:"note"`
 	// The `Organizer` of the meeting.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -163,10 +168,10 @@ type Meeting struct {
 	// A temporary, signed URL to download the meeting recording. The URL expires after
 	// one hour.
 	RecordingURL string `json:"recording_url" format:"uri"`
-	// A summary or notes generated before the meeting.
-	SummaryAnte string `json:"summary_ante"`
-	// A summary or notes generated after the meeting.
-	SummaryPost string `json:"summary_post"`
+	// A summary of the meeting.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Summary Note `json:"summary"`
 	// The title or subject of the meeting.
 	Title      string            `json:"title"`
 	Transcript MeetingTranscript `json:"transcript,nullable"`
@@ -185,11 +190,11 @@ type Meeting struct {
 		Description  respjson.Field
 		Duration     respjson.Field
 		Location     respjson.Field
+		Note         respjson.Field
 		Organizer    respjson.Field
 		ProviderUri  respjson.Field
 		RecordingURL respjson.Field
-		SummaryAnte  respjson.Field
-		SummaryPost  respjson.Field
+		Summary      respjson.Field
 		Title        respjson.Field
 		Transcript   respjson.Field
 		ExtraFields  map[string]respjson.Field
@@ -292,9 +297,9 @@ func (r *Organizer) UnmarshalJSON(data []byte) error {
 
 type MeetingGetParams struct {
 	// Specifies which related objects to include in the response. Valid options are
-	// `organizer` and `attendees`.
+	// `organizer`, `attendees`, `transcript`, `note`, and `summary`.
 	//
-	// Any of "organizer", "attendees", "transcript".
+	// Any of "organizer", "attendees", "transcript", "note", "summary".
 	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }

@@ -89,6 +89,9 @@ type Note struct {
 	Type constant.Note `json:"type,required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Creator ItemPointer `json:"creator,nullable"`
 	// A short, system-generated summary of the note's content.
 	Summary string `json:"summary"`
 	// An optional title for the note.
@@ -100,6 +103,7 @@ type Note struct {
 		CreatedAt   respjson.Field
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
+		Creator     respjson.Field
 		Summary     respjson.Field
 		Title       respjson.Field
 		ExtraFields map[string]respjson.Field
