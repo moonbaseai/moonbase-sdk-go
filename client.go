@@ -19,6 +19,7 @@ type Client struct {
 	Options            []option.RequestOption
 	Funnels            FunnelService
 	Collections        CollectionService
+	Items              ItemService
 	Views              ViewService
 	Inboxes            InboxService
 	InboxConversations InboxConversationService
@@ -34,7 +35,6 @@ type Client struct {
 	Meetings           MeetingService
 	Notes              NoteService
 	WebhookEndpoints   WebhookEndpointService
-	Items              ItemService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,
@@ -61,6 +61,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.Funnels = NewFunnelService(opts...)
 	r.Collections = NewCollectionService(opts...)
+	r.Items = NewItemService(opts...)
 	r.Views = NewViewService(opts...)
 	r.Inboxes = NewInboxService(opts...)
 	r.InboxConversations = NewInboxConversationService(opts...)
@@ -76,7 +77,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Meetings = NewMeetingService(opts...)
 	r.Notes = NewNoteService(opts...)
 	r.WebhookEndpoints = NewWebhookEndpointService(opts...)
-	r.Items = NewItemService(opts...)
 
 	return
 }
