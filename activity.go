@@ -907,11 +907,81 @@ type ActivityListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter activities by type, date, or item.
+	Filter ActivityListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [ActivityListParams]'s query parameters as `url.Values`.
 func (r ActivityListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter activities by type, date, or item.
+type ActivityListParamsFilter struct {
+	ItemID     ActivityListParamsFilterItemID     `query:"item_id,omitzero" json:"-"`
+	OccurredAt ActivityListParamsFilterOccurredAt `query:"occurred_at,omitzero" json:"-"`
+	Type       ActivityListParamsFilterType       `query:"type,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilter]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilter) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterItemID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterItemID]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterItemID) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterOccurredAt struct {
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterOccurredAt]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterOccurredAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterType struct {
+	// Any of "activity/call_occurred", "activity/form_submitted",
+	// "activity/inbox_message_sent", "activity/item_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/meeting_held",
+	// "activity/meeting_scheduled", "activity/note_created",
+	// "activity/program_message_bounced", "activity/program_message_clicked",
+	// "activity/program_message_complained", "activity/program_message_failed",
+	// "activity/program_message_opened", "activity/program_message_sent",
+	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
+	In []string `query:"in,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterType]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterType) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
