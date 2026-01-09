@@ -34,6 +34,7 @@ type Client struct {
 	Meetings           MeetingService
 	Notes              NoteService
 	WebhookEndpoints   WebhookEndpointService
+	Items              ItemService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,
@@ -75,6 +76,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Meetings = NewMeetingService(opts...)
 	r.Notes = NewNoteService(opts...)
 	r.WebhookEndpoints = NewWebhookEndpointService(opts...)
+	r.Items = NewItemService(opts...)
 
 	return
 }

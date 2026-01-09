@@ -2353,6 +2353,9 @@ func (r *IntegerValueParam) UnmarshalJSON(data []byte) error {
 type Item struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// A lightweight reference to a `Collection`, containing the minimal information
+	// needed to identify it.
+	Collection CollectionPointer `json:"collection,required"`
 	// String representing the object’s type. Always `item` for this object.
 	Type constant.Item `json:"type,required"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
@@ -2361,6 +2364,7 @@ type Item struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		Collection  respjson.Field
 		Type        respjson.Field
 		Values      respjson.Field
 		ExtraFields map[string]respjson.Field
