@@ -116,6 +116,16 @@ Methods:
 - <code title="delete /collections/{collection_id}/items/{id}">client.Collections.Items.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CollectionItemService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CollectionItemDeleteParams">CollectionItemDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="post /collections/{collection_id}/items/upsert">client.Collections.Items.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CollectionItemService.Upsert">Upsert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, collectionID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#CollectionItemUpsertParams">CollectionItemUpsertParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Item">Item</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+# Items
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchResponse">ItemSearchResponse</a>
+
+Methods:
+
+- <code title="get /items/search">client.Items.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemService.Search">Search</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchParams">ItemSearchParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchResponse">ItemSearchResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Views
 
 Response Types:
@@ -311,13 +321,3 @@ Methods:
 - <code title="patch /webhook_endpoints/{id}">client.WebhookEndpoints.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#WebhookEndpointService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#WebhookEndpointUpdateParams">WebhookEndpointUpdateParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Endpoint">Endpoint</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /webhook_endpoints">client.WebhookEndpoints.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#WebhookEndpointService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#WebhookEndpointListParams">WebhookEndpointListParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination#CursorPage">CursorPage</a>[<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Endpoint">Endpoint</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /webhook_endpoints/{id}">client.WebhookEndpoints.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#WebhookEndpointService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
-# Items
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchResponse">ItemSearchResponse</a>
-
-Methods:
-
-- <code title="get /items/search">client.Items.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemService.Search">Search</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchParams">ItemSearchParams</a>) (<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemSearchResponse">ItemSearchResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
