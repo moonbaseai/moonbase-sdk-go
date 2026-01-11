@@ -35,6 +35,7 @@ type ActivityProgramMessageOpened string       // Always "activity/program_messa
 type ActivityProgramMessageSent string         // Always "activity/program_message_sent"
 type ActivityProgramMessageShielded string     // Always "activity/program_message_shielded"
 type ActivityProgramMessageUnsubscribed string // Always "activity/program_message_unsubscribed"
+type AgentSettings string                      // Always "agent_settings"
 type Call string                               // Always "call"
 type CallParticipant string                    // Always "call_participant"
 type ChoiceFieldOption string                  // Always "choice_field_option"
@@ -139,6 +140,7 @@ func (c ActivityProgramMessageShielded) Default() ActivityProgramMessageShielded
 func (c ActivityProgramMessageUnsubscribed) Default() ActivityProgramMessageUnsubscribed {
 	return "activity/program_message_unsubscribed"
 }
+func (c AgentSettings) Default() AgentSettings                 { return "agent_settings" }
 func (c Call) Default() Call                                   { return "call" }
 func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
 func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
@@ -231,6 +233,7 @@ func (c ActivityProgramMessageOpened) MarshalJSON() ([]byte, error)       { retu
 func (c ActivityProgramMessageSent) MarshalJSON() ([]byte, error)         { return marshalString(c) }
 func (c ActivityProgramMessageShielded) MarshalJSON() ([]byte, error)     { return marshalString(c) }
 func (c ActivityProgramMessageUnsubscribed) MarshalJSON() ([]byte, error) { return marshalString(c) }
+func (c AgentSettings) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c Call) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
