@@ -19,6 +19,7 @@ func ValueOf[T Constant[T]]() T {
 }
 
 type ActivityCallOccurred string               // Always "activity/call_occurred"
+type ActivityFileCreated string                // Always "activity/file_created"
 type ActivityFormSubmitted string              // Always "activity/form_submitted"
 type ActivityInboxMessageSent string           // Always "activity/inbox_message_sent"
 type ActivityItemCreated string                // Always "activity/item_created"
@@ -104,6 +105,7 @@ type WebhookEndpoint string                    // Always "webhook_endpoint"
 type WebhookSubscription string                // Always "webhook_subscription"
 
 func (c ActivityCallOccurred) Default() ActivityCallOccurred   { return "activity/call_occurred" }
+func (c ActivityFileCreated) Default() ActivityFileCreated     { return "activity/file_created" }
 func (c ActivityFormSubmitted) Default() ActivityFormSubmitted { return "activity/form_submitted" }
 func (c ActivityInboxMessageSent) Default() ActivityInboxMessageSent {
 	return "activity/inbox_message_sent"
@@ -217,6 +219,7 @@ func (c WebhookEndpoint) Default() WebhookEndpoint               { return "webho
 func (c WebhookSubscription) Default() WebhookSubscription       { return "webhook_subscription" }
 
 func (c ActivityCallOccurred) MarshalJSON() ([]byte, error)               { return marshalString(c) }
+func (c ActivityFileCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ActivityFormSubmitted) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c ActivityInboxMessageSent) MarshalJSON() ([]byte, error)           { return marshalString(c) }
 func (c ActivityItemCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }
