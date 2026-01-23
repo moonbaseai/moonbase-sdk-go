@@ -22,6 +22,12 @@ type Error = apierror.Error
 // This is an alias to an internal type.
 type FormattedText = shared.FormattedText
 
+// Structured content that can be rendered in multiple formats, currently
+// supporting Markdown.
+//
+// This is an alias to an internal type.
+type FormattedTextParam = shared.FormattedTextParam
+
 // A lightweight reference to another resource.
 //
 // This is an alias to an internal type.

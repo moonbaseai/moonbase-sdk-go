@@ -47,8 +47,9 @@ type AgentSettingGetResponse struct {
 	UpdatedAt             time.Time              `json:"updated_at,required" format:"date-time"`
 	DealSummaryModel      string                 `json:"deal_summary_model"`
 	DealSummaryPrompt     string                 `json:"deal_summary_prompt"`
-	MeetingPrebriefModel  string                 `json:"meeting_prebrief_model"`
+	MeetingAgentModel     string                 `json:"meeting_agent_model"`
 	MeetingPrebriefPrompt string                 `json:"meeting_prebrief_prompt"`
+	MeetingSummaryPrompt  string                 `json:"meeting_summary_prompt"`
 	MeetingWebSearch      bool                   `json:"meeting_web_search"`
 	OrganizationInfo      string                 `json:"organization_info"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -58,8 +59,9 @@ type AgentSettingGetResponse struct {
 		UpdatedAt             respjson.Field
 		DealSummaryModel      respjson.Field
 		DealSummaryPrompt     respjson.Field
-		MeetingPrebriefModel  respjson.Field
+		MeetingAgentModel     respjson.Field
 		MeetingPrebriefPrompt respjson.Field
+		MeetingSummaryPrompt  respjson.Field
 		MeetingWebSearch      respjson.Field
 		OrganizationInfo      respjson.Field
 		ExtraFields           map[string]respjson.Field

@@ -1,5 +1,6 @@
 # Shared Params Types
 
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared#FormattedTextParam">FormattedTextParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/shared#PointerParam">PointerParam</a>
 
 # Shared Response Types
@@ -304,7 +305,9 @@ Response Types:
 
 Methods:
 
+- <code title="post /notes">client.Notes.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteNewParams">NoteNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Note">Note</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /notes/{id}">client.Notes.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Note">Note</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="patch /notes/{id}">client.Notes.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteUpdateParams">NoteUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Note">Note</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /notes">client.Notes.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#NoteListParams">NoteListParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination#CursorPage">CursorPage</a>[<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Note">Note</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # WebhookEndpoints

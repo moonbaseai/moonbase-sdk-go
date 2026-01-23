@@ -27,7 +27,7 @@ func TestInboxMessageNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.InboxMessages.New(context.TODO(), moonbase.InboxMessageNewParams{
 		Body:    "This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown).",
-		InboxID: "1CLJt2v1rdcqdM6vZpPpjq",
+		InboxID: "1CLJt2v6KXDyzDuM57pQqo",
 		Bcc: []moonbase.InboxMessageNewParamsBcc{{
 			Email: "steve@example.com",
 			Name:  moonbase.String("Steve"),
