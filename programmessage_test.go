@@ -27,9 +27,9 @@ func TestProgramMessageSendWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.ProgramMessages.Send(context.TODO(), moonbase.ProgramMessageSendParams{
 		Person: moonbase.ProgramMessageSendParamsPerson{
-			Email: "person-160@example-160.com",
+			Email: "person-169@example-169.com",
 		},
-		ProgramTemplateID: "1CLJt2v271pTY4bHG7UQrc",
+		ProgramTemplateID: "1CLJt2v6ZuRbtwPhmQtzxa",
 		CustomVariables: map[string]any{
 			"coupon_code": "bar",
 		},

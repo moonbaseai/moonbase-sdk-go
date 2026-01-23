@@ -35,6 +35,31 @@ func (r *FormattedText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// ToParam converts this FormattedText to a FormattedTextParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// FormattedTextParam.Overrides()
+func (r FormattedText) ToParam() FormattedTextParam {
+	return param.Override[FormattedTextParam](json.RawMessage(r.RawJSON()))
+}
+
+// Structured content that can be rendered in multiple formats, currently
+// supporting Markdown.
+type FormattedTextParam struct {
+	// The content formatted as Markdown text.
+	Markdown param.Opt[string] `json:"markdown,omitzero"`
+	paramObj
+}
+
+func (r FormattedTextParam) MarshalJSON() (data []byte, err error) {
+	type shadow FormattedTextParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *FormattedTextParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A lightweight reference to another resource.
 type Pointer struct {
 	// Unique identifier for the referenced object.
