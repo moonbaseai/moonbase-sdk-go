@@ -53,6 +53,7 @@ func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetPar
 	return
 }
 
+// Adds a transcript or recording to an existing meeting.
 func (r *MeetingService) Update(ctx context.Context, id string, body MeetingUpdateParams, opts ...option.RequestOption) (res *Meeting, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -153,6 +154,11 @@ type Meeting struct {
 	Duration float64 `json:"duration"`
 	// The physical or virtual location of the meeting.
 	Location string `json:"location"`
+	// Any personal notes taken during the meeting. It also includes the AI-generated
+	// pre-meeting briefing.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Note Note `json:"note"`
 	// The `Organizer` of the meeting.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -162,10 +168,10 @@ type Meeting struct {
 	// A temporary, signed URL to download the meeting recording. The URL expires after
 	// one hour.
 	RecordingURL string `json:"recording_url" format:"uri"`
-	// A summary or notes generated before the meeting.
-	SummaryAnte string `json:"summary_ante"`
-	// A summary or notes generated after the meeting.
-	SummaryPost string `json:"summary_post"`
+	// A summary of the meeting.
+	//
+	// **Note:** Only present when requested using the `include` query parameter.
+	Summary Note `json:"summary"`
 	// The title or subject of the meeting.
 	Title      string            `json:"title"`
 	Transcript MeetingTranscript `json:"transcript,nullable"`
@@ -184,11 +190,11 @@ type Meeting struct {
 		Description  respjson.Field
 		Duration     respjson.Field
 		Location     respjson.Field
+		Note         respjson.Field
 		Organizer    respjson.Field
 		ProviderUri  respjson.Field
 		RecordingURL respjson.Field
-		SummaryAnte  respjson.Field
-		SummaryPost  respjson.Field
+		Summary      respjson.Field
 		Title        respjson.Field
 		Transcript   respjson.Field
 		ExtraFields  map[string]respjson.Field
@@ -291,9 +297,9 @@ func (r *Organizer) UnmarshalJSON(data []byte) error {
 
 type MeetingGetParams struct {
 	// Specifies which related objects to include in the response. Valid options are
-	// `organizer` and `attendees`.
+	// `organizer`, `attendees`, `transcript`, `note`, and `summary`.
 	//
-	// Any of "organizer", "attendees", "transcript".
+	// Any of "organizer", "attendees", "transcript", "note", "summary".
 	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
@@ -307,7 +313,9 @@ func (r MeetingGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type MeetingUpdateParams struct {
-	Recording  MeetingUpdateParamsRecording  `json:"recording,omitzero"`
+	// A video recording of the meeting.
+	Recording MeetingUpdateParamsRecording `json:"recording,omitzero"`
+	// The meeting transcript.
 	Transcript MeetingUpdateParamsTranscript `json:"transcript,omitzero"`
 	paramObj
 }
@@ -320,11 +328,17 @@ func (r *MeetingUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A video recording of the meeting.
+//
 // The properties ContentType, ProviderID, URL are required.
 type MeetingUpdateParamsRecording struct {
+	// The content type of the recording. Note that only `video/mp4` is supported at
+	// this time.
 	ContentType string `json:"content_type,required"`
-	ProviderID  string `json:"provider_id,required"`
-	URL         string `json:"url,required" format:"uri"`
+	// The unique identifier for the recording from the provider's system.
+	ProviderID string `json:"provider_id,required"`
+	// The URL pointing to the recording.
+	URL string `json:"url,required" format:"uri"`
 	paramObj
 }
 
@@ -336,11 +350,17 @@ func (r *MeetingUpdateParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The meeting transcript.
+//
 // The properties Cues, Provider, ProviderID are required.
 type MeetingUpdateParamsTranscript struct {
-	Cues       []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
-	Provider   string                             `json:"provider,required"`
-	ProviderID string                             `json:"provider_id,required"`
+	// A list of cues that identify the text spoken in specific time slices of the
+	// meeting.
+	Cues []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
+	// Identifies the source of the transcript.
+	Provider string `json:"provider,required"`
+	// The unique identifier for the transcript from the provider's system.
+	ProviderID string `json:"provider_id,required"`
 	paramObj
 }
 
@@ -352,12 +372,20 @@ func (r *MeetingUpdateParamsTranscript) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for creating a `MeetingTranscriptCue` object to capture the text
+// spoken in a specific time slice.
+//
 // The properties From, Speaker, Text, To are required.
 type MeetingUpdateParamsTranscriptCue struct {
-	From    float64 `json:"from,required"`
-	Speaker string  `json:"speaker,required"`
-	Text    string  `json:"text,required"`
-	To      float64 `json:"to,required"`
+	// The start time of the slice, in fractional seconds from the start of the
+	// meeting.
+	From float64 `json:"from,required"`
+	// The name of the person speaking.
+	Speaker string `json:"speaker,required"`
+	// The text spoken during the slice.
+	Text string `json:"text,required"`
+	// The end time of the slice, in fractional seconds from the start of the meeting.
+	To float64 `json:"to,required"`
 	paramObj
 }
 

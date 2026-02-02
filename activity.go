@@ -80,7 +80,8 @@ func (r *ActivityService) ListAutoPaging(ctx context.Context, query ActivityList
 // ActivityUnion contains all possible properties and values from
 // [ActivityCallOccurred], [ActivityFormSubmitted], [ActivityInboxMessageSent],
 // [ActivityItemCreated], [ActivityItemMentioned], [ActivityItemMerged],
-// [ActivityMeetingHeld], [ActivityMeetingScheduled], [ActivityNoteCreated],
+// [ActivityActivityFileCreated], [ActivityMeetingHeld],
+// [ActivityMeetingScheduled], [ActivityNoteCreated],
 // [ActivityProgramMessageBounced], [ActivityProgramMessageClicked],
 // [ActivityProgramMessageComplained], [ActivityProgramMessageFailed],
 // [ActivityProgramMessageOpened], [ActivityProgramMessageSent],
@@ -96,8 +97,8 @@ type ActivityUnion struct {
 	OccurredAt time.Time      `json:"occurred_at"`
 	// Any of "activity/call_occurred", "activity/form_submitted",
 	// "activity/inbox_message_sent", "activity/item_created",
-	// "activity/item_mentioned", "activity/item_merged", "activity/meeting_held",
-	// "activity/meeting_scheduled", "activity/note_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
 	// "activity/program_message_bounced", "activity/program_message_clicked",
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
@@ -117,10 +118,12 @@ type ActivityUnion struct {
 	Initiator ItemPointer `json:"initiator"`
 	// This field is from variant [ActivityItemMerged].
 	Source ItemPointer `json:"source"`
+	// This field is from variant [ActivityActivityFileCreated].
+	File shared.Pointer `json:"file"`
+	// This field is from variant [ActivityActivityFileCreated].
+	RelatedItem ItemPointer `json:"related_item"`
 	// This field is from variant [ActivityMeetingHeld].
 	Meeting shared.Pointer `json:"meeting"`
-	// This field is from variant [ActivityNoteCreated].
-	RelatedItem ItemPointer `json:"related_item"`
 	// This field is from variant [ActivityNoteCreated].
 	RelatedMeeting shared.Pointer `json:"related_meeting"`
 	// This field is from variant [ActivityProgramMessageBounced].
@@ -152,8 +155,9 @@ type ActivityUnion struct {
 		Destination            respjson.Field
 		Initiator              respjson.Field
 		Source                 respjson.Field
-		Meeting                respjson.Field
+		File                   respjson.Field
 		RelatedItem            respjson.Field
+		Meeting                respjson.Field
 		RelatedMeeting         respjson.Field
 		ProgramMessage         respjson.Field
 		Recipient              respjson.Field
@@ -180,6 +184,7 @@ func (ActivityInboxMessageSent) implActivityUnion()           {}
 func (ActivityItemCreated) implActivityUnion()                {}
 func (ActivityItemMentioned) implActivityUnion()              {}
 func (ActivityItemMerged) implActivityUnion()                 {}
+func (ActivityActivityFileCreated) implActivityUnion()        {}
 func (ActivityMeetingHeld) implActivityUnion()                {}
 func (ActivityMeetingScheduled) implActivityUnion()           {}
 func (ActivityNoteCreated) implActivityUnion()                {}
@@ -201,6 +206,7 @@ func (ActivityProgramMessageUnsubscribed) implActivityUnion() {}
 //	case moonbase.ActivityItemCreated:
 //	case moonbase.ActivityItemMentioned:
 //	case moonbase.ActivityItemMerged:
+//	case moonbase.ActivityActivityFileCreated:
 //	case moonbase.ActivityMeetingHeld:
 //	case moonbase.ActivityMeetingScheduled:
 //	case moonbase.ActivityNoteCreated:
@@ -229,6 +235,8 @@ func (u ActivityUnion) AsAny() anyActivity {
 		return u.AsActivityItemMentioned()
 	case "activity/item_merged":
 		return u.AsActivityItemMerged()
+	case "activity/file_created":
+		return u.AsActivityFileCreated()
 	case "activity/meeting_held":
 		return u.AsActivityMeetingHeld()
 	case "activity/meeting_scheduled":
@@ -281,6 +289,11 @@ func (u ActivityUnion) AsActivityItemMentioned() (v ActivityItemMentioned) {
 }
 
 func (u ActivityUnion) AsActivityItemMerged() (v ActivityItemMerged) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ActivityUnion) AsActivityFileCreated() (v ActivityActivityFileCreated) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -344,6 +357,37 @@ func (u ActivityUnion) AsActivityProgramMessageUnsubscribed() (v ActivityProgram
 func (u ActivityUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ActivityUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Represents an event that occurs when a `File` is created.
+type ActivityActivityFileCreated struct {
+	// Unique identifier for the object.
+	ID string `json:"id,required"`
+	// A lightweight reference to another resource.
+	File shared.Pointer `json:"file,required"`
+	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
+	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	RelatedItem ItemPointer `json:"related_item,required"`
+	// The type of activity. Always `activity/file_created`.
+	Type constant.ActivityFileCreated `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		File        respjson.Field
+		OccurredAt  respjson.Field
+		RelatedItem respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ActivityActivityFileCreated) RawJSON() string { return r.JSON.raw }
+func (r *ActivityActivityFileCreated) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -907,11 +951,81 @@ type ActivityListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Filter activities by type, date, or item.
+	Filter ActivityListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
 }
 
 // URLQuery serializes [ActivityListParams]'s query parameters as `url.Values`.
 func (r ActivityListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter activities by type, date, or item.
+type ActivityListParamsFilter struct {
+	ItemID     ActivityListParamsFilterItemID     `query:"item_id,omitzero" json:"-"`
+	OccurredAt ActivityListParamsFilterOccurredAt `query:"occurred_at,omitzero" json:"-"`
+	Type       ActivityListParamsFilterType       `query:"type,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilter]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilter) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterItemID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterItemID]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterItemID) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterOccurredAt struct {
+	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
+	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterOccurredAt]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterOccurredAt) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type ActivityListParamsFilterType struct {
+	// Any of "activity/call_occurred", "activity/form_submitted",
+	// "activity/inbox_message_sent", "activity/item_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
+	// "activity/program_message_bounced", "activity/program_message_clicked",
+	// "activity/program_message_complained", "activity/program_message_failed",
+	// "activity/program_message_opened", "activity/program_message_sent",
+	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
+	In []string `query:"in,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsFilterType]'s query parameters as
+// `url.Values`.
+func (r ActivityListParamsFilterType) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

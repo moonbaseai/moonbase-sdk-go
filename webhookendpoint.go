@@ -98,7 +98,7 @@ func (r *WebhookEndpointService) ListAutoPaging(ctx context.Context, query Webho
 // Permanently deletes an endpoint.
 func (r *WebhookEndpointService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
 		return
@@ -170,8 +170,8 @@ type Subscription struct {
 	//
 	// Any of "activity/call_occurred", "activity/form_submitted",
 	// "activity/inbox_message_sent", "activity/item_created",
-	// "activity/item_mentioned", "activity/item_merged", "activity/meeting_held",
-	// "activity/meeting_scheduled", "activity/note_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
 	// "activity/program_message_bounced", "activity/program_message_clicked",
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
@@ -206,6 +206,7 @@ const (
 	SubscriptionEventTypeActivityItemCreated                SubscriptionEventType = "activity/item_created"
 	SubscriptionEventTypeActivityItemMentioned              SubscriptionEventType = "activity/item_mentioned"
 	SubscriptionEventTypeActivityItemMerged                 SubscriptionEventType = "activity/item_merged"
+	SubscriptionEventTypeActivityFileCreated                SubscriptionEventType = "activity/file_created"
 	SubscriptionEventTypeActivityMeetingHeld                SubscriptionEventType = "activity/meeting_held"
 	SubscriptionEventTypeActivityMeetingScheduled           SubscriptionEventType = "activity/meeting_scheduled"
 	SubscriptionEventTypeActivityNoteCreated                SubscriptionEventType = "activity/note_created"
@@ -256,8 +257,8 @@ type WebhookEndpointNewParamsSubscription struct {
 	//
 	// Any of "activity/call_occurred", "activity/form_submitted",
 	// "activity/inbox_message_sent", "activity/item_created",
-	// "activity/item_mentioned", "activity/item_merged", "activity/meeting_held",
-	// "activity/meeting_scheduled", "activity/note_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
 	// "activity/program_message_bounced", "activity/program_message_clicked",
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
@@ -276,7 +277,7 @@ func (r *WebhookEndpointNewParamsSubscription) UnmarshalJSON(data []byte) error 
 
 func init() {
 	apijson.RegisterFieldValidator[WebhookEndpointNewParamsSubscription](
-		"event_type", "activity/call_occurred", "activity/form_submitted", "activity/inbox_message_sent", "activity/item_created", "activity/item_mentioned", "activity/item_merged", "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created", "activity/program_message_bounced", "activity/program_message_clicked", "activity/program_message_complained", "activity/program_message_failed", "activity/program_message_opened", "activity/program_message_sent", "activity/program_message_shielded", "activity/program_message_unsubscribed",
+		"event_type", "activity/call_occurred", "activity/form_submitted", "activity/inbox_message_sent", "activity/item_created", "activity/item_mentioned", "activity/item_merged", "activity/file_created", "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created", "activity/program_message_bounced", "activity/program_message_clicked", "activity/program_message_complained", "activity/program_message_failed", "activity/program_message_opened", "activity/program_message_sent", "activity/program_message_shielded", "activity/program_message_unsubscribed",
 	)
 }
 
@@ -317,8 +318,8 @@ type WebhookEndpointUpdateParamsSubscription struct {
 	//
 	// Any of "activity/call_occurred", "activity/form_submitted",
 	// "activity/inbox_message_sent", "activity/item_created",
-	// "activity/item_mentioned", "activity/item_merged", "activity/meeting_held",
-	// "activity/meeting_scheduled", "activity/note_created",
+	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
 	// "activity/program_message_bounced", "activity/program_message_clicked",
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
@@ -339,7 +340,7 @@ func (r *WebhookEndpointUpdateParamsSubscription) UnmarshalJSON(data []byte) err
 
 func init() {
 	apijson.RegisterFieldValidator[WebhookEndpointUpdateParamsSubscription](
-		"event_type", "activity/call_occurred", "activity/form_submitted", "activity/inbox_message_sent", "activity/item_created", "activity/item_mentioned", "activity/item_merged", "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created", "activity/program_message_bounced", "activity/program_message_clicked", "activity/program_message_complained", "activity/program_message_failed", "activity/program_message_opened", "activity/program_message_sent", "activity/program_message_shielded", "activity/program_message_unsubscribed",
+		"event_type", "activity/call_occurred", "activity/form_submitted", "activity/inbox_message_sent", "activity/item_created", "activity/item_mentioned", "activity/item_merged", "activity/file_created", "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created", "activity/program_message_bounced", "activity/program_message_clicked", "activity/program_message_complained", "activity/program_message_failed", "activity/program_message_opened", "activity/program_message_sent", "activity/program_message_shielded", "activity/program_message_unsubscribed",
 	)
 }
 

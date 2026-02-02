@@ -29,7 +29,7 @@ func TestInboxGetWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.InboxGetParams{
-			Include: moonbase.InboxGetParamsIncludeTagsets,
+			Include: []string{"tagsets"},
 		},
 	)
 	if err != nil {
@@ -56,7 +56,7 @@ func TestInboxListWithOptionalParams(t *testing.T) {
 	_, err := client.Inboxes.List(context.TODO(), moonbase.InboxListParams{
 		After:   moonbase.String("after"),
 		Before:  moonbase.String("before"),
-		Include: moonbase.InboxListParamsIncludeTagsets,
+		Include: []string{"tagsets"},
 		Limit:   moonbase.Int(1),
 	})
 	if err != nil {

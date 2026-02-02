@@ -91,6 +91,8 @@ type BooleanField struct {
 	//
 	// Any of "one", "many".
 	Cardinality BooleanFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Is Active").
@@ -116,6 +118,7 @@ type BooleanField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -200,6 +203,8 @@ type ChoiceField struct {
 	//
 	// Any of "one", "many".
 	Cardinality ChoiceFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Priority").
@@ -228,6 +233,7 @@ type ChoiceField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Options     respjson.Field
@@ -415,6 +421,9 @@ func (u ChoiceValueParamDataUnion) GetType() *string {
 type Collection struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// If `true`, this is one of the foundational collections (People, Organizations,
+	// Deals, or Tasks).
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// A list of `Field` objects that define the schema for items in this collection.
@@ -437,6 +446,7 @@ type Collection struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Fields      respjson.Field
 		Name        respjson.Field
@@ -523,6 +533,8 @@ type DateField struct {
 	//
 	// Any of "one", "many".
 	Cardinality DateFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Due Date").
@@ -548,6 +560,7 @@ type DateField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -632,6 +645,8 @@ type DatetimeField struct {
 	//
 	// Any of "one", "many".
 	Cardinality DatetimeFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Meeting Time").
@@ -657,6 +672,7 @@ type DatetimeField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -741,6 +757,8 @@ type DomainField struct {
 	//
 	// Any of "one", "many".
 	Cardinality DomainFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Company Domain").
@@ -766,6 +784,7 @@ type DomainField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -852,6 +871,8 @@ type EmailField struct {
 	//
 	// Any of "one", "many".
 	Cardinality EmailFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Work Email").
@@ -877,6 +898,7 @@ type EmailField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -967,6 +989,7 @@ func (r *EmailValueParam) UnmarshalJSON(data []byte) error {
 type FieldUnion struct {
 	ID          string    `json:"id"`
 	Cardinality string    `json:"cardinality"`
+	Core        bool      `json:"core"`
 	CreatedAt   time.Time `json:"created_at"`
 	Name        string    `json:"name"`
 	Readonly    bool      `json:"readonly"`
@@ -987,23 +1010,27 @@ type FieldUnion struct {
 	// This field is from variant [StageField].
 	Funnel Funnel `json:"funnel"`
 	// This field is from variant [RelationField].
+	AllowedCollections []CollectionPointer `json:"allowed_collections"`
+	// This field is from variant [RelationField].
 	RelationType RelationFieldRelationType `json:"relation_type"`
 	JSON         struct {
-		ID           respjson.Field
-		Cardinality  respjson.Field
-		CreatedAt    respjson.Field
-		Name         respjson.Field
-		Readonly     respjson.Field
-		Ref          respjson.Field
-		Required     respjson.Field
-		Type         respjson.Field
-		Unique       respjson.Field
-		UpdatedAt    respjson.Field
-		Description  respjson.Field
-		Options      respjson.Field
-		Funnel       respjson.Field
-		RelationType respjson.Field
-		raw          string
+		ID                 respjson.Field
+		Cardinality        respjson.Field
+		Core               respjson.Field
+		CreatedAt          respjson.Field
+		Name               respjson.Field
+		Readonly           respjson.Field
+		Ref                respjson.Field
+		Required           respjson.Field
+		Type               respjson.Field
+		Unique             respjson.Field
+		UpdatedAt          respjson.Field
+		Description        respjson.Field
+		Options            respjson.Field
+		Funnel             respjson.Field
+		AllowedCollections respjson.Field
+		RelationType       respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
@@ -1922,6 +1949,8 @@ type FloatField struct {
 	//
 	// Any of "one", "many".
 	Cardinality FloatFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Rating").
@@ -1947,6 +1976,7 @@ type FloatField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2133,6 +2163,8 @@ type GeoField struct {
 	//
 	// Any of "one", "many".
 	Cardinality GeoFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Location").
@@ -2158,6 +2190,7 @@ type GeoField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2246,6 +2279,8 @@ type IntegerField struct {
 	//
 	// Any of "one", "many".
 	Cardinality IntegerFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Employee Count").
@@ -2272,6 +2307,7 @@ type IntegerField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2353,6 +2389,9 @@ func (r *IntegerValueParam) UnmarshalJSON(data []byte) error {
 type Item struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// A lightweight reference to a `Collection`, containing the minimal information
+	// needed to identify it.
+	Collection CollectionPointer `json:"collection,required"`
 	// String representing the object’s type. Always `item` for this object.
 	Type constant.Item `json:"type,required"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
@@ -2361,6 +2400,7 @@ type Item struct {
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
+		Collection  respjson.Field
 		Type        respjson.Field
 		Values      respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -2441,6 +2481,8 @@ type MonetaryField struct {
 	//
 	// Any of "one", "many".
 	Cardinality MonetaryFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Deal Value").
@@ -2466,6 +2508,7 @@ type MonetaryField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2599,6 +2642,8 @@ type MultiLineTextField struct {
 	//
 	// Any of "one", "many".
 	Cardinality MultiLineTextFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Description").
@@ -2624,6 +2669,7 @@ type MultiLineTextField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2713,6 +2759,8 @@ type PercentageField struct {
 	//
 	// Any of "one", "many".
 	Cardinality PercentageFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Win Probability").
@@ -2738,6 +2786,7 @@ type PercentageField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -2823,11 +2872,15 @@ func (r *PercentageValueParam) UnmarshalJSON(data []byte) error {
 type RelationField struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// The set of collections that are valid targets for this relation.
+	AllowedCollections []CollectionPointer `json:"allowed_collections,required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
 	Cardinality RelationFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Account").
@@ -2856,20 +2909,22 @@ type RelationField struct {
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID           respjson.Field
-		Cardinality  respjson.Field
-		CreatedAt    respjson.Field
-		Name         respjson.Field
-		Readonly     respjson.Field
-		Ref          respjson.Field
-		RelationType respjson.Field
-		Required     respjson.Field
-		Type         respjson.Field
-		Unique       respjson.Field
-		UpdatedAt    respjson.Field
-		Description  respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		ID                 respjson.Field
+		AllowedCollections respjson.Field
+		Cardinality        respjson.Field
+		Core               respjson.Field
+		CreatedAt          respjson.Field
+		Name               respjson.Field
+		Readonly           respjson.Field
+		Ref                respjson.Field
+		RelationType       respjson.Field
+		Required           respjson.Field
+		Type               respjson.Field
+		Unique             respjson.Field
+		UpdatedAt          respjson.Field
+		Description        respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
@@ -2998,6 +3053,8 @@ type SingleLineTextField struct {
 	//
 	// Any of "one", "many".
 	Cardinality SingleLineTextFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Company Name").
@@ -3023,6 +3080,7 @@ type SingleLineTextField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -3112,6 +3170,8 @@ type SocialLinkedInField struct {
 	//
 	// Any of "one", "many".
 	Cardinality SocialLinkedInFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "LinkedIn Profile").
@@ -3137,6 +3197,7 @@ type SocialLinkedInField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -3217,6 +3278,8 @@ type SocialXField struct {
 	//
 	// Any of "one", "many".
 	Cardinality SocialXFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "X Profile").
@@ -3242,6 +3305,7 @@ type SocialXField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -3325,6 +3389,8 @@ type StageField struct {
 	//
 	// Any of "one", "many".
 	Cardinality StageFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The `Funnel` object that defines the available stages for this field.
@@ -3352,6 +3418,7 @@ type StageField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Funnel      respjson.Field
 		Name        respjson.Field
@@ -3442,6 +3509,8 @@ type TelephoneNumberField struct {
 	//
 	// Any of "one", "many".
 	Cardinality TelephoneNumberFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Phone").
@@ -3467,6 +3536,7 @@ type TelephoneNumberField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field
@@ -3505,6 +3575,8 @@ type URLField struct {
 	//
 	// Any of "one", "many".
 	Cardinality URLFieldCardinality `json:"cardinality,required"`
+	// If `true`, this is a built-in field included by default.
+	Core bool `json:"core,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Website").
@@ -3530,6 +3602,7 @@ type URLField struct {
 	JSON struct {
 		ID          respjson.Field
 		Cardinality respjson.Field
+		Core        respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
 		Readonly    respjson.Field

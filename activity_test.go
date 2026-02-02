@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
@@ -50,7 +51,19 @@ func TestActivityListWithOptionalParams(t *testing.T) {
 	_, err := client.Activities.List(context.TODO(), moonbase.ActivityListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
-		Limit:  moonbase.Int(1),
+		Filter: moonbase.ActivityListParamsFilter{
+			ItemID: moonbase.ActivityListParamsFilterItemID{
+				Eq: moonbase.String("eq"),
+			},
+			OccurredAt: moonbase.ActivityListParamsFilterOccurredAt{
+				Gte: moonbase.Time(time.Now()),
+				Lte: moonbase.Time(time.Now()),
+			},
+			Type: moonbase.ActivityListParamsFilterType{
+				In: []string{"activity/call_occurred"},
+			},
+		},
+		Limit: moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

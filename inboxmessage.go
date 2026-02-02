@@ -41,6 +41,14 @@ func NewInboxMessageService(opts ...option.RequestOption) (r InboxMessageService
 	return
 }
 
+// Creates a new message draft.
+func (r *InboxMessageService) New(ctx context.Context, body InboxMessageNewParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "inbox_messages"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Retrieves the details of an existing message.
 func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMessageGetParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -50,6 +58,18 @@ func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMes
 	}
 	path := fmt.Sprintf("inbox_messages/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
+// Updates an existing message draft.
+func (r *InboxMessageService) Update(ctx context.Context, id string, body InboxMessageUpdateParams, opts ...option.RequestOption) (res *EmailMessage, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("inbox_messages/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -74,6 +94,19 @@ func (r *InboxMessageService) List(ctx context.Context, query InboxMessageListPa
 // Returns a list of messages.
 func (r *InboxMessageService) ListAutoPaging(ctx context.Context, query InboxMessageListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[EmailMessage] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
+}
+
+// Permanently deletes a message draft.
+func (r *InboxMessageService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("inbox_messages/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
 }
 
 // The Address object represents a recipient or sender of a message. It contains an
@@ -139,6 +172,8 @@ type EmailMessage struct {
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// `true` if the message is a draft that has not been sent.
 	Draft bool `json:"draft,required"`
+	// The current lock version of the message for optimistic concurrency control.
+	LockVersion int64 `json:"lock_version,required"`
 	// `true` if the message is classified as spam.
 	Spam bool `json:"spam,required"`
 	// The subject line of the email.
@@ -170,6 +205,7 @@ type EmailMessage struct {
 		Bulk         respjson.Field
 		CreatedAt    respjson.Field
 		Draft        respjson.Field
+		LockVersion  respjson.Field
 		Spam         respjson.Field
 		Subject      respjson.Field
 		Trash        respjson.Field
@@ -226,6 +262,83 @@ func (r *EmailMessageAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type InboxMessageNewParams struct {
+	// The email body.
+	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	// The inbox to use for sending the email.
+	InboxID string `json:"inbox_id,required"`
+	// The ID of the conversation, if responding to an existing conversation.
+	ConversationID param.Opt[string] `json:"conversation_id,omitzero"`
+	// The subject line of the email.
+	Subject param.Opt[string] `json:"subject,omitzero"`
+	// A list of the BCC recipients.
+	Bcc []InboxMessageNewParamsBcc `json:"bcc,omitzero"`
+	// A list of the CC recipients.
+	Cc []InboxMessageNewParamsCc `json:"cc,omitzero"`
+	// A list of recipients.
+	To []InboxMessageNewParamsTo `json:"to,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsBcc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsBcc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsBcc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsBcc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsCc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsCc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsCc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsCc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageNewParamsTo struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageNewParamsTo) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsTo
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsTo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type InboxMessageGetParams struct {
 	// Specifies which related objects to include in the response. Valid options are
 	// `addresses`, `attachments`, and `conversation`.
@@ -241,6 +354,81 @@ func (r InboxMessageGetParams) URLQuery() (v url.Values, err error) {
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type InboxMessageUpdateParams struct {
+	// The current lock version of the draft for optimistic concurrency control.
+	LockVersion int64 `json:"lock_version,required"`
+	// The subject line of the email.
+	Subject param.Opt[string] `json:"subject,omitzero"`
+	// A list of the BCC recipients.
+	Bcc []InboxMessageUpdateParamsBcc `json:"bcc,omitzero"`
+	// The email body.
+	Body shared.FormattedTextParam `json:"body,omitzero"`
+	// A list of the CC recipients.
+	Cc []InboxMessageUpdateParamsCc `json:"cc,omitzero"`
+	// A list of the recipients.
+	To []InboxMessageUpdateParamsTo `json:"to,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageUpdateParamsBcc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageUpdateParamsBcc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageUpdateParamsBcc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageUpdateParamsBcc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageUpdateParamsCc struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageUpdateParamsCc) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageUpdateParamsCc
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageUpdateParamsCc) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Email is required.
+type InboxMessageUpdateParamsTo struct {
+	// The email address.
+	Email string `json:"email,required" format:"email"`
+	// The recipient's name.
+	Name param.Opt[string] `json:"name,omitzero"`
+	paramObj
+}
+
+func (r InboxMessageUpdateParamsTo) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageUpdateParamsTo
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageUpdateParamsTo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type InboxMessageListParams struct {

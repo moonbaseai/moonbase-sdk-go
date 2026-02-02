@@ -41,6 +41,14 @@ func NewNoteService(opts ...option.RequestOption) (r NoteService) {
 	return
 }
 
+// Create a new note.
+func (r *NoteService) New(ctx context.Context, body NoteNewParams, opts ...option.RequestOption) (res *Note, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "notes"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Retrieves the details of an existing note.
 func (r *NoteService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Note, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -50,6 +58,18 @@ func (r *NoteService) Get(ctx context.Context, id string, opts ...option.Request
 	}
 	path := fmt.Sprintf("notes/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
+// Update an existing note.
+func (r *NoteService) Update(ctx context.Context, id string, body NoteUpdateParams, opts ...option.RequestOption) (res *Note, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("notes/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return
 }
 
@@ -85,10 +105,15 @@ type Note struct {
 	Body shared.FormattedText `json:"body,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// The current lock version of the note for optimistic concurrency control.
+	LockVersion int64 `json:"lock_version,required"`
 	// String representing the object’s type. Always `note` for this object.
 	Type constant.Note `json:"type,required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Creator ItemPointer `json:"creator,nullable"`
 	// A short, system-generated summary of the note's content.
 	Summary string `json:"summary"`
 	// An optional title for the note.
@@ -98,8 +123,10 @@ type Note struct {
 		ID          respjson.Field
 		Body        respjson.Field
 		CreatedAt   respjson.Field
+		LockVersion respjson.Field
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
+		Creator     respjson.Field
 		Summary     respjson.Field
 		Title       respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -110,6 +137,36 @@ type Note struct {
 // Returns the unmodified JSON received from the API
 func (r Note) RawJSON() string { return r.JSON.raw }
 func (r *Note) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NoteNewParams struct {
+	// The main content of the note.
+	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	paramObj
+}
+
+func (r NoteNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow NoteNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NoteNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NoteUpdateParams struct {
+	// The main content of the note.
+	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	// The current lock version of the note for optimistic concurrency control.
+	LockVersion int64 `json:"lock_version,required"`
+	paramObj
+}
+
+func (r NoteUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow NoteUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *NoteUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
