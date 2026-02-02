@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.1.0-alpha.6 (2026-02-02)
+
+Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
+
+### Features
+
+* **api:** manual updates ([c75dc0e](https://github.com/moonbaseai/moonbase-sdk-go/commit/c75dc0ed748f394b3db62c2cad6228f071a535b4))
+* **api:** update api ([3e2bf65](https://github.com/moonbaseai/moonbase-sdk-go/commit/3e2bf658d23793ce67931689658b13a775e0169d))
+* **api:** update api ([7e9bd90](https://github.com/moonbaseai/moonbase-sdk-go/commit/7e9bd90a2aa1c53c87f4e0bc44331572402a9e6f))
+* **api:** update api ([0fd2c56](https://github.com/moonbaseai/moonbase-sdk-go/commit/0fd2c56e2455abd875d070c53bbb238175548b9b))
+* **api:** update api ([64823fd](https://github.com/moonbaseai/moonbase-sdk-go/commit/64823fdf34e4f3dab18a32384f4c4c90351ddd2a))
+* **api:** update api ([9a08348](https://github.com/moonbaseai/moonbase-sdk-go/commit/9a0834831afbab009cedfe9af74203c0072b7f3d))
+* **api:** update api ([cbb8c67](https://github.com/moonbaseai/moonbase-sdk-go/commit/cbb8c6732da4e13886ef94be2784557d0e56f5f1))
+* **api:** update api ([735ae8d](https://github.com/moonbaseai/moonbase-sdk-go/commit/735ae8de247a868d88626bbb08f051b816c391cb))
+* **api:** update api ([9475b65](https://github.com/moonbaseai/moonbase-sdk-go/commit/9475b65b888ef9c0c736a39945b4c65808ddd846))
+* **api:** update api ([b64801a](https://github.com/moonbaseai/moonbase-sdk-go/commit/b64801a74cd85d173bd409af7ca9c53f26096f7a))
+* **client:** add a convenient param.SetJSON helper ([4f33e36](https://github.com/moonbaseai/moonbase-sdk-go/commit/4f33e36606b3d3a7f96abe651f9a51404e1e1985))
+* **encoder:** support bracket encoding form-data object members ([f98da4f](https://github.com/moonbaseai/moonbase-sdk-go/commit/f98da4f84e56f221c54a08a43d2cd086f9796c95))
+
+
+### Bug Fixes
+
+* **client:** correctly specify Accept header with */* instead of empty ([ca87c33](https://github.com/moonbaseai/moonbase-sdk-go/commit/ca87c3301fb481d3a7b6721aedfe48867fc776b2))
+* **docs:** add missing pointer prefix to api.md return types ([aff0f15](https://github.com/moonbaseai/moonbase-sdk-go/commit/aff0f157db1da4723ed4b14543c1da1ce35d6572))
+* **docs:** fix mcp installation instructions for remote servers ([f83bdff](https://github.com/moonbaseai/moonbase-sdk-go/commit/f83bdff7d1fc87bed3fe20f156c583675d46eaef))
+* **mcp:** correct code tool API endpoint ([040cc7c](https://github.com/moonbaseai/moonbase-sdk-go/commit/040cc7c26f8d37cd19631a25f02d7e755964c89d))
+* rename param to avoid collision ([5fd2db8](https://github.com/moonbaseai/moonbase-sdk-go/commit/5fd2db8acb31b38a46e894912f929339cfbb02a5))
+
+
+### Chores
+
+* add float64 to valid types for RegisterFieldValidator ([db9e501](https://github.com/moonbaseai/moonbase-sdk-go/commit/db9e5018dca229002b7c516ee0a254172f845220))
+* elide duplicate aliases ([b9acba3](https://github.com/moonbaseai/moonbase-sdk-go/commit/b9acba3bc29d7a5cd43c8179775d5cf4d4f8423d))
+* **internal:** codegen related update ([1145815](https://github.com/moonbaseai/moonbase-sdk-go/commit/11458159d4689299e355bf90101620ffb3b893fa))
+* **internal:** codegen related update ([16d9bfc](https://github.com/moonbaseai/moonbase-sdk-go/commit/16d9bfc9513037c2d8fae62de2762f56994820c7))
+* **internal:** update `actions/checkout` version ([7489cd1](https://github.com/moonbaseai/moonbase-sdk-go/commit/7489cd17363dfa9633b2d97077c13fb34162d6e4))
+
+
+### Documentation
+
+* **api:** update meeting params ([c58852c](https://github.com/moonbaseai/moonbase-sdk-go/commit/c58852ce688e21c74f34a9ec5b82bbcf6f2276ef))
+* prominently feature MCP server setup in root SDK readmes ([7fc4a2a](https://github.com/moonbaseai/moonbase-sdk-go/commit/7fc4a2aecb0ba7d8552a42b4f4b405497b7f03b3))
+
 ## 0.1.0-alpha.5 (2025-11-13)
 
 Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
