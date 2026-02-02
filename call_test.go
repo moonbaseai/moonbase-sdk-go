@@ -92,7 +92,7 @@ func TestCallUpsertWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:       "openphone",
-		ProviderID:     "openphone_id_000000000003",
+		ProviderID:     "openphone_id_000000000001",
 		ProviderStatus: "completed",
 		StartAt:        time.Now(),
 		AnsweredAt:     moonbase.Time(time.Now()),
