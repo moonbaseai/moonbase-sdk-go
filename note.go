@@ -101,6 +101,8 @@ func (r *NoteService) ListAutoPaging(ctx context.Context, query NoteListParams, 
 type Note struct {
 	// Unique identifier for the object.
 	ID string `json:"id,required"`
+	// A list of items, meetings or calls this note is associated with.
+	Associations []shared.Pointer `json:"associations,required"`
 	// The main content of the note.
 	Body shared.FormattedText `json:"body,required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
@@ -120,17 +122,18 @@ type Note struct {
 	Title string `json:"title"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Body        respjson.Field
-		CreatedAt   respjson.Field
-		LockVersion respjson.Field
-		Type        respjson.Field
-		UpdatedAt   respjson.Field
-		Creator     respjson.Field
-		Summary     respjson.Field
-		Title       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID           respjson.Field
+		Associations respjson.Field
+		Body         respjson.Field
+		CreatedAt    respjson.Field
+		LockVersion  respjson.Field
+		Type         respjson.Field
+		UpdatedAt    respjson.Field
+		Creator      respjson.Field
+		Summary      respjson.Field
+		Title        respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -143,6 +146,9 @@ func (r *Note) UnmarshalJSON(data []byte) error {
 type NoteNewParams struct {
 	// The main content of the note.
 	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	// Link the Note to Moonbase items (person, organization, deal, task, or an item in
+	// a custom collection), meetings, or calls.
+	Associations []shared.PointerParam `json:"associations,omitzero"`
 	paramObj
 }
 
