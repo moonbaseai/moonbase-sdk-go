@@ -30,6 +30,10 @@ func TestNoteNewWithOptionalParams(t *testing.T) {
 		Body: shared.FormattedTextParam{
 			Markdown: moonbase.String("# A note title\n\nHere's a note for me! Yay!"),
 		},
+		Associations: []shared.PointerParam{{
+			ID:   "id",
+			Type: "type",
+		}},
 	})
 	if err != nil {
 		var apierr *moonbase.Error

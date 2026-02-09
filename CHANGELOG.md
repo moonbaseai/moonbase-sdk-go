@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.7 (2026-02-09)
+
+Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
+
+### Features
+
+* **api:** update api ([b0af728](https://github.com/moonbaseai/moonbase-sdk-go/commit/b0af7284002199e1c5dc268404e7e2824bba7dff))
+
 ## 0.1.0-alpha.6 (2026-02-02)
 
 Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
