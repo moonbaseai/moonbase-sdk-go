@@ -68,10 +68,10 @@ func (r *CollectionItemService) Get(ctx context.Context, id string, query Collec
 // Updates an item.
 func (r *CollectionItemService) Update(ctx context.Context, id string, params CollectionItemUpdateParams, opts ...option.RequestOption) (res *Item, err error) {
 	if !param.IsOmitted(params.UpdateManyStrategy) {
-		opts = append(opts, option.WithHeader("update-many-strategy", fmt.Sprintf("%s", params.UpdateManyStrategy)))
+		opts = append(opts, option.WithHeader("update-many-strategy", fmt.Sprintf("%v", params.UpdateManyStrategy)))
 	}
 	if !param.IsOmitted(params.UpdateOneStrategy) {
-		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%s", params.UpdateOneStrategy)))
+		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%v", params.UpdateOneStrategy)))
 	}
 	opts = slices.Concat(r.Options, opts)
 	if params.CollectionID == "" {
@@ -134,10 +134,10 @@ func (r *CollectionItemService) Delete(ctx context.Context, id string, body Coll
 // Find and update an existing item, or create a new one.
 func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string, params CollectionItemUpsertParams, opts ...option.RequestOption) (res *Item, err error) {
 	if !param.IsOmitted(params.UpdateManyStrategy) {
-		opts = append(opts, option.WithHeader("update-many-strategy", fmt.Sprintf("%s", params.UpdateManyStrategy)))
+		opts = append(opts, option.WithHeader("update-many-strategy", fmt.Sprintf("%v", params.UpdateManyStrategy)))
 	}
 	if !param.IsOmitted(params.UpdateOneStrategy) {
-		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%s", params.UpdateOneStrategy)))
+		opts = append(opts, option.WithHeader("update-one-strategy", fmt.Sprintf("%v", params.UpdateOneStrategy)))
 	}
 	opts = slices.Concat(r.Options, opts)
 	if collectionID == "" {
