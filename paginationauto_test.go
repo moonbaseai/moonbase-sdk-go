@@ -31,7 +31,7 @@ func TestAutoPagination(t *testing.T) {
 			Limit: moonbase.Int(5),
 		},
 	)
-	// Prism mock isn't going to give us real pagination
+	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
 		item := iter.Current()
 		t.Logf("%+v\n", item.ID)
