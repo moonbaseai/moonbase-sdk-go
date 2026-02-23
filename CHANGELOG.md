@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.1.0-alpha.8 (2026-02-23)
+
+Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
+
+### Features
+
+* **api:** add search to collections/items, add Search resource, remove Items resource ([88edee3](https://github.com/moonbaseai/moonbase-sdk-go/commit/88edee3d341e740bae3da3bffbae725d013b6827))
+
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([777e93e](https://github.com/moonbaseai/moonbase-sdk-go/commit/777e93e6a0c318a2a5f92ae9022e14ad2d131119))
+* **client:** use correct format specifier for header serialization ([9e226bf](https://github.com/moonbaseai/moonbase-sdk-go/commit/9e226bf1b8b34842a057dce6755770e984d154ce))
+* **encoder:** correctly serialize NullStruct ([7e84631](https://github.com/moonbaseai/moonbase-sdk-go/commit/7e846310aca2789523f94d28d76cc6c326116347))
+
+
+### Chores
+
+* update mock server docs ([3f79a3b](https://github.com/moonbaseai/moonbase-sdk-go/commit/3f79a3b26a234e40e0e7778877d651d67d1a3894))
+
 ## 0.1.0-alpha.7 (2026-02-09)
 
 Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
