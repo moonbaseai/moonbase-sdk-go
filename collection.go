@@ -2472,6 +2472,316 @@ func (r *ItemPointerParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func ItemsFilterParamOfItemsFilterValueMatches[T string | float64 | bool](field string, op ItemsFilterValueMatchesOp, value T) ItemsFilterUnionParam {
+	var variant ItemsFilterValueMatchesParam
+	variant.Field = field
+	variant.Op = op
+	switch v := any(value).(type) {
+	case string:
+		variant.Value.OfString = param.NewOpt(v)
+	case float64:
+		variant.Value.OfFloat = param.NewOpt(v)
+	case bool:
+		variant.Value.OfBool = param.NewOpt(v)
+	}
+	return ItemsFilterUnionParam{OfItemsFilterValueMatches: &variant}
+}
+
+func ItemsFilterParamOfItemsFilterValueExists(field string) ItemsFilterUnionParam {
+	var variant ItemsFilterValueExistsParam
+	variant.Field = field
+	return ItemsFilterUnionParam{OfItemsFilterValueExists: &variant}
+}
+
+func ItemsFilterParamOfItemsFilterAndGroup(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
+	var variant ItemsFilterAndGroupParam
+	variant.Filters = filters
+	return ItemsFilterUnionParam{OfItemsFilterAndGroup: &variant}
+}
+
+func ItemsFilterParamOfItemsFilterOrGroup(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
+	var variant ItemsFilterOrGroupParam
+	variant.Filters = filters
+	return ItemsFilterUnionParam{OfItemsFilterOrGroup: &variant}
+}
+
+func ItemsFilterParamOfItemsFilterNotGroup[
+	T ItemsFilterValueMatchesParam | ItemsFilterValueExistsParam | ItemsFilterAndGroupParam | ItemsFilterOrGroupParam | ItemsFilterNotGroupParam,
+](filter T) ItemsFilterUnionParam {
+	var variant ItemsFilterNotGroupParam
+	switch v := any(filter).(type) {
+	case ItemsFilterValueMatchesParam:
+		variant.Filter.OfItemsFilterValueMatches = &v
+	case ItemsFilterValueExistsParam:
+		variant.Filter.OfItemsFilterValueExists = &v
+	case ItemsFilterAndGroupParam:
+		variant.Filter.OfItemsFilterAndGroup = &v
+	case ItemsFilterOrGroupParam:
+		variant.Filter.OfItemsFilterOrGroup = &v
+	case ItemsFilterNotGroupParam:
+		variant.Filter.OfItemsFilterNotGroup = &v
+	}
+	return ItemsFilterUnionParam{OfItemsFilterNotGroup: &variant}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ItemsFilterUnionParam struct {
+	OfItemsFilterValueMatches *ItemsFilterValueMatchesParam `json:",omitzero,inline"`
+	OfItemsFilterValueExists  *ItemsFilterValueExistsParam  `json:",omitzero,inline"`
+	OfItemsFilterAndGroup     *ItemsFilterAndGroupParam     `json:",omitzero,inline"`
+	OfItemsFilterOrGroup      *ItemsFilterOrGroupParam      `json:",omitzero,inline"`
+	OfItemsFilterNotGroup     *ItemsFilterNotGroupParam     `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ItemsFilterUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfItemsFilterValueMatches,
+		u.OfItemsFilterValueExists,
+		u.OfItemsFilterAndGroup,
+		u.OfItemsFilterOrGroup,
+		u.OfItemsFilterNotGroup)
+}
+func (u *ItemsFilterUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ItemsFilterUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfItemsFilterValueMatches) {
+		return u.OfItemsFilterValueMatches
+	} else if !param.IsOmitted(u.OfItemsFilterValueExists) {
+		return u.OfItemsFilterValueExists
+	} else if !param.IsOmitted(u.OfItemsFilterAndGroup) {
+		return u.OfItemsFilterAndGroup
+	} else if !param.IsOmitted(u.OfItemsFilterOrGroup) {
+		return u.OfItemsFilterOrGroup
+	} else if !param.IsOmitted(u.OfItemsFilterNotGroup) {
+		return u.OfItemsFilterNotGroup
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ItemsFilterUnionParam) GetValue() *ItemsFilterValueMatchesValueUnionParam {
+	if vt := u.OfItemsFilterValueMatches; vt != nil {
+		return &vt.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ItemsFilterUnionParam) GetFilter() *ItemsFilterUnionParam {
+	if vt := u.OfItemsFilterNotGroup; vt != nil {
+		return &vt.Filter
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ItemsFilterUnionParam) GetField() *string {
+	if vt := u.OfItemsFilterValueMatches; vt != nil {
+		return (*string)(&vt.Field)
+	} else if vt := u.OfItemsFilterValueExists; vt != nil {
+		return (*string)(&vt.Field)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ItemsFilterUnionParam) GetOp() *string {
+	if vt := u.OfItemsFilterValueMatches; vt != nil {
+		return (*string)(&vt.Op)
+	} else if vt := u.OfItemsFilterValueExists; vt != nil {
+		return (*string)(&vt.Op)
+	} else if vt := u.OfItemsFilterAndGroup; vt != nil {
+		return (*string)(&vt.Op)
+	} else if vt := u.OfItemsFilterOrGroup; vt != nil {
+		return (*string)(&vt.Op)
+	} else if vt := u.OfItemsFilterNotGroup; vt != nil {
+		return (*string)(&vt.Op)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's Filters property, if present.
+func (u ItemsFilterUnionParam) GetFilters() []ItemsFilterUnionParam {
+	if vt := u.OfItemsFilterAndGroup; vt != nil {
+		return vt.Filters
+	} else if vt := u.OfItemsFilterOrGroup; vt != nil {
+		return vt.Filters
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ItemsFilterUnionParam](
+		"op",
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("starts_with"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("ends_with"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("contains"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("not_contains"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("eq"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("not_eq"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("gt"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("lt"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("gte"),
+		apijson.Discriminator[ItemsFilterValueMatchesParam]("lte"),
+		apijson.Discriminator[ItemsFilterValueExistsParam]("exists"),
+		apijson.Discriminator[ItemsFilterAndGroupParam]("and"),
+		apijson.Discriminator[ItemsFilterOrGroupParam]("or"),
+		apijson.Discriminator[ItemsFilterNotGroupParam]("not"),
+	)
+}
+
+// Include only items that match ALL of the filters in `filters`.
+//
+// The properties Filters, Op are required.
+type ItemsFilterAndGroupParam struct {
+	// An array of filters, ALL of which must be satisfied for this `and` filter to
+	// match.
+	Filters []ItemsFilterUnionParam `json:"filters,omitzero,required"`
+	// This field can be elided, and will marshal its zero value as "and".
+	Op constant.And `json:"op,required"`
+	paramObj
+}
+
+func (r ItemsFilterAndGroupParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemsFilterAndGroupParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemsFilterAndGroupParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Filter, Op are required.
+type ItemsFilterNotGroupParam struct {
+	// A nested filter which must NOT match in order for this `not` filter to match.
+	Filter ItemsFilterUnionParam `json:"filter,omitzero,required"`
+	// This field can be elided, and will marshal its zero value as "not".
+	Op constant.Not `json:"op,required"`
+	paramObj
+}
+
+func (r ItemsFilterNotGroupParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemsFilterNotGroupParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemsFilterNotGroupParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Include only items that match ANY of the filters in `filters`.
+//
+// The properties Filters, Op are required.
+type ItemsFilterOrGroupParam struct {
+	// An array of filters, ANY of which must be satisfied for this `or` filter to
+	// match.
+	Filters []ItemsFilterUnionParam `json:"filters,omitzero,required"`
+	// This field can be elided, and will marshal its zero value as "or".
+	Op constant.Or `json:"op,required"`
+	paramObj
+}
+
+func (r ItemsFilterOrGroupParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemsFilterOrGroupParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemsFilterOrGroupParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Include only items that have a value in the given `field`.
+//
+// The properties Field, Op are required.
+type ItemsFilterValueExistsParam struct {
+	// The id or key of the field for which a value must exist.
+	Field string `json:"field,required"`
+	// This field can be elided, and will marshal its zero value as "exists".
+	Op constant.Exists `json:"op,required"`
+	paramObj
+}
+
+func (r ItemsFilterValueExistsParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemsFilterValueExistsParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemsFilterValueExistsParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Include only items with a value in the given `field` that satisfies the `op`
+// condition.
+//
+// The properties Field, Op, Value are required.
+type ItemsFilterValueMatchesParam struct {
+	// The id or key of the field in which values are matched.
+	Field string `json:"field,required"`
+	// The matching operator for this filter.
+	//
+	// Any of "starts_with", "ends_with", "contains", "not_contains", "eq", "not_eq",
+	// "gt", "lt", "gte", "lte".
+	Op ItemsFilterValueMatchesOp `json:"op,omitzero,required"`
+	// The value to match against. Use ISO8601 format for dates and datetime fields.
+	// For date fields, the time portion of the date-time will be ignored. For currency
+	// fields, the amount should be in the smallest unit of currency (eg: cents for
+	// USD).
+	Value ItemsFilterValueMatchesValueUnionParam `json:"value,omitzero,required"`
+	paramObj
+}
+
+func (r ItemsFilterValueMatchesParam) MarshalJSON() (data []byte, err error) {
+	type shadow ItemsFilterValueMatchesParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ItemsFilterValueMatchesParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The matching operator for this filter.
+type ItemsFilterValueMatchesOp string
+
+const (
+	ItemsFilterValueMatchesOpStartsWith  ItemsFilterValueMatchesOp = "starts_with"
+	ItemsFilterValueMatchesOpEndsWith    ItemsFilterValueMatchesOp = "ends_with"
+	ItemsFilterValueMatchesOpContains    ItemsFilterValueMatchesOp = "contains"
+	ItemsFilterValueMatchesOpNotContains ItemsFilterValueMatchesOp = "not_contains"
+	ItemsFilterValueMatchesOpEq          ItemsFilterValueMatchesOp = "eq"
+	ItemsFilterValueMatchesOpNotEq       ItemsFilterValueMatchesOp = "not_eq"
+	ItemsFilterValueMatchesOpGt          ItemsFilterValueMatchesOp = "gt"
+	ItemsFilterValueMatchesOpLt          ItemsFilterValueMatchesOp = "lt"
+	ItemsFilterValueMatchesOpGte         ItemsFilterValueMatchesOp = "gte"
+	ItemsFilterValueMatchesOpLte         ItemsFilterValueMatchesOp = "lte"
+)
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ItemsFilterValueMatchesValueUnionParam struct {
+	OfString param.Opt[string]  `json:",omitzero,inline"`
+	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ItemsFilterValueMatchesValueUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
+}
+func (u *ItemsFilterValueMatchesValueUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ItemsFilterValueMatchesValueUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	}
+	return nil
+}
+
 // A field that stores monetary amounts with currency information.
 type MonetaryField struct {
 	// Unique identifier for the object.

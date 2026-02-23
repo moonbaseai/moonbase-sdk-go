@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestItemSearchWithOptionalParams(t *testing.T) {
+func TestSearch(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,13 +25,8 @@ func TestItemSearchWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Items.Search(context.TODO(), moonbase.ItemSearchParams{
+	_, err := client.Search(context.TODO(), moonbase.SearchParams{
 		Query: "query",
-		Filter: moonbase.ItemSearchParamsFilter{
-			CollectionID: moonbase.ItemSearchParamsFilterCollectionID{
-				In: []string{"string"},
-			},
-		},
 	})
 	if err != nil {
 		var apierr *moonbase.Error

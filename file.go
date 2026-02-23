@@ -80,6 +80,19 @@ func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, 
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Permanently deletes a file.
+func (r *FileService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("files/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
+}
+
 // Upload a file
 func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ...option.RequestOption) (res *MoonbaseFile, err error) {
 	opts = slices.Concat(r.Options, opts)

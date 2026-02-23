@@ -96,6 +96,19 @@ func (r *NoteService) ListAutoPaging(ctx context.Context, query NoteListParams, 
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Permanently deletes a note.
+func (r *NoteService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("notes/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
+}
+
 // The Note object represents a block of text content, often used for meeting notes
 // or summaries.
 type Note struct {

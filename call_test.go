@@ -36,7 +36,7 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:       "openphone",
-		ProviderID:     "openphone_id_000000000006",
+		ProviderID:     "openphone_id_000000000002",
 		ProviderStatus: "completed",
 		StartAt:        time.Now(),
 		AnsweredAt:     moonbase.Time(time.Now()),
@@ -70,6 +70,60 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestCallGetWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Calls.Get(
+		context.TODO(),
+		"id",
+		moonbase.CallGetParams{
+			Include: []string{"transcript"},
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCallListWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Calls.List(context.TODO(), moonbase.CallListParams{
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Limit:  moonbase.Int(1),
+	})
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestCallUpsertWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -92,7 +146,7 @@ func TestCallUpsertWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:       "openphone",
-		ProviderID:     "openphone_id_000000000001",
+		ProviderID:     "openphone_id_000000000009",
 		ProviderStatus: "completed",
 		StartAt:        time.Now(),
 		AnsweredAt:     moonbase.Time(time.Now()),
