@@ -16,6 +16,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 )
 
 // CollectionItemService contains methods and other services that help with
@@ -131,6 +132,33 @@ func (r *CollectionItemService) Delete(ctx context.Context, id string, body Coll
 	return
 }
 
+// Returns a list of items in the collection that match the given filters.
+func (r *CollectionItemService) Search(ctx context.Context, collectionID string, params CollectionItemSearchParams, opts ...option.RequestOption) (res *pagination.CursorPage[CollectionItemSearchResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if collectionID == "" {
+		err = errors.New("missing required collection_id parameter")
+		return
+	}
+	path := fmt.Sprintf("collections/%s/items/search", collectionID)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Returns a list of items in the collection that match the given filters.
+func (r *CollectionItemService) SearchAutoPaging(ctx context.Context, collectionID string, params CollectionItemSearchParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[CollectionItemSearchResponse] {
+	return pagination.NewCursorPageAutoPager(r.Search(ctx, collectionID, params, opts...))
+}
+
 // Find and update an existing item, or create a new one.
 func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string, params CollectionItemUpsertParams, opts ...option.RequestOption) (res *Item, err error) {
 	if !param.IsOmitted(params.UpdateManyStrategy) {
@@ -147,6 +175,25 @@ func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string,
 	path := fmt.Sprintf("collections/%s/items/upsert", collectionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
+}
+
+// A search result entry
+type CollectionItemSearchResponse struct {
+	// An Item represents a single record or row within a Collection. It holds a set of
+	// `values` corresponding to the Collection's `fields`.
+	Data Item `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CollectionItemSearchResponse) RawJSON() string { return r.JSON.raw }
+func (r *CollectionItemSearchResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type CollectionItemNewParams struct {
@@ -215,6 +262,11 @@ type CollectionItemListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Include only specific fields in the returned items. Specify fields by id or key.
+	Include []string `query:"include,omitzero" json:"-"`
+	// Sort items by the specified field ids or keys. Prefix a field with a
+	// hyphen/minus (`-`) to sort in descending order by that field.
+	Sort []string `query:"sort,omitzero" json:"-"`
 	paramObj
 }
 
@@ -230,6 +282,46 @@ func (r CollectionItemListParams) URLQuery() (v url.Values, err error) {
 type CollectionItemDeleteParams struct {
 	CollectionID string `path:"collection_id,required" json:"-"`
 	paramObj
+}
+
+type CollectionItemSearchParams struct {
+	// When specified, returns results starting immediately after the item identified
+	// by this cursor. Use the cursor value from the previous response's metadata to
+	// fetch the next page of results.
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// When specified, returns results starting immediately before the item identified
+	// by this cursor. Use the cursor value from the response's metadata to fetch the
+	// previous page of results.
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
+	// to 20 if not specified.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Return only items that match the filter conditions. Complex filters can be
+	// created by nesting filters inside of `AND`, `OR`, and `NOT` filters.
+	Filter ItemsFilterUnionParam `json:"filter,omitzero"`
+	// Include only specific fields in the returned items. Specify fields by id or key.
+	Include []string `json:"include,omitzero"`
+	// Sort items by the specified field ids or keys. Prefix a field with a
+	// hyphen/minus (`-`) to sort in descending order by that field.
+	Sort []string `json:"sort,omitzero"`
+	paramObj
+}
+
+func (r CollectionItemSearchParams) MarshalJSON() (data []byte, err error) {
+	type shadow CollectionItemSearchParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CollectionItemSearchParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URLQuery serializes [CollectionItemSearchParams]'s query parameters as
+// `url.Values`.
+func (r CollectionItemSearchParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type CollectionItemUpsertParams struct {

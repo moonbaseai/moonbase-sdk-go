@@ -19,7 +19,6 @@ type Client struct {
 	Options            []option.RequestOption
 	Funnels            FunnelService
 	Collections        CollectionService
-	Items              ItemService
 	Views              ViewService
 	Inboxes            InboxService
 	InboxConversations InboxConversationService
@@ -62,7 +61,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.Funnels = NewFunnelService(opts...)
 	r.Collections = NewCollectionService(opts...)
-	r.Items = NewItemService(opts...)
 	r.Views = NewViewService(opts...)
 	r.Inboxes = NewInboxService(opts...)
 	r.InboxConversations = NewInboxConversationService(opts...)
@@ -150,4 +148,11 @@ func (r *Client) Patch(ctx context.Context, path string, params any, res any, op
 // response.
 func (r *Client) Delete(ctx context.Context, path string, params any, res any, opts ...option.RequestOption) error {
 	return r.Execute(ctx, http.MethodDelete, path, params, res, opts...)
+}
+
+func (r *Client) Search(ctx context.Context, body SearchParams, opts ...option.RequestOption) (res *SearchResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "search"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
 }

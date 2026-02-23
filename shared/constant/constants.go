@@ -37,12 +37,14 @@ type ActivityProgramMessageSent string         // Always "activity/program_messa
 type ActivityProgramMessageShielded string     // Always "activity/program_message_shielded"
 type ActivityProgramMessageUnsubscribed string // Always "activity/program_message_unsubscribed"
 type AgentSettings string                      // Always "agent_settings"
+type And string                                // Always "and"
 type Call string                               // Always "call"
 type CallParticipant string                    // Always "call_participant"
 type ChoiceFieldOption string                  // Always "choice_field_option"
 type Collection string                         // Always "collection"
 type EmailMessage string                       // Always "email_message"
 type Error string                              // Always "error"
+type Exists string                             // Always "exists"
 type FieldBoolean string                       // Always "field/boolean"
 type FieldChoice string                        // Always "field/choice"
 type FieldDate string                          // Always "field/date"
@@ -75,7 +77,9 @@ type MeetingAttendee string                    // Always "meeting_attendee"
 type MeetingOrganizer string                   // Always "meeting_organizer"
 type MessageAddress string                     // Always "message_address"
 type MessageAttachment string                  // Always "message_attachment"
+type Not string                                // Always "not"
 type Note string                               // Always "note"
+type Or string                                 // Always "or"
 type Program string                            // Always "program"
 type ProgramMessage string                     // Always "program_message"
 type ProgramTemplate string                    // Always "program_template"
@@ -143,12 +147,14 @@ func (c ActivityProgramMessageUnsubscribed) Default() ActivityProgramMessageUnsu
 	return "activity/program_message_unsubscribed"
 }
 func (c AgentSettings) Default() AgentSettings                 { return "agent_settings" }
+func (c And) Default() And                                     { return "and" }
 func (c Call) Default() Call                                   { return "call" }
 func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
 func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
 func (c Collection) Default() Collection                       { return "collection" }
 func (c EmailMessage) Default() EmailMessage                   { return "email_message" }
 func (c Error) Default() Error                                 { return "error" }
+func (c Exists) Default() Exists                               { return "exists" }
 func (c FieldBoolean) Default() FieldBoolean                   { return "field/boolean" }
 func (c FieldChoice) Default() FieldChoice                     { return "field/choice" }
 func (c FieldDate) Default() FieldDate                         { return "field/date" }
@@ -185,7 +191,9 @@ func (c MeetingAttendee) Default() MeetingAttendee               { return "meeti
 func (c MeetingOrganizer) Default() MeetingOrganizer             { return "meeting_organizer" }
 func (c MessageAddress) Default() MessageAddress                 { return "message_address" }
 func (c MessageAttachment) Default() MessageAttachment           { return "message_attachment" }
+func (c Not) Default() Not                                       { return "not" }
 func (c Note) Default() Note                                     { return "note" }
+func (c Or) Default() Or                                         { return "or" }
 func (c Program) Default() Program                               { return "program" }
 func (c ProgramMessage) Default() ProgramMessage                 { return "program_message" }
 func (c ProgramTemplate) Default() ProgramTemplate               { return "program_template" }
@@ -237,12 +245,14 @@ func (c ActivityProgramMessageSent) MarshalJSON() ([]byte, error)         { retu
 func (c ActivityProgramMessageShielded) MarshalJSON() ([]byte, error)     { return marshalString(c) }
 func (c ActivityProgramMessageUnsubscribed) MarshalJSON() ([]byte, error) { return marshalString(c) }
 func (c AgentSettings) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
+func (c And) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Call) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Collection) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c EmailMessage) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c Error) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
+func (c Exists) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c FieldBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FieldChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c FieldDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -275,7 +285,9 @@ func (c MeetingAttendee) MarshalJSON() ([]byte, error)                    { retu
 func (c MeetingOrganizer) MarshalJSON() ([]byte, error)                   { return marshalString(c) }
 func (c MessageAddress) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c MessageAttachment) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
+func (c Not) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Note) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c Or) MarshalJSON() ([]byte, error)                                 { return marshalString(c) }
 func (c Program) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c ProgramMessage) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ProgramTemplate) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
