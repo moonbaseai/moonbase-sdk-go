@@ -4,13 +4,18 @@ package moonbase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
+	"github.com/moonbaseai/moonbase-sdk-go/internal/apiquery"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 	"github.com/moonbaseai/moonbase-sdk-go/shared"
@@ -42,6 +47,41 @@ func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...optio
 	path := "calls"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
+}
+
+// Retrieves the details of an existing call.
+func (r *CallService) Get(ctx context.Context, id string, query CallGetParams, opts ...option.RequestOption) (res *Call, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return
+	}
+	path := fmt.Sprintf("calls/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
+}
+
+// Returns a list of calls.
+func (r *CallService) List(ctx context.Context, query CallListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Call], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	path := "calls"
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Returns a list of calls.
+func (r *CallService) ListAutoPaging(ctx context.Context, query CallListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Call] {
+	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Find and update an existing phone call, or create a new one.
@@ -81,8 +121,15 @@ type Call struct {
 	AnsweredAt time.Time `json:"answered_at" format:"date-time"`
 	// The time the call ended, if available, as an ISO 8601 timestamp in UTC.
 	EndAt time.Time `json:"end_at" format:"date-time"`
+	// The Note object represents a block of text content, often used for meeting notes
+	// or summaries.
+	Note Note `json:"note"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata"`
+	// The Note object represents a block of text content, often used for meeting notes
+	// or summaries.
+	Summary    Note           `json:"summary"`
+	Transcript CallTranscript `json:"transcript,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -97,7 +144,10 @@ type Call struct {
 		UpdatedAt        respjson.Field
 		AnsweredAt       respjson.Field
 		EndAt            respjson.Field
+		Note             respjson.Field
 		ProviderMetadata respjson.Field
+		Summary          respjson.Field
+		Transcript       respjson.Field
 		ExtraFields      map[string]respjson.Field
 		raw              string
 	} `json:"-"`
@@ -150,6 +200,62 @@ type CallParticipant struct {
 // Returns the unmodified JSON received from the API
 func (r CallParticipant) RawJSON() string { return r.JSON.raw }
 func (r *CallParticipant) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CallTranscript struct {
+	Cues []CallTranscriptCue `json:"cues,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Cues        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CallTranscript) RawJSON() string { return r.JSON.raw }
+func (r *CallTranscript) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CallTranscriptCue struct {
+	From    float64                  `json:"from,required"`
+	Speaker CallTranscriptCueSpeaker `json:"speaker,required"`
+	Text    string                   `json:"text,required"`
+	To      float64                  `json:"to,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		From        respjson.Field
+		Speaker     respjson.Field
+		Text        respjson.Field
+		To          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CallTranscriptCue) RawJSON() string { return r.JSON.raw }
+func (r *CallTranscriptCue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CallTranscriptCueSpeaker struct {
+	AttendeeID string `json:"attendee_id"`
+	Label      string `json:"label"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AttendeeID  respjson.Field
+		Label       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CallTranscriptCueSpeaker) RawJSON() string { return r.JSON.raw }
+func (r *CallTranscriptCueSpeaker) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -286,6 +392,46 @@ func (r CallNewParamsTranscriptCue) MarshalJSON() (data []byte, err error) {
 }
 func (r *CallNewParamsTranscriptCue) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type CallGetParams struct {
+	// Specifies which related objects to include in the response. Valid options are
+	// `transcript`, `note`, and `summary`.
+	//
+	// Any of "transcript", "note", "summary".
+	Include []string `query:"include,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [CallGetParams]'s query parameters as `url.Values`.
+func (r CallGetParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+type CallListParams struct {
+	// When specified, returns results starting immediately after the item identified
+	// by this cursor. Use the cursor value from the previous response's metadata to
+	// fetch the next page of results.
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// When specified, returns results starting immediately before the item identified
+	// by this cursor. Use the cursor value from the response's metadata to fetch the
+	// previous page of results.
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
+	// to 20 if not specified.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [CallListParams]'s query parameters as `url.Values`.
+func (r CallListParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type CallUpsertParams struct {

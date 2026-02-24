@@ -139,9 +139,11 @@ func TestCollectionItemListWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"collection_id",
 		moonbase.CollectionItemListParams{
-			After:  moonbase.String("after"),
-			Before: moonbase.String("before"),
-			Limit:  moonbase.Int(1),
+			After:   moonbase.String("after"),
+			Before:  moonbase.String("before"),
+			Include: []string{"string"},
+			Limit:   moonbase.Int(1),
+			Sort:    []string{"string"},
 		},
 	)
 	if err != nil {
@@ -170,6 +172,43 @@ func TestCollectionItemDelete(t *testing.T) {
 		"id",
 		moonbase.CollectionItemDeleteParams{
 			CollectionID: "collection_id",
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCollectionItemSearchWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Collections.Items.Search(
+		context.TODO(),
+		"collection_id",
+		moonbase.CollectionItemSearchParams{
+			After:  moonbase.String("after"),
+			Before: moonbase.String("before"),
+			Limit:  moonbase.Int(1),
+			Filter: moonbase.ItemsFilterUnionParam{
+				OfItemsFilterAndGroup: &moonbase.ItemsFilterAndGroupParam{
+					Filters: []moonbase.ItemsFilterUnionParam{},
+				},
+			},
+			Include: []string{"string"},
+			Sort:    []string{"string"},
 		},
 	)
 	if err != nil {
