@@ -79,19 +79,19 @@ func (r *FormService) ListAutoPaging(ctx context.Context, query FormListParams, 
 // URL for external users. Each form submission creates a new item.
 type Form struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The `Collection` that submissions to this form are saved to.
-	Collection Collection `json:"collection,required"`
+	Collection Collection `json:"collection" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The name of the form, used as the title on its public page.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// `true` if the form is available at a public URL.
-	PagesEnabled bool `json:"pages_enabled,required"`
+	PagesEnabled bool `json:"pages_enabled" api:"required"`
 	// String representing the object’s type. Always `form` for this object.
-	Type constant.Form `json:"type,required"`
+	Type constant.Form `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The public URL for the form, if `pages_enabled` is `true`.
 	PagesURL string `json:"pages_url" format:"uri"`
 	// An optional URL to redirect users to after a successful submission.

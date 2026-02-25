@@ -113,22 +113,22 @@ func (r *NoteService) Delete(ctx context.Context, id string, opts ...option.Requ
 // or summaries.
 type Note struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A list of items, meetings or calls this note is associated with.
-	Associations []shared.Pointer `json:"associations,required"`
+	Associations []shared.Pointer `json:"associations" api:"required"`
 	// The main content of the note.
-	Body shared.FormattedText `json:"body,required"`
+	Body shared.FormattedText `json:"body" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The current lock version of the note for optimistic concurrency control.
-	LockVersion int64 `json:"lock_version,required"`
+	LockVersion int64 `json:"lock_version" api:"required"`
 	// String representing the object’s type. Always `note` for this object.
-	Type constant.Note `json:"type,required"`
+	Type constant.Note `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Creator ItemPointer `json:"creator,nullable"`
+	Creator ItemPointer `json:"creator" api:"nullable"`
 	// A short, system-generated summary of the note's content.
 	Summary string `json:"summary"`
 	// An optional title for the note.
@@ -158,7 +158,7 @@ func (r *Note) UnmarshalJSON(data []byte) error {
 
 type NoteNewParams struct {
 	// The main content of the note.
-	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
 	// Link the Note to Moonbase items (person, organization, deal, task, or an item in
 	// a custom collection), meetings, or calls.
 	Associations []shared.PointerParam `json:"associations,omitzero"`
@@ -175,9 +175,9 @@ func (r *NoteNewParams) UnmarshalJSON(data []byte) error {
 
 type NoteUpdateParams struct {
 	// The main content of the note.
-	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
 	// The current lock version of the note for optimistic concurrency control.
-	LockVersion int64 `json:"lock_version,required"`
+	LockVersion int64 `json:"lock_version" api:"required"`
 	paramObj
 }
 

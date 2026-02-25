@@ -63,9 +63,9 @@ func (r *FormattedTextParam) UnmarshalJSON(data []byte) error {
 // A lightweight reference to another resource.
 type Pointer struct {
 	// Unique identifier for the referenced object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// String indicating the type of the referenced object.
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -95,9 +95,9 @@ func (r Pointer) ToParam() PointerParam {
 // The properties ID, Type are required.
 type PointerParam struct {
 	// Unique identifier for the referenced object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// String indicating the type of the referenced object.
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	paramObj
 }
 

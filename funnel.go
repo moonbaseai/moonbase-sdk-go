@@ -34,11 +34,11 @@ func NewFunnelService(opts ...option.RequestOption) (r FunnelService) {
 // A Funnel represents a series of steps used to track progression.
 type Funnel struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// An ordered list of `FunnelStep` objects that make up the funnel.
-	Steps []FunnelStep `json:"steps,required"`
+	Steps []FunnelStep `json:"steps" api:"required"`
 	// String representing the object’s type. Always `funnel` for this object.
-	Type constant.Funnel `json:"type,required"`
+	Type constant.Funnel `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -58,9 +58,9 @@ func (r *Funnel) UnmarshalJSON(data []byte) error {
 // Represents a single step within a `Funnel`.
 type FunnelStep struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The name of the step.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The status of the step in the funnel flow.
 	//
 	// - `active`: represents an in progress state within the funnel
@@ -68,9 +68,9 @@ type FunnelStep struct {
 	// - `failure`: exited the funnel without conversion
 	//
 	// Any of "active", "success", "failure".
-	StepType FunnelStepStepType `json:"step_type,required"`
+	StepType FunnelStepStepType `json:"step_type" api:"required"`
 	// String representing the object’s type. Always `funnel_step` for this object.
-	Type constant.FunnelStep `json:"type,required"`
+	Type constant.FunnelStep `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -115,9 +115,9 @@ const (
 // The properties ID, Name, StepType, Type are required.
 type FunnelStepParam struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The name of the step.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The status of the step in the funnel flow.
 	//
 	// - `active`: represents an in progress state within the funnel
@@ -125,11 +125,11 @@ type FunnelStepParam struct {
 	// - `failure`: exited the funnel without conversion
 	//
 	// Any of "active", "success", "failure".
-	StepType FunnelStepStepType `json:"step_type,omitzero,required"`
+	StepType FunnelStepStepType `json:"step_type,omitzero" api:"required"`
 	// String representing the object’s type. Always `funnel_step` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "funnel_step".
-	Type constant.FunnelStep `json:"type,required"`
+	Type constant.FunnelStep `json:"type" api:"required"`
 	paramObj
 }
 

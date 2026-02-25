@@ -46,16 +46,16 @@ func (r *ProgramMessageService) Send(ctx context.Context, body ProgramMessageSen
 // Represents a single message sent as part of a `Program`.
 type ProgramMessage struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the message was created and enqueued for sending, as an ISO 8601
 	// timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The `ProgramTemplate` used to generate this message.
-	ProgramTemplate ProgramTemplate `json:"program_template,required"`
+	ProgramTemplate ProgramTemplate `json:"program_template" api:"required"`
 	// String representing the object’s type. Always `program_message` for this object.
-	Type constant.ProgramMessage `json:"type,required"`
+	Type constant.ProgramMessage `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID              respjson.Field
@@ -76,9 +76,9 @@ func (r *ProgramMessage) UnmarshalJSON(data []byte) error {
 
 type ProgramMessageSendParams struct {
 	// The person to send the message to.
-	Person ProgramMessageSendParamsPerson `json:"person,omitzero,required"`
+	Person ProgramMessageSendParamsPerson `json:"person,omitzero" api:"required"`
 	// The ID of the `ProgramTemplate` to use for sending the message.
-	ProgramTemplateID string `json:"program_template_id,required"`
+	ProgramTemplateID string `json:"program_template_id" api:"required"`
 	// Any custom Liquid variables to be interpolated into the message template.
 	CustomVariables map[string]any `json:"custom_variables,omitzero"`
 	paramObj
@@ -96,7 +96,7 @@ func (r *ProgramMessageSendParams) UnmarshalJSON(data []byte) error {
 //
 // The property Email is required.
 type ProgramMessageSendParamsPerson struct {
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	paramObj
 }
 
