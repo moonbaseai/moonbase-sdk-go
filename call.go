@@ -96,27 +96,27 @@ func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ..
 // contains details about the participants, timing, and outcome of the call.
 type Call struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The direction of the call, either `incoming` or `outgoing`.
 	//
 	// Any of "incoming", "outgoing".
-	Direction CallDirection `json:"direction,required"`
+	Direction CallDirection `json:"direction" api:"required"`
 	// The participants involved in the call.
-	Participants []CallParticipant `json:"participants,required"`
+	Participants []CallParticipant `json:"participants" api:"required"`
 	// The name of the phone provider that handled the call.
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The unique identifier for the call from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The current status of the call.
-	ProviderStatus string `json:"provider_status,required"`
+	ProviderStatus string `json:"provider_status" api:"required"`
 	// The time the call started, as an ISO 8601 timestamp in UTC.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
 	// String representing the object’s type. Always `call` for this object.
-	Type constant.Call `json:"type,required"`
+	Type constant.Call `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The time the call was answered, if available, as an ISO 8601 timestamp in UTC.
 	AnsweredAt time.Time `json:"answered_at" format:"date-time"`
 	// The time the call ended, if available, as an ISO 8601 timestamp in UTC.
@@ -129,7 +129,7 @@ type Call struct {
 	// The Note object represents a block of text content, often used for meeting notes
 	// or summaries.
 	Summary    Note           `json:"summary"`
-	Transcript CallTranscript `json:"transcript,nullable"`
+	Transcript CallTranscript `json:"transcript" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -170,16 +170,16 @@ const (
 // Represents a participant in a call.
 type CallParticipant struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The E.164 formatted phone number of the participant.
-	Phone string `json:"phone,required"`
+	Phone string `json:"phone" api:"required"`
 	// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
 	//
 	// Any of "caller", "callee", "other".
-	Role string `json:"role,required"`
+	Role string `json:"role" api:"required"`
 	// String representing the object’s type. Always `call_participant` for this
 	// object.
-	Type constant.CallParticipant `json:"type,required"`
+	Type constant.CallParticipant `json:"type" api:"required"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -204,7 +204,7 @@ func (r *CallParticipant) UnmarshalJSON(data []byte) error {
 }
 
 type CallTranscript struct {
-	Cues []CallTranscriptCue `json:"cues,required"`
+	Cues []CallTranscriptCue `json:"cues" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cues        respjson.Field
@@ -220,10 +220,10 @@ func (r *CallTranscript) UnmarshalJSON(data []byte) error {
 }
 
 type CallTranscriptCue struct {
-	From    float64                  `json:"from,required"`
-	Speaker CallTranscriptCueSpeaker `json:"speaker,required"`
-	Text    string                   `json:"text,required"`
-	To      float64                  `json:"to,required"`
+	From    float64                  `json:"from" api:"required"`
+	Speaker CallTranscriptCueSpeaker `json:"speaker" api:"required"`
+	Text    string                   `json:"text" api:"required"`
+	To      float64                  `json:"to" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		From        respjson.Field
@@ -263,17 +263,17 @@ type CallNewParams struct {
 	// The direction of the call, either `incoming` or `outgoing`.
 	//
 	// Any of "incoming", "outgoing".
-	Direction CallNewParamsDirection `json:"direction,omitzero,required"`
+	Direction CallNewParamsDirection `json:"direction,omitzero" api:"required"`
 	// An array of participants involved in the call.
-	Participants []CallNewParamsParticipant `json:"participants,omitzero,required"`
+	Participants []CallNewParamsParticipant `json:"participants,omitzero" api:"required"`
 	// The name of the phone provider that handled the call (e.g., `openphone`).
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The unique identifier for the call from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The status of the call.
-	ProviderStatus string `json:"provider_status,required"`
+	ProviderStatus string `json:"provider_status" api:"required"`
 	// The time the call started, as an ISO 8601 timestamp in UTC.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
 	// The time the call was answered, as an ISO 8601 timestamp in UTC.
 	AnsweredAt param.Opt[time.Time] `json:"answered_at,omitzero" format:"date-time"`
 	// The time the call ended, as an ISO 8601 timestamp in UTC.
@@ -308,11 +308,11 @@ const (
 // The properties Phone, Role are required.
 type CallNewParamsParticipant struct {
 	// The E.164 formatted phone number of the participant.
-	Phone string `json:"phone,required"`
+	Phone string `json:"phone" api:"required"`
 	// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
 	//
 	// Any of "caller", "callee", "other".
-	Role string `json:"role,omitzero,required"`
+	Role string `json:"role,omitzero" api:"required"`
 	paramObj
 }
 
@@ -336,11 +336,11 @@ func init() {
 type CallNewParamsRecording struct {
 	// The content type of the recording. Note that only `audio/mpeg` is supported at
 	// this time.
-	ContentType string `json:"content_type,required"`
+	ContentType string `json:"content_type" api:"required"`
 	// The unique identifier for the recording from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
-	URL string `json:"url,required" format:"uri"`
+	URL string `json:"url" api:"required" format:"uri"`
 	paramObj
 }
 
@@ -358,7 +358,7 @@ func (r *CallNewParamsRecording) UnmarshalJSON(data []byte) error {
 type CallNewParamsTranscript struct {
 	// A list of cues that identify the text spoken in specific time slices of the
 	// call.
-	Cues []CallNewParamsTranscriptCue `json:"cues,omitzero,required"`
+	Cues []CallNewParamsTranscriptCue `json:"cues,omitzero" api:"required"`
 	paramObj
 }
 
@@ -376,13 +376,13 @@ func (r *CallNewParamsTranscript) UnmarshalJSON(data []byte) error {
 // The properties From, Speaker, Text, To are required.
 type CallNewParamsTranscriptCue struct {
 	// The start time of the slice, in fractional seconds from the start of the call.
-	From float64 `json:"from,required"`
+	From float64 `json:"from" api:"required"`
 	// The E.164 formatted phone number of the speaker.
-	Speaker string `json:"speaker,required"`
+	Speaker string `json:"speaker" api:"required"`
 	// The text spoken during the slice.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The end time of the slice, in fractional seconds from the start of the call.
-	To float64 `json:"to,required"`
+	To float64 `json:"to" api:"required"`
 	paramObj
 }
 
@@ -438,17 +438,17 @@ type CallUpsertParams struct {
 	// The direction of the call, either `incoming` or `outgoing`.
 	//
 	// Any of "incoming", "outgoing".
-	Direction CallUpsertParamsDirection `json:"direction,omitzero,required"`
+	Direction CallUpsertParamsDirection `json:"direction,omitzero" api:"required"`
 	// An array of participants involved in the call.
-	Participants []CallUpsertParamsParticipant `json:"participants,omitzero,required"`
+	Participants []CallUpsertParamsParticipant `json:"participants,omitzero" api:"required"`
 	// The name of the phone provider that handled the call (e.g., `openphone`).
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The unique identifier for the call from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The status of the call.
-	ProviderStatus string `json:"provider_status,required"`
+	ProviderStatus string `json:"provider_status" api:"required"`
 	// The time the call started, as an ISO 8601 timestamp in UTC.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
 	// The time the call was answered, as an ISO 8601 timestamp in UTC.
 	AnsweredAt param.Opt[time.Time] `json:"answered_at,omitzero" format:"date-time"`
 	// The time the call ended, as an ISO 8601 timestamp in UTC.
@@ -483,11 +483,11 @@ const (
 // The properties Phone, Role are required.
 type CallUpsertParamsParticipant struct {
 	// The E.164 formatted phone number of the participant.
-	Phone string `json:"phone,required"`
+	Phone string `json:"phone" api:"required"`
 	// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
 	//
 	// Any of "caller", "callee", "other".
-	Role string `json:"role,omitzero,required"`
+	Role string `json:"role,omitzero" api:"required"`
 	paramObj
 }
 
@@ -511,11 +511,11 @@ func init() {
 type CallUpsertParamsRecording struct {
 	// The content type of the recording. Note that only `audio/mpeg` is supported at
 	// this time.
-	ContentType string `json:"content_type,required"`
+	ContentType string `json:"content_type" api:"required"`
 	// The unique identifier for the recording from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
-	URL string `json:"url,required" format:"uri"`
+	URL string `json:"url" api:"required" format:"uri"`
 	paramObj
 }
 
@@ -533,7 +533,7 @@ func (r *CallUpsertParamsRecording) UnmarshalJSON(data []byte) error {
 type CallUpsertParamsTranscript struct {
 	// A list of cues that identify the text spoken in specific time slices of the
 	// call.
-	Cues []CallUpsertParamsTranscriptCue `json:"cues,omitzero,required"`
+	Cues []CallUpsertParamsTranscriptCue `json:"cues,omitzero" api:"required"`
 	paramObj
 }
 
@@ -551,13 +551,13 @@ func (r *CallUpsertParamsTranscript) UnmarshalJSON(data []byte) error {
 // The properties From, Speaker, Text, To are required.
 type CallUpsertParamsTranscriptCue struct {
 	// The start time of the slice, in fractional seconds from the start of the call.
-	From float64 `json:"from,required"`
+	From float64 `json:"from" api:"required"`
 	// The E.164 formatted phone number of the speaker.
-	Speaker string `json:"speaker,required"`
+	Speaker string `json:"speaker" api:"required"`
 	// The text spoken during the slice.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The end time of the slice, in fractional seconds from the start of the call.
-	To float64 `json:"to,required"`
+	To float64 `json:"to" api:"required"`
 	paramObj
 }
 

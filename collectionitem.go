@@ -181,7 +181,7 @@ func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string,
 type CollectionItemSearchResponse struct {
 	// An Item represents a single record or row within a Collection. It holds a set of
 	// `values` corresponding to the Collection's `fields`.
-	Data Item `json:"data,required"`
+	Data Item `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -198,7 +198,7 @@ func (r *CollectionItemSearchResponse) UnmarshalJSON(data []byte) error {
 
 type CollectionItemNewParams struct {
 	// A hash where keys are the `ref` of a `Field` and values are the data to be set.
-	Values map[string]FieldValueParamUnion `json:"values,omitzero,required"`
+	Values map[string]FieldValueParamUnion `json:"values,omitzero" api:"required"`
 	paramObj
 }
 
@@ -211,15 +211,15 @@ func (r *CollectionItemNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type CollectionItemGetParams struct {
-	CollectionID string `path:"collection_id,required" json:"-"`
+	CollectionID string `path:"collection_id" api:"required" json:"-"`
 	paramObj
 }
 
 type CollectionItemUpdateParams struct {
-	CollectionID string `path:"collection_id,required" json:"-"`
+	CollectionID string `path:"collection_id" api:"required" json:"-"`
 	// A hash where keys are the `ref` of a `Field` and values are the new data to be
 	// set.
-	Values map[string]FieldValueParamUnion `json:"values,omitzero,required"`
+	Values map[string]FieldValueParamUnion `json:"values,omitzero" api:"required"`
 	// Any of "replace", "preserve", "merge".
 	UpdateManyStrategy CollectionItemUpdateParamsUpdateManyStrategy `header:"update-many-strategy,omitzero" json:"-"`
 	// Any of "replace", "preserve".
@@ -280,7 +280,7 @@ func (r CollectionItemListParams) URLQuery() (v url.Values, err error) {
 }
 
 type CollectionItemDeleteParams struct {
-	CollectionID string `path:"collection_id,required" json:"-"`
+	CollectionID string `path:"collection_id" api:"required" json:"-"`
 	paramObj
 }
 
@@ -328,9 +328,9 @@ type CollectionItemUpsertParams struct {
 	// A hash where keys are the `ref` of a `Field` and values are used to identify the
 	// item to update. When multiple identifiers are provided, the update will find
 	// items that match any of the identifiers.
-	Identifiers map[string]FieldValueParamUnion `json:"identifiers,omitzero,required"`
+	Identifiers map[string]FieldValueParamUnion `json:"identifiers,omitzero" api:"required"`
 	// A hash where keys are the `ref` of a `Field` and values are the data to be set.
-	Values map[string]FieldValueParamUnion `json:"values,omitzero,required"`
+	Values map[string]FieldValueParamUnion `json:"values,omitzero" api:"required"`
 	// Any of "replace", "preserve", "merge".
 	UpdateManyStrategy CollectionItemUpsertParamsUpdateManyStrategy `header:"update-many-strategy,omitzero" json:"-"`
 	// Any of "replace", "preserve".

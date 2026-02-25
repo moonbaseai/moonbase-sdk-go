@@ -79,27 +79,27 @@ func (r *ProgramService) ListAutoPaging(ctx context.Context, query ProgramListPa
 // and tracks engagement metrics.
 type Program struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The current status of the program. Can be `draft`, `published`, `paused`, or
 	// `archived`.
 	//
 	// Any of "draft", "published", "paused", "archived".
-	Status ProgramStatus `json:"status,required"`
+	Status ProgramStatus `json:"status" api:"required"`
 	// `true` if link clicks are tracked for this program.
-	TrackClicks bool `json:"track_clicks,required"`
+	TrackClicks bool `json:"track_clicks" api:"required"`
 	// `true` if email opens are tracked for this program.
-	TrackOpens bool `json:"track_opens,required"`
+	TrackOpens bool `json:"track_opens" api:"required"`
 	// The sending trigger for the program. Can be `api` for transactional sends or
 	// `broadcast` for scheduled sends.
 	//
 	// Any of "api", "broadcast".
-	Trigger ProgramTrigger `json:"trigger,required"`
+	Trigger ProgramTrigger `json:"trigger" api:"required"`
 	// String representing the object’s type. Always `program` for this object.
-	Type constant.Program `json:"type,required"`
+	Type constant.Program `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A `ProgramActivityMetrics` object summarizing engagement for this program.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -163,21 +163,21 @@ const (
 // **Note:** Only present when requested using the `include` query parameter.
 type ProgramActivityMetrics struct {
 	// The number of emails that could not be delivered.
-	Bounced int64 `json:"bounced,required"`
+	Bounced int64 `json:"bounced" api:"required"`
 	// The number of recipients who clicked at least one link.
-	Clicked int64 `json:"clicked,required"`
+	Clicked int64 `json:"clicked" api:"required"`
 	// The number of recipients who marked the email as spam.
-	Complained int64 `json:"complained,required"`
+	Complained int64 `json:"complained" api:"required"`
 	// The number of emails that failed to send due to a technical issue.
-	Failed int64 `json:"failed,required"`
+	Failed int64 `json:"failed" api:"required"`
 	// The number of recipients who opened the email.
-	Opened int64 `json:"opened,required"`
+	Opened int64 `json:"opened" api:"required"`
 	// The total number of emails successfully sent.
-	Sent int64 `json:"sent,required"`
+	Sent int64 `json:"sent" api:"required"`
 	// The number of emails blocked by delivery protection rules.
-	Shielded int64 `json:"shielded,required"`
+	Shielded int64 `json:"shielded" api:"required"`
 	// The number of recipients who unsubscribed.
-	Unsubscribed int64 `json:"unsubscribed,required"`
+	Unsubscribed int64 `json:"unsubscribed" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Bounced      respjson.Field

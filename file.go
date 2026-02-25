@@ -104,24 +104,24 @@ func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ..
 // The File object represents a file that has been uploaded to your library.
 type MoonbaseFile struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A list of items this file is associated with.
-	Associations []ItemPointer `json:"associations,required"`
+	Associations []ItemPointer `json:"associations" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A temporary, signed URL to download the file content. The URL expires after one
 	// hour.
-	DownloadURL string `json:"download_url,required" format:"uri"`
+	DownloadURL string `json:"download_url" api:"required" format:"uri"`
 	// The original filename of the uploaded file.
-	Filename string `json:"filename,required"`
+	Filename string `json:"filename" api:"required"`
 	// The display name of the file.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// The size of the file in bytes.
-	Size float64 `json:"size,required"`
+	Size float64 `json:"size" api:"required"`
 	// String representing the object’s type. Always `file` for this object.
-	Type constant.File `json:"type,required"`
+	Type constant.File `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -169,7 +169,7 @@ func (r FileListParams) URLQuery() (v url.Values, err error) {
 
 type FileUploadParams struct {
 	// The File object to be uploaded.
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// The display name of the file.
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Link the File to Moonbase items like a person, organization, deal, task, or an

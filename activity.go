@@ -363,16 +363,16 @@ func (r *ActivityUnion) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `File` is created.
 type ActivityActivityFileCreated struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	File shared.Pointer `json:"file,required"`
+	File shared.Pointer `json:"file" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	RelatedItem ItemPointer `json:"related_item,required"`
+	RelatedItem ItemPointer `json:"related_item" api:"required"`
 	// The type of activity. Always `activity/file_created`.
-	Type constant.ActivityFileCreated `json:"type,required"`
+	Type constant.ActivityFileCreated `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -394,13 +394,13 @@ func (r *ActivityActivityFileCreated) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when an incoming or outgoing call is logged.
 type ActivityCallOccurred struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	Call shared.Pointer `json:"call,required"`
+	Call shared.Pointer `json:"call" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/call_occurred`.
-	Type constant.ActivityCallOccurred `json:"type,required"`
+	Type constant.ActivityCallOccurred `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -421,14 +421,14 @@ func (r *ActivityCallOccurred) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `Form` is submitted.
 type ActivityFormSubmitted struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Item ItemPointer `json:"item,required"`
+	Item ItemPointer `json:"item" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/form_submitted`.
-	Type constant.ActivityFormSubmitted `json:"type,required"`
+	Type constant.ActivityFormSubmitted `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -449,13 +449,13 @@ func (r *ActivityFormSubmitted) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a message is sent from an `Inbox`.
 type ActivityInboxMessageSent struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	Message shared.Pointer `json:"message,required"`
+	Message shared.Pointer `json:"message" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/inbox_message_sent`.
-	Type constant.ActivityInboxMessageSent `json:"type,required"`
+	Type constant.ActivityInboxMessageSent `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -476,14 +476,14 @@ func (r *ActivityInboxMessageSent) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when an `Item` is created.
 type ActivityItemCreated struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Item ItemPointer `json:"item,required"`
+	Item ItemPointer `json:"item" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/item_created`.
-	Type constant.ActivityItemCreated `json:"type,required"`
+	Type constant.ActivityItemCreated `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -504,19 +504,19 @@ func (r *ActivityItemCreated) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when an `Item` is mentioned.
 type ActivityItemMentioned struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Author ItemPointer `json:"author,required"`
+	Author ItemPointer `json:"author" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Item ItemPointer `json:"item,required"`
+	Item ItemPointer `json:"item" api:"required"`
 	// A lightweight reference to another resource.
-	Note shared.Pointer `json:"note,required"`
+	Note shared.Pointer `json:"note" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/item_mentioned`.
-	Type constant.ActivityItemMentioned `json:"type,required"`
+	Type constant.ActivityItemMentioned `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -539,20 +539,20 @@ func (r *ActivityItemMentioned) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when an `Item` is merged into another item.
 type ActivityItemMerged struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Destination ItemPointer `json:"destination,required"`
+	Destination ItemPointer `json:"destination" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Initiator ItemPointer `json:"initiator,required"`
+	Initiator ItemPointer `json:"initiator" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Source ItemPointer `json:"source,required"`
+	Source ItemPointer `json:"source" api:"required"`
 	// The type of activity. Always `activity/item_merged`.
-	Type constant.ActivityItemMerged `json:"type,required"`
+	Type constant.ActivityItemMerged `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -575,13 +575,13 @@ func (r *ActivityItemMerged) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `Meeting` has concluded.
 type ActivityMeetingHeld struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	Meeting shared.Pointer `json:"meeting,required"`
+	Meeting shared.Pointer `json:"meeting" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/meeting_held`.
-	Type constant.ActivityMeetingHeld `json:"type,required"`
+	Type constant.ActivityMeetingHeld `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -602,13 +602,13 @@ func (r *ActivityMeetingHeld) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `Meeting` is scheduled.
 type ActivityMeetingScheduled struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	Meeting shared.Pointer `json:"meeting,required"`
+	Meeting shared.Pointer `json:"meeting" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/meeting_scheduled`.
-	Type constant.ActivityMeetingScheduled `json:"type,required"`
+	Type constant.ActivityMeetingScheduled `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -629,18 +629,18 @@ func (r *ActivityMeetingScheduled) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `Note` is created.
 type ActivityNoteCreated struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to another resource.
-	Note shared.Pointer `json:"note,required"`
+	Note shared.Pointer `json:"note" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	RelatedItem ItemPointer `json:"related_item,required"`
+	RelatedItem ItemPointer `json:"related_item" api:"required"`
 	// A lightweight reference to another resource.
-	RelatedMeeting shared.Pointer `json:"related_meeting,required"`
+	RelatedMeeting shared.Pointer `json:"related_meeting" api:"required"`
 	// The type of activity. Always `activity/note_created`.
-	Type constant.ActivityNoteCreated `json:"type,required"`
+	Type constant.ActivityNoteCreated `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -663,16 +663,16 @@ func (r *ActivityNoteCreated) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `ProgramMessage` bounces.
 type ActivityProgramMessageBounced struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_bounced`.
-	Type constant.ActivityProgramMessageBounced `json:"type,required"`
+	Type constant.ActivityProgramMessageBounced `json:"type" api:"required"`
 	// The type of bounce (e.g., `Permanent` for hard bounces, `Temporary` for soft
 	// bounces).
 	BounceType string `json:"bounce_type"`
@@ -702,16 +702,16 @@ func (r *ActivityProgramMessageBounced) UnmarshalJSON(data []byte) error {
 // `ProgramMessage`.
 type ActivityProgramMessageClicked struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_clicked`.
-	Type constant.ActivityProgramMessageClicked `json:"type,required"`
+	Type constant.ActivityProgramMessageClicked `json:"type" api:"required"`
 	// The text of the link that was clicked.
 	LinkText string `json:"link_text"`
 	// The URL of the link that was clicked.
@@ -740,16 +740,16 @@ func (r *ActivityProgramMessageClicked) UnmarshalJSON(data []byte) error {
 // spam.
 type ActivityProgramMessageComplained struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_complained`.
-	Type constant.ActivityProgramMessageComplained `json:"type,required"`
+	Type constant.ActivityProgramMessageComplained `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -772,16 +772,16 @@ func (r *ActivityProgramMessageComplained) UnmarshalJSON(data []byte) error {
 // for a technical reason.
 type ActivityProgramMessageFailed struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_failed`.
-	Type constant.ActivityProgramMessageFailed `json:"type,required"`
+	Type constant.ActivityProgramMessageFailed `json:"type" api:"required"`
 	// A code indicating the reason for the failure (e.g., `message_contained_virus`).
 	ReasonCode string `json:"reason_code"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -806,16 +806,16 @@ func (r *ActivityProgramMessageFailed) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a recipient opens a `ProgramMessage`.
 type ActivityProgramMessageOpened struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_opened`.
-	Type constant.ActivityProgramMessageOpened `json:"type,required"`
+	Type constant.ActivityProgramMessageOpened `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -837,16 +837,16 @@ func (r *ActivityProgramMessageOpened) UnmarshalJSON(data []byte) error {
 // Represents an event that occurs when a `ProgramMessage` is successfully sent.
 type ActivityProgramMessageSent struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_sent`.
-	Type constant.ActivityProgramMessageSent `json:"type,required"`
+	Type constant.ActivityProgramMessageSent `json:"type" api:"required"`
 	// List of email addresses the message was sent to.
 	RecipientEmails []string `json:"recipient_emails"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -872,16 +872,16 @@ func (r *ActivityProgramMessageSent) UnmarshalJSON(data []byte) error {
 // sent by a delivery protection rule.
 type ActivityProgramMessageShielded struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_shielded`.
-	Type constant.ActivityProgramMessageShielded `json:"type,required"`
+	Type constant.ActivityProgramMessageShielded `json:"type" api:"required"`
 	// A code indicating why the message was shielded (e.g.,
 	// `person_previously_unsubscribed`).
 	ReasonCode string `json:"reason_code"`
@@ -908,16 +908,16 @@ func (r *ActivityProgramMessageShielded) UnmarshalJSON(data []byte) error {
 // `ProgramMessage`.
 type ActivityProgramMessageUnsubscribed struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at,required" format:"date-time"`
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message,required"`
+	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
 	// A reference to an `Item` within a specific `Collection`, providing the context
 	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient,required"`
+	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_unsubscribed`.
-	Type constant.ActivityProgramMessageUnsubscribed `json:"type,required"`
+	Type constant.ActivityProgramMessageUnsubscribed `json:"type" api:"required"`
 	// The email address of the person who unsubscribed.
 	Email string `json:"email"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

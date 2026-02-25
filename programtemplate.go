@@ -80,18 +80,18 @@ func (r *ProgramTemplateService) ListAutoPaging(ctx context.Context, query Progr
 // including support for Liquid templating.
 type ProgramTemplate struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The body content of the email, which can include Liquid variables.
-	Body shared.FormattedText `json:"body,required"`
+	Body shared.FormattedText `json:"body" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The subject line of the email, which can include Liquid variables.
-	Subject string `json:"subject,required"`
+	Subject string `json:"subject" api:"required"`
 	// String representing the object’s type. Always `program_template` for this
 	// object.
-	Type constant.ProgramTemplate `json:"type,required"`
+	Type constant.ProgramTemplate `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The `Program` that uses this template.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.

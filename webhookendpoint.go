@@ -113,23 +113,23 @@ func (r *WebhookEndpointService) Delete(ctx context.Context, id string, opts ...
 // objects.
 type Endpoint struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// Indicates whether the endpoint is enabled.
 	//
 	// Any of "disabled", "enabled".
-	Status EndpointStatus `json:"status,required"`
+	Status EndpointStatus `json:"status" api:"required"`
 	// An array of `WebhookSubscription` objects representing the events this endpoint
 	// will receive.
-	Subscriptions []Subscription `json:"subscriptions,required"`
+	Subscriptions []Subscription `json:"subscriptions" api:"required"`
 	// String representing the object’s type. Always `webhook_endpoint` for this
 	// object.
-	Type constant.WebhookEndpoint `json:"type,required"`
+	Type constant.WebhookEndpoint `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The HTTPS URL where webhook events will be sent.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// The signing secret used to verify webhook authenticity. This value is only shown
 	// when creating the endpoint and starts with `whsec_`.
 	Secret string `json:"secret"`
@@ -176,10 +176,10 @@ type Subscription struct {
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
 	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
-	EventType SubscriptionEventType `json:"event_type,required"`
+	EventType SubscriptionEventType `json:"event_type" api:"required"`
 	// String representing the object’s type. Always `webhook_subscription` for this
 	// object.
-	Type constant.WebhookSubscription `json:"type,required"`
+	Type constant.WebhookSubscription `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventType   respjson.Field
@@ -224,9 +224,9 @@ type WebhookEndpointNewParams struct {
 	// Indicates whether the endpoint is enabled.
 	//
 	// Any of "disabled", "enabled".
-	Status WebhookEndpointNewParamsStatus `json:"status,omitzero,required"`
+	Status WebhookEndpointNewParamsStatus `json:"status,omitzero" api:"required"`
 	// The HTTPS URL where webhook events will be sent.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// An array of event types that this endpoint should receive notifications for.
 	Subscriptions []WebhookEndpointNewParamsSubscription `json:"subscriptions,omitzero"`
 	paramObj
@@ -263,7 +263,7 @@ type WebhookEndpointNewParamsSubscription struct {
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
 	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
-	EventType string `json:"event_type,omitzero,required"`
+	EventType string `json:"event_type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -324,7 +324,7 @@ type WebhookEndpointUpdateParamsSubscription struct {
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
 	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
-	EventType string `json:"event_type,omitzero,required"`
+	EventType string `json:"event_type,omitzero" api:"required"`
 	// Unique identifier for the object.
 	ID param.Opt[string] `json:"id,omitzero"`
 	paramObj

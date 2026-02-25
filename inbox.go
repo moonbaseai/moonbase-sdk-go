@@ -78,15 +78,15 @@ func (r *InboxService) ListAutoPaging(ctx context.Context, query InboxListParams
 // The Inbox object represents a shared inbox for receiving and sending messages.
 type Inbox struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The display name of the inbox.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `inbox` for this object.
-	Type constant.Inbox `json:"type,required"`
+	Type constant.Inbox `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	CanRead   bool      `json:"can_read"`
 	// The list of `Tagset` objects associated with this inbox, which defines the tags
 	// available for its conversations.

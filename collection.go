@@ -85,33 +85,33 @@ func (r *CollectionService) ListAutoPaging(ctx context.Context, query Collection
 // A field that stores true or false values.
 type BooleanField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality BooleanFieldCardinality `json:"cardinality,required"`
+	Cardinality BooleanFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Is Active").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `is_active`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/boolean` for this field.
-	Type constant.FieldBoolean `json:"type,required"`
+	Type constant.FieldBoolean `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -150,8 +150,8 @@ const (
 
 // True or false value
 type BooleanValue struct {
-	Data bool                  `json:"data,required"`
-	Type constant.ValueBoolean `json:"type,required"`
+	Data bool                  `json:"data" api:"required"`
+	Type constant.ValueBoolean `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -180,9 +180,9 @@ func (r BooleanValue) ToParam() BooleanValueParam {
 //
 // The properties Data, Type are required.
 type BooleanValueParam struct {
-	Data bool `json:"data,required"`
+	Data bool `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/boolean".
-	Type constant.ValueBoolean `json:"type,required"`
+	Type constant.ValueBoolean `json:"type" api:"required"`
 	paramObj
 }
 
@@ -197,36 +197,36 @@ func (r *BooleanValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores one or more predefined options from a list of choices.
 type ChoiceField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality ChoiceFieldCardinality `json:"cardinality,required"`
+	Cardinality ChoiceFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Priority").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A list of `FieldOption` objects representing the available choices for this
 	// field.
-	Options []ChoiceFieldOption `json:"options,required"`
+	Options []ChoiceFieldOption `json:"options" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `priority`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/choice` for this field.
-	Type constant.FieldChoice `json:"type,required"`
+	Type constant.FieldChoice `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -267,12 +267,12 @@ const (
 // Represents a single selectable option within a choice field.
 type ChoiceFieldOption struct {
 	// Unique identifier for the option.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The human-readable text displayed for this option.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `choice_field_option` for this
 	// object.
-	Type constant.ChoiceFieldOption `json:"type,required"`
+	Type constant.ChoiceFieldOption `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -303,15 +303,15 @@ func (r ChoiceFieldOption) ToParam() ChoiceFieldOptionParam {
 // The properties ID, Name, Type are required.
 type ChoiceFieldOptionParam struct {
 	// Unique identifier for the option.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The human-readable text displayed for this option.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `choice_field_option` for this
 	// object.
 	//
 	// This field can be elided, and will marshal its zero value as
 	// "choice_field_option".
-	Type constant.ChoiceFieldOption `json:"type,required"`
+	Type constant.ChoiceFieldOption `json:"type" api:"required"`
 	paramObj
 }
 
@@ -326,8 +326,8 @@ func (r *ChoiceFieldOptionParam) UnmarshalJSON(data []byte) error {
 // Selected choice option
 type ChoiceValue struct {
 	// An option that must match one of the predefined options for the field.
-	Data ChoiceFieldOption    `json:"data,required"`
-	Type constant.ValueChoice `json:"type,required"`
+	Data ChoiceFieldOption    `json:"data" api:"required"`
+	Type constant.ValueChoice `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -348,9 +348,9 @@ func (r *ChoiceValue) UnmarshalJSON(data []byte) error {
 // The properties Data, Type are required.
 type ChoiceValueParam struct {
 	// An option that must match one of the predefined options for the field.
-	Data ChoiceValueParamDataUnion `json:"data,omitzero,required"`
+	Data ChoiceValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/choice".
-	Type constant.ValueChoice `json:"type,required"`
+	Type constant.ValueChoice `json:"type" api:"required"`
 	paramObj
 }
 
@@ -420,23 +420,23 @@ func (u ChoiceValueParamDataUnion) GetType() *string {
 // list of `Items`.
 type Collection struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// If `true`, this is one of the foundational collections (People, Organizations,
 	// Deals, or Tasks).
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A list of `Field` objects that define the schema for items in this collection.
-	Fields []FieldUnion `json:"fields,required"`
+	Fields []FieldUnion `json:"fields" api:"required"`
 	// The user-facing name of the collection (e.g., “Organizations”).
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A unique, stable, machine-readable identifier for the collection. This reference
 	// is used in API requests and does not change even if the `name` is updated.
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// String representing the object’s type. Always `collection` for this object.
-	Type constant.Collection `json:"type,required"`
+	Type constant.Collection `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the collection's purpose.
 	Description string `json:"description"`
 	// A list of saved `View` objects for presenting the collection's data.
@@ -470,11 +470,11 @@ func (r *Collection) UnmarshalJSON(data []byte) error {
 // needed to identify it.
 type CollectionPointer struct {
 	// Unique identifier of the collection.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The stable, machine-readable reference identifier of the collection.
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// String representing the object’s type. Always `collection` for this object.
-	Type constant.Collection `json:"type,required"`
+	Type constant.Collection `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -506,13 +506,13 @@ func (r CollectionPointer) ToParam() CollectionPointerParam {
 // The properties ID, Ref, Type are required.
 type CollectionPointerParam struct {
 	// Unique identifier of the collection.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The stable, machine-readable reference identifier of the collection.
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// String representing the object’s type. Always `collection` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "collection".
-	Type constant.Collection `json:"type,required"`
+	Type constant.Collection `json:"type" api:"required"`
 	paramObj
 }
 
@@ -527,33 +527,33 @@ func (r *CollectionPointerParam) UnmarshalJSON(data []byte) error {
 // A field that stores dates without time information.
 type DateField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality DateFieldCardinality `json:"cardinality,required"`
+	Cardinality DateFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Due Date").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `due_date`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/date` for this field.
-	Type constant.FieldDate `json:"type,required"`
+	Type constant.FieldDate `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -592,8 +592,8 @@ const (
 
 // Date without time
 type DateValue struct {
-	Data time.Time          `json:"data,required" format:"date"`
-	Type constant.ValueDate `json:"type,required"`
+	Data time.Time          `json:"data" api:"required" format:"date"`
+	Type constant.ValueDate `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -622,9 +622,9 @@ func (r DateValue) ToParam() DateValueParam {
 //
 // The properties Data, Type are required.
 type DateValueParam struct {
-	Data time.Time `json:"data,required" format:"date"`
+	Data time.Time `json:"data" api:"required" format:"date"`
 	// This field can be elided, and will marshal its zero value as "value/date".
-	Type constant.ValueDate `json:"type,required"`
+	Type constant.ValueDate `json:"type" api:"required"`
 	paramObj
 }
 
@@ -639,33 +639,33 @@ func (r *DateValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores dates with time information.
 type DatetimeField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality DatetimeFieldCardinality `json:"cardinality,required"`
+	Cardinality DatetimeFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Meeting Time").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `meeting_time`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/datetime` for this field.
-	Type constant.FieldDatetime `json:"type,required"`
+	Type constant.FieldDatetime `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -704,8 +704,8 @@ const (
 
 // Date and time value
 type DatetimeValue struct {
-	Data time.Time              `json:"data,required" format:"date-time"`
-	Type constant.ValueDatetime `json:"type,required"`
+	Data time.Time              `json:"data" api:"required" format:"date-time"`
+	Type constant.ValueDatetime `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -734,9 +734,9 @@ func (r DatetimeValue) ToParam() DatetimeValueParam {
 //
 // The properties Data, Type are required.
 type DatetimeValueParam struct {
-	Data time.Time `json:"data,required" format:"date-time"`
+	Data time.Time `json:"data" api:"required" format:"date-time"`
 	// This field can be elided, and will marshal its zero value as "value/datetime".
-	Type constant.ValueDatetime `json:"type,required"`
+	Type constant.ValueDatetime `json:"type" api:"required"`
 	paramObj
 }
 
@@ -751,33 +751,33 @@ func (r *DatetimeValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores internet domain names.
 type DomainField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality DomainFieldCardinality `json:"cardinality,required"`
+	Cardinality DomainFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Company Domain").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `company_domain`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/domain` for this field.
-	Type constant.FieldUriDomain `json:"type,required"`
+	Type constant.FieldUriDomain `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -817,8 +817,8 @@ const (
 // Internet domain name
 type DomainValue struct {
 	// A valid internet domain name, without protocol (e.g., 'https://') or path.
-	Data string                  `json:"data,required"`
-	Type constant.ValueUriDomain `json:"type,required"`
+	Data string                  `json:"data" api:"required"`
+	Type constant.ValueUriDomain `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -848,9 +848,9 @@ func (r DomainValue) ToParam() DomainValueParam {
 // The properties Data, Type are required.
 type DomainValueParam struct {
 	// A valid internet domain name, without protocol (e.g., 'https://') or path.
-	Data string `json:"data,required"`
+	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/uri/domain".
-	Type constant.ValueUriDomain `json:"type,required"`
+	Type constant.ValueUriDomain `json:"type" api:"required"`
 	paramObj
 }
 
@@ -865,33 +865,33 @@ func (r *DomainValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores and validates email addresses.
 type EmailField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality EmailFieldCardinality `json:"cardinality,required"`
+	Cardinality EmailFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Work Email").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `work_email`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/email` for this field.
-	Type constant.FieldEmail `json:"type,required"`
+	Type constant.FieldEmail `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -931,8 +931,8 @@ const (
 // Email address value
 type EmailValue struct {
 	// A valid email address.
-	Data string              `json:"data,required" format:"email"`
-	Type constant.ValueEmail `json:"type,required"`
+	Data string              `json:"data" api:"required" format:"email"`
+	Type constant.ValueEmail `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -962,9 +962,9 @@ func (r EmailValue) ToParam() EmailValueParam {
 // The properties Data, Type are required.
 type EmailValueParam struct {
 	// A valid email address.
-	Data string `json:"data,required" format:"email"`
+	Data string `json:"data" api:"required" format:"email"`
 	// This field can be elided, and will marshal its zero value as "value/email".
-	Type constant.ValueEmail `json:"type,required"`
+	Type constant.ValueEmail `json:"type" api:"required"`
 	paramObj
 }
 
@@ -1867,10 +1867,10 @@ func (u fieldValueParamUnionData) GetType() *string {
 type FieldValueParamX struct {
 	// Social media profile information including both the full URL and extracted
 	// username.
-	Data FieldValueParamXData `json:"data,omitzero,required"`
+	Data FieldValueParamXData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_x".
-	Type constant.ValueUriSocialX `json:"type,required"`
+	Type constant.ValueUriSocialX `json:"type" api:"required"`
 	paramObj
 }
 
@@ -1907,10 +1907,10 @@ func (r *FieldValueParamXData) UnmarshalJSON(data []byte) error {
 // The properties Data, Type are required.
 type FieldValueParamLinkedIn struct {
 	// The social media profile for the LinkedIn platform
-	Data FieldValueParamLinkedInData `json:"data,omitzero,required"`
+	Data FieldValueParamLinkedInData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_linked_in".
-	Type constant.ValueUriSocialLinkedIn `json:"type,required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
 	paramObj
 }
 
@@ -1943,33 +1943,33 @@ func (r *FieldValueParamLinkedInData) UnmarshalJSON(data []byte) error {
 // A field that stores decimal numbers with floating-point precision.
 type FloatField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality FloatFieldCardinality `json:"cardinality,required"`
+	Cardinality FloatFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Rating").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `rating`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/unitless_float` for this field.
-	Type constant.FieldNumberUnitlessFloat `json:"type,required"`
+	Type constant.FieldNumberUnitlessFloat `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2008,8 +2008,8 @@ const (
 
 // Floating point number
 type FloatValue struct {
-	Data float64                           `json:"data,required"`
-	Type constant.ValueNumberUnitlessFloat `json:"type,required"`
+	Data float64                           `json:"data" api:"required"`
+	Type constant.ValueNumberUnitlessFloat `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2038,10 +2038,10 @@ func (r FloatValue) ToParam() FloatValueParam {
 //
 // The properties Data, Type are required.
 type FloatValueParam struct {
-	Data float64 `json:"data,required"`
+	Data float64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/unitless_float".
-	Type constant.ValueNumberUnitlessFloat `json:"type,required"`
+	Type constant.ValueNumberUnitlessFloat `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2056,8 +2056,8 @@ func (r *FloatValueParam) UnmarshalJSON(data []byte) error {
 // Funnel step value
 type FunnelStepValue struct {
 	// A specific funnel step, as configured on the Funnel
-	Data FunnelStep               `json:"data,required"`
-	Type constant.ValueFunnelStep `json:"type,required"`
+	Data FunnelStep               `json:"data" api:"required"`
+	Type constant.ValueFunnelStep `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2078,10 +2078,10 @@ func (r *FunnelStepValue) UnmarshalJSON(data []byte) error {
 // The properties Data, Type are required.
 type FunnelStepValueParam struct {
 	// A specific funnel step, as configured on the Funnel
-	Data FunnelStepValueParamDataUnion `json:"data,omitzero,required"`
+	Data FunnelStepValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/funnel_step".
-	Type constant.ValueFunnelStep `json:"type,required"`
+	Type constant.ValueFunnelStep `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2157,33 +2157,33 @@ func (u FunnelStepValueParamDataUnion) GetType() *string {
 // A field that stores geographic coordinates or location data.
 type GeoField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality GeoFieldCardinality `json:"cardinality,required"`
+	Cardinality GeoFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Location").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `location`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/geo` for this field.
-	Type constant.FieldGeo `json:"type,required"`
+	Type constant.FieldGeo `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2224,8 +2224,8 @@ const (
 type GeoValue struct {
 	// A string that represents some geographic location. The exact format may vary
 	// based on context.
-	Data string            `json:"data,required"`
-	Type constant.ValueGeo `json:"type,required"`
+	Data string            `json:"data" api:"required"`
+	Type constant.ValueGeo `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2256,9 +2256,9 @@ func (r GeoValue) ToParam() GeoValueParam {
 type GeoValueParam struct {
 	// A string that represents some geographic location. The exact format may vary
 	// based on context.
-	Data string `json:"data,required"`
+	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/geo".
-	Type constant.ValueGeo `json:"type,required"`
+	Type constant.ValueGeo `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2273,34 +2273,34 @@ func (r *GeoValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores whole numbers without decimal places.
 type IntegerField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality IntegerFieldCardinality `json:"cardinality,required"`
+	Cardinality IntegerFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Employee Count").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `employee_count`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/unitless_integer` for this
 	// field.
-	Type constant.FieldNumberUnitlessInteger `json:"type,required"`
+	Type constant.FieldNumberUnitlessInteger `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2339,8 +2339,8 @@ const (
 
 // Integer value without units
 type IntegerValue struct {
-	Data int64                               `json:"data,required"`
-	Type constant.ValueNumberUnitlessInteger `json:"type,required"`
+	Data int64                               `json:"data" api:"required"`
+	Type constant.ValueNumberUnitlessInteger `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2369,10 +2369,10 @@ func (r IntegerValue) ToParam() IntegerValueParam {
 //
 // The properties Data, Type are required.
 type IntegerValueParam struct {
-	Data int64 `json:"data,required"`
+	Data int64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/unitless_integer".
-	Type constant.ValueNumberUnitlessInteger `json:"type,required"`
+	Type constant.ValueNumberUnitlessInteger `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2388,15 +2388,15 @@ func (r *IntegerValueParam) UnmarshalJSON(data []byte) error {
 // `values` corresponding to the Collection's `fields`.
 type Item struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A lightweight reference to a `Collection`, containing the minimal information
 	// needed to identify it.
-	Collection CollectionPointer `json:"collection,required"`
+	Collection CollectionPointer `json:"collection" api:"required"`
 	// String representing the object’s type. Always `item` for this object.
-	Type constant.Item `json:"type,required"`
+	Type constant.Item `json:"type" api:"required"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
 	// that field.
-	Values map[string]FieldValueUnion `json:"values,required"`
+	Values map[string]FieldValueUnion `json:"values" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2418,11 +2418,11 @@ func (r *Item) UnmarshalJSON(data []byte) error {
 // needed to locate the item.
 type ItemPointer struct {
 	// Unique identifier of the item.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to the `Collection` containing this item.
-	Collection CollectionPointer `json:"collection,required"`
+	Collection CollectionPointer `json:"collection" api:"required"`
 	// String representing the object’s type. Always `item` for this object.
-	Type constant.Item `json:"type,required"`
+	Type constant.Item `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2454,13 +2454,13 @@ func (r ItemPointer) ToParam() ItemPointerParam {
 // The properties ID, Collection, Type are required.
 type ItemPointerParam struct {
 	// Unique identifier of the item.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A reference to the `Collection` containing this item.
-	Collection CollectionPointerParam `json:"collection,omitzero,required"`
+	Collection CollectionPointerParam `json:"collection,omitzero" api:"required"`
 	// String representing the object’s type. Always `item` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "item".
-	Type constant.Item `json:"type,required"`
+	Type constant.Item `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2640,9 +2640,9 @@ func init() {
 type ItemsFilterAndGroupParam struct {
 	// An array of filters, ALL of which must be satisfied for this `and` filter to
 	// match.
-	Filters []ItemsFilterUnionParam `json:"filters,omitzero,required"`
+	Filters []ItemsFilterUnionParam `json:"filters,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "and".
-	Op constant.And `json:"op,required"`
+	Op constant.And `json:"op" api:"required"`
 	paramObj
 }
 
@@ -2657,9 +2657,9 @@ func (r *ItemsFilterAndGroupParam) UnmarshalJSON(data []byte) error {
 // The properties Filter, Op are required.
 type ItemsFilterNotGroupParam struct {
 	// A nested filter which must NOT match in order for this `not` filter to match.
-	Filter ItemsFilterUnionParam `json:"filter,omitzero,required"`
+	Filter ItemsFilterUnionParam `json:"filter,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "not".
-	Op constant.Not `json:"op,required"`
+	Op constant.Not `json:"op" api:"required"`
 	paramObj
 }
 
@@ -2677,9 +2677,9 @@ func (r *ItemsFilterNotGroupParam) UnmarshalJSON(data []byte) error {
 type ItemsFilterOrGroupParam struct {
 	// An array of filters, ANY of which must be satisfied for this `or` filter to
 	// match.
-	Filters []ItemsFilterUnionParam `json:"filters,omitzero,required"`
+	Filters []ItemsFilterUnionParam `json:"filters,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "or".
-	Op constant.Or `json:"op,required"`
+	Op constant.Or `json:"op" api:"required"`
 	paramObj
 }
 
@@ -2696,9 +2696,9 @@ func (r *ItemsFilterOrGroupParam) UnmarshalJSON(data []byte) error {
 // The properties Field, Op are required.
 type ItemsFilterValueExistsParam struct {
 	// The id or key of the field for which a value must exist.
-	Field string `json:"field,required"`
+	Field string `json:"field" api:"required"`
 	// This field can be elided, and will marshal its zero value as "exists".
-	Op constant.Exists `json:"op,required"`
+	Op constant.Exists `json:"op" api:"required"`
 	paramObj
 }
 
@@ -2716,17 +2716,17 @@ func (r *ItemsFilterValueExistsParam) UnmarshalJSON(data []byte) error {
 // The properties Field, Op, Value are required.
 type ItemsFilterValueMatchesParam struct {
 	// The id or key of the field in which values are matched.
-	Field string `json:"field,required"`
+	Field string `json:"field" api:"required"`
 	// The matching operator for this filter.
 	//
 	// Any of "starts_with", "ends_with", "contains", "not_contains", "eq", "not_eq",
 	// "gt", "lt", "gte", "lte".
-	Op ItemsFilterValueMatchesOp `json:"op,omitzero,required"`
+	Op ItemsFilterValueMatchesOp `json:"op,omitzero" api:"required"`
 	// The value to match against. Use ISO8601 format for dates and datetime fields.
 	// For date fields, the time portion of the date-time will be ignored. For currency
 	// fields, the amount should be in the smallest unit of currency (eg: cents for
 	// USD).
-	Value ItemsFilterValueMatchesValueUnionParam `json:"value,omitzero,required"`
+	Value ItemsFilterValueMatchesValueUnionParam `json:"value,omitzero" api:"required"`
 	paramObj
 }
 
@@ -2785,33 +2785,33 @@ func (u *ItemsFilterValueMatchesValueUnionParam) asAny() any {
 // A field that stores monetary amounts with currency information.
 type MonetaryField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality MonetaryFieldCardinality `json:"cardinality,required"`
+	Cardinality MonetaryFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Deal Value").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `deal_value`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/monetary` for this field.
-	Type constant.FieldNumberMonetary `json:"type,required"`
+	Type constant.FieldNumberMonetary `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2852,8 +2852,8 @@ const (
 type MonetaryValue struct {
 	// A monetary amount is composed of the amount in the smallest unit of a currency
 	// and an ISO currency code.
-	Data MonetaryValueData            `json:"data,required"`
-	Type constant.ValueNumberMonetary `json:"type,required"`
+	Data MonetaryValueData            `json:"data" api:"required"`
+	Type constant.ValueNumberMonetary `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2882,10 +2882,10 @@ func (r MonetaryValue) ToParam() MonetaryValueParam {
 // and an ISO currency code.
 type MonetaryValueData struct {
 	// The 3-letter ISO 4217 currency code
-	Currency string `json:"currency,required"`
+	Currency string `json:"currency" api:"required"`
 	// The amount in the minor units of the currency. For example, $10 (10 USD) would
 	// be 1000. Minor units conversion depends on the currency.
-	InMinorUnits int64 `json:"in_minor_units,required"`
+	InMinorUnits int64 `json:"in_minor_units" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Currency     respjson.Field
@@ -2907,10 +2907,10 @@ func (r *MonetaryValueData) UnmarshalJSON(data []byte) error {
 type MonetaryValueParam struct {
 	// A monetary amount is composed of the amount in the smallest unit of a currency
 	// and an ISO currency code.
-	Data MonetaryValueDataParam `json:"data,omitzero,required"`
+	Data MonetaryValueDataParam `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/monetary".
-	Type constant.ValueNumberMonetary `json:"type,required"`
+	Type constant.ValueNumberMonetary `json:"type" api:"required"`
 	paramObj
 }
 
@@ -2928,10 +2928,10 @@ func (r *MonetaryValueParam) UnmarshalJSON(data []byte) error {
 // The properties Currency, InMinorUnits are required.
 type MonetaryValueDataParam struct {
 	// The 3-letter ISO 4217 currency code
-	Currency string `json:"currency,required"`
+	Currency string `json:"currency" api:"required"`
 	// The amount in the minor units of the currency. For example, $10 (10 USD) would
 	// be 1000. Minor units conversion depends on the currency.
-	InMinorUnits int64 `json:"in_minor_units,required"`
+	InMinorUnits int64 `json:"in_minor_units" api:"required"`
 	paramObj
 }
 
@@ -2946,33 +2946,33 @@ func (r *MonetaryValueDataParam) UnmarshalJSON(data []byte) error {
 // A field that stores multiple lines of text with line breaks preserved.
 type MultiLineTextField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality MultiLineTextFieldCardinality `json:"cardinality,required"`
+	Cardinality MultiLineTextFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Description").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `description`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/text/multi_line` for this field.
-	Type constant.FieldTextMultiLine `json:"type,required"`
+	Type constant.FieldTextMultiLine `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3013,8 +3013,8 @@ const (
 type MultiLineTextValue struct {
 	// Text which may contain line breaks, can be up to 65,536 characters long. Do not
 	// use markdown formatting, just plain text.
-	Data string                      `json:"data,required"`
-	Type constant.ValueTextMultiLine `json:"type,required"`
+	Data string                      `json:"data" api:"required"`
+	Type constant.ValueTextMultiLine `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3045,10 +3045,10 @@ func (r MultiLineTextValue) ToParam() MultiLineTextValueParam {
 type MultiLineTextValueParam struct {
 	// Text which may contain line breaks, can be up to 65,536 characters long. Do not
 	// use markdown formatting, just plain text.
-	Data string `json:"data,required"`
+	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/text/multi_line".
-	Type constant.ValueTextMultiLine `json:"type,required"`
+	Type constant.ValueTextMultiLine `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3063,33 +3063,33 @@ func (r *MultiLineTextValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores percentage values as decimal numbers.
 type PercentageField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality PercentageFieldCardinality `json:"cardinality,required"`
+	Cardinality PercentageFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Win Probability").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `win_probability`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/percentage` for this field.
-	Type constant.FieldNumberPercentage `json:"type,required"`
+	Type constant.FieldNumberPercentage `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3130,8 +3130,8 @@ const (
 type PercentageValue struct {
 	// A floating-point number representing a percentage value, for example 50.21 for
 	// 50.21% or -1000 for -1000% etc.
-	Data float64                        `json:"data,required"`
-	Type constant.ValueNumberPercentage `json:"type,required"`
+	Data float64                        `json:"data" api:"required"`
+	Type constant.ValueNumberPercentage `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3162,10 +3162,10 @@ func (r PercentageValue) ToParam() PercentageValueParam {
 type PercentageValueParam struct {
 	// A floating-point number representing a percentage value, for example 50.21 for
 	// 50.21% or -1000 for -1000% etc.
-	Data float64 `json:"data,required"`
+	Data float64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/percentage".
-	Type constant.ValueNumberPercentage `json:"type,required"`
+	Type constant.ValueNumberPercentage `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3181,40 +3181,40 @@ func (r *PercentageValueParam) UnmarshalJSON(data []byte) error {
 // cross-collection relationships.
 type RelationField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The set of collections that are valid targets for this relation.
-	AllowedCollections []CollectionPointer `json:"allowed_collections,required"`
+	AllowedCollections []CollectionPointer `json:"allowed_collections" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality RelationFieldCardinality `json:"cardinality,required"`
+	Cardinality RelationFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Account").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `account`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// The type of relationship. Can be `one_way` for simple references or `two_way`
 	// for bidirectional relationships.
 	//
 	// Any of "one_way", "two_way".
-	RelationType RelationFieldRelationType `json:"relation_type,required"`
+	RelationType RelationFieldRelationType `json:"relation_type" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/relation` for this field.
-	Type constant.FieldRelation `json:"type,required"`
+	Type constant.FieldRelation `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3265,8 +3265,8 @@ const (
 // Related item reference
 type RelationValue struct {
 	// A reference to another Moonbase item.
-	Data ItemPointer            `json:"data,required"`
-	Type constant.ValueRelation `json:"type,required"`
+	Data ItemPointer            `json:"data" api:"required"`
+	Type constant.ValueRelation `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3287,9 +3287,9 @@ func (r *RelationValue) UnmarshalJSON(data []byte) error {
 // The properties Data, Type are required.
 type RelationValueParam struct {
 	// A reference to another Moonbase item.
-	Data RelationValueParamDataUnion `json:"data,omitzero,required"`
+	Data RelationValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/relation".
-	Type constant.ValueRelation `json:"type,required"`
+	Type constant.ValueRelation `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3357,33 +3357,33 @@ func (u RelationValueParamDataUnion) GetType() *string {
 // A field that stores a single line of text without line breaks.
 type SingleLineTextField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality SingleLineTextFieldCardinality `json:"cardinality,required"`
+	Cardinality SingleLineTextFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Company Name").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `company_name`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/text/single_line` for this field.
-	Type constant.FieldTextSingleLine `json:"type,required"`
+	Type constant.FieldTextSingleLine `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3424,8 +3424,8 @@ const (
 type SingleLineTextValue struct {
 	// A single line of text, up to 1024 characters long. It should not contain line
 	// breaks.
-	Data string                       `json:"data,required"`
-	Type constant.ValueTextSingleLine `json:"type,required"`
+	Data string                       `json:"data" api:"required"`
+	Type constant.ValueTextSingleLine `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3456,10 +3456,10 @@ func (r SingleLineTextValue) ToParam() SingleLineTextValueParam {
 type SingleLineTextValueParam struct {
 	// A single line of text, up to 1024 characters long. It should not contain line
 	// breaks.
-	Data string `json:"data,required"`
+	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/text/single_line".
-	Type constant.ValueTextSingleLine `json:"type,required"`
+	Type constant.ValueTextSingleLine `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3474,33 +3474,33 @@ func (r *SingleLineTextValueParam) UnmarshalJSON(data []byte) error {
 // A field that stores LinkedIn profile information.
 type SocialLinkedInField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality SocialLinkedInFieldCardinality `json:"cardinality,required"`
+	Cardinality SocialLinkedInFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "LinkedIn Profile").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `linkedin_profile`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/social_linked_in` for this field.
-	Type constant.FieldUriSocialLinkedIn `json:"type,required"`
+	Type constant.FieldUriSocialLinkedIn `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3540,8 +3540,8 @@ const (
 // The social media profile for the LinkedIn platform
 type SocialLinkedInValue struct {
 	// The social media profile for the LinkedIn platform
-	Data SocialLinkedInValueData         `json:"data,required"`
-	Type constant.ValueUriSocialLinkedIn `json:"type,required"`
+	Data SocialLinkedInValueData         `json:"data" api:"required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3560,10 +3560,10 @@ func (r *SocialLinkedInValue) UnmarshalJSON(data []byte) error {
 // The social media profile for the LinkedIn platform
 type SocialLinkedInValueData struct {
 	// The full URL to the LinkedIn profile.
-	URL string `json:"url,required" format:"uri"`
+	URL string `json:"url" api:"required" format:"uri"`
 	// The LinkedIn username, including the prefix 'company/' for company pages or
 	// 'in/' for personal profiles.
-	Username string `json:"username,required"`
+	Username string `json:"username" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		URL         respjson.Field
@@ -3582,33 +3582,33 @@ func (r *SocialLinkedInValueData) UnmarshalJSON(data []byte) error {
 // A field that stores X (formerly Twitter) profile information.
 type SocialXField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality SocialXFieldCardinality `json:"cardinality,required"`
+	Cardinality SocialXFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "X Profile").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `x_profile`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/social_x` for this field.
-	Type constant.FieldUriSocialX `json:"type,required"`
+	Type constant.FieldUriSocialX `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3649,8 +3649,8 @@ const (
 type SocialXValue struct {
 	// Social media profile information including both the full URL and extracted
 	// username.
-	Data SocialXValueData         `json:"data,required"`
-	Type constant.ValueUriSocialX `json:"type,required"`
+	Data SocialXValueData         `json:"data" api:"required"`
+	Type constant.ValueUriSocialX `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3670,11 +3670,11 @@ func (r *SocialXValue) UnmarshalJSON(data []byte) error {
 // username.
 type SocialXValueData struct {
 	// The full URL to the X profile, starting with 'https://x.com/'
-	URL string `json:"url,required" format:"uri"`
+	URL string `json:"url" api:"required" format:"uri"`
 	// The X username, up to 15 characters long, containing only lowercase letters
 	// (a-z), uppercase letters (A-Z), numbers (0-9), and underscores (\_). Does not
 	// include the '@' symbol prefix.
-	Username string `json:"username,required"`
+	Username string `json:"username" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		URL         respjson.Field
@@ -3693,35 +3693,35 @@ func (r *SocialXValueData) UnmarshalJSON(data []byte) error {
 // A field that tracks an item's position in a funnel or pipeline workflow.
 type StageField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality StageFieldCardinality `json:"cardinality,required"`
+	Cardinality StageFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The `Funnel` object that defines the available stages for this field.
-	Funnel Funnel `json:"funnel,required"`
+	Funnel Funnel `json:"funnel" api:"required"`
 	// The human-readable name of the field (e.g., "Sales Stage").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `sales_stage`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/stage` for this field.
-	Type constant.FieldStage `json:"type,required"`
+	Type constant.FieldStage `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3763,8 +3763,8 @@ const (
 type TelephoneNumber struct {
 	// A telephone number in strictly formatted E.164 format. Do not include spaces,
 	// dashes, or parentheses etc.
-	Data string                        `json:"data,required"`
-	Type constant.ValueTelephoneNumber `json:"type,required"`
+	Data string                        `json:"data" api:"required"`
+	Type constant.ValueTelephoneNumber `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3795,10 +3795,10 @@ func (r TelephoneNumber) ToParam() TelephoneNumberParam {
 type TelephoneNumberParam struct {
 	// A telephone number in strictly formatted E.164 format. Do not include spaces,
 	// dashes, or parentheses etc.
-	Data string `json:"data,required"`
+	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/telephone_number".
-	Type constant.ValueTelephoneNumber `json:"type,required"`
+	Type constant.ValueTelephoneNumber `json:"type" api:"required"`
 	paramObj
 }
 
@@ -3813,33 +3813,33 @@ func (r *TelephoneNumberParam) UnmarshalJSON(data []byte) error {
 // A field that stores phone numbers in E.164 format.
 type TelephoneNumberField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality TelephoneNumberFieldCardinality `json:"cardinality,required"`
+	Cardinality TelephoneNumberFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Phone").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `phone`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/telephone_number` for this field.
-	Type constant.FieldTelephoneNumber `json:"type,required"`
+	Type constant.FieldTelephoneNumber `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3879,33 +3879,33 @@ const (
 // A field that stores and validates web URLs.
 type URLField struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Specifies whether the field can hold a single value (`one`) or multiple values
 	// (`many`).
 	//
 	// Any of "one", "many".
-	Cardinality URLFieldCardinality `json:"cardinality,required"`
+	Cardinality URLFieldCardinality `json:"cardinality" api:"required"`
 	// If `true`, this is a built-in field included by default.
-	Core bool `json:"core,required"`
+	Core bool `json:"core" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The human-readable name of the field (e.g., "Website").
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// If `true`, the value of this field is system-managed and cannot be updated via
 	// the API.
-	Readonly bool `json:"readonly,required"`
+	Readonly bool `json:"readonly" api:"required"`
 	// A unique, stable, machine-readable identifier for the field within its
 	// collection (e.g., `website`).
-	Ref string `json:"ref,required"`
+	Ref string `json:"ref" api:"required"`
 	// If `true`, this field must have a value.
-	Required bool `json:"required,required"`
+	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/url` for this field.
-	Type constant.FieldUriURL `json:"type,required"`
+	Type constant.FieldUriURL `json:"type" api:"required"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
-	Unique bool `json:"unique,required"`
+	Unique bool `json:"unique" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the field's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3947,8 +3947,8 @@ type URLValue struct {
 	// A valid URL, conforming to RFC 3986, up to 8,192 characters long. It should
 	// include the protocol, for example 'https://' or 'mailto:support@moonbase.ai'
 	// etc.
-	Data string               `json:"data,required" format:"uri"`
-	Type constant.ValueUriURL `json:"type,required"`
+	Data string               `json:"data" api:"required" format:"uri"`
+	Type constant.ValueUriURL `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3980,9 +3980,9 @@ type URLValueParam struct {
 	// A valid URL, conforming to RFC 3986, up to 8,192 characters long. It should
 	// include the protocol, for example 'https://' or 'mailto:support@moonbase.ai'
 	// etc.
-	Data string `json:"data,required" format:"uri"`
+	Data string `json:"data" api:"required" format:"uri"`
 	// This field can be elided, and will marshal its zero value as "value/uri/url".
-	Type constant.ValueUriURL `json:"type,required"`
+	Type constant.ValueUriURL `json:"type" api:"required"`
 	paramObj
 }
 
@@ -4742,10 +4742,10 @@ func init() {
 type ValueParamValueUriSocialX struct {
 	// Social media profile information including both the full URL and extracted
 	// username.
-	Data ValueParamValueUriSocialXData `json:"data,omitzero,required"`
+	Data ValueParamValueUriSocialXData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_x".
-	Type constant.ValueUriSocialX `json:"type,required"`
+	Type constant.ValueUriSocialX `json:"type" api:"required"`
 	paramObj
 }
 
@@ -4782,10 +4782,10 @@ func (r *ValueParamValueUriSocialXData) UnmarshalJSON(data []byte) error {
 // The properties Data, Type are required.
 type ValueParamValueUriSocialLinkedIn struct {
 	// The social media profile for the LinkedIn platform
-	Data ValueParamValueUriSocialLinkedInData `json:"data,omitzero,required"`
+	Data ValueParamValueUriSocialLinkedInData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_linked_in".
-	Type constant.ValueUriSocialLinkedIn `json:"type,required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
 	paramObj
 }
 
