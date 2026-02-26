@@ -334,7 +334,9 @@ func (r *MeetingUpdateParams) UnmarshalJSON(data []byte) error {
 type MeetingUpdateParamsRecording struct {
 	// The content type of the recording. Note that only `video/mp4` is supported at
 	// this time.
-	ContentType string `json:"content_type" api:"required"`
+	//
+	// Any of "video/mp4".
+	ContentType string `json:"content_type,omitzero" api:"required"`
 	// The unique identifier for the recording from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
@@ -348,6 +350,12 @@ func (r MeetingUpdateParamsRecording) MarshalJSON() (data []byte, err error) {
 }
 func (r *MeetingUpdateParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[MeetingUpdateParamsRecording](
+		"content_type", "video/mp4",
+	)
 }
 
 // The meeting transcript.

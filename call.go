@@ -106,7 +106,9 @@ type Call struct {
 	// The participants involved in the call.
 	Participants []CallParticipant `json:"participants" api:"required"`
 	// The name of the phone provider that handled the call.
-	Provider string `json:"provider" api:"required"`
+	//
+	// Any of "openphone", "user", "zoom_phone".
+	Provider CallProvider `json:"provider" api:"required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The current status of the call.
@@ -203,6 +205,15 @@ func (r *CallParticipant) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The name of the phone provider that handled the call.
+type CallProvider string
+
+const (
+	CallProviderOpenphone CallProvider = "openphone"
+	CallProviderUser      CallProvider = "user"
+	CallProviderZoomPhone CallProvider = "zoom_phone"
+)
+
 type CallTranscript struct {
 	Cues []CallTranscriptCue `json:"cues" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -267,7 +278,9 @@ type CallNewParams struct {
 	// An array of participants involved in the call.
 	Participants []CallNewParamsParticipant `json:"participants,omitzero" api:"required"`
 	// The name of the phone provider that handled the call (e.g., `openphone`).
-	Provider string `json:"provider" api:"required"`
+	//
+	// Any of "openphone", "user", "zoom_phone".
+	Provider CallNewParamsProvider `json:"provider,omitzero" api:"required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The status of the call.
@@ -330,13 +343,24 @@ func init() {
 	)
 }
 
+// The name of the phone provider that handled the call (e.g., `openphone`).
+type CallNewParamsProvider string
+
+const (
+	CallNewParamsProviderOpenphone CallNewParamsProvider = "openphone"
+	CallNewParamsProviderUser      CallNewParamsProvider = "user"
+	CallNewParamsProviderZoomPhone CallNewParamsProvider = "zoom_phone"
+)
+
 // Parameters for creating a `CallRecording` object.
 //
 // The properties ContentType, ProviderID, URL are required.
 type CallNewParamsRecording struct {
 	// The content type of the recording. Note that only `audio/mpeg` is supported at
 	// this time.
-	ContentType string `json:"content_type" api:"required"`
+	//
+	// Any of "audio/mpeg".
+	ContentType string `json:"content_type,omitzero" api:"required"`
 	// The unique identifier for the recording from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
@@ -350,6 +374,12 @@ func (r CallNewParamsRecording) MarshalJSON() (data []byte, err error) {
 }
 func (r *CallNewParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[CallNewParamsRecording](
+		"content_type", "audio/mpeg",
+	)
 }
 
 // A transcript of the call.
@@ -442,7 +472,9 @@ type CallUpsertParams struct {
 	// An array of participants involved in the call.
 	Participants []CallUpsertParamsParticipant `json:"participants,omitzero" api:"required"`
 	// The name of the phone provider that handled the call (e.g., `openphone`).
-	Provider string `json:"provider" api:"required"`
+	//
+	// Any of "openphone", "user", "zoom_phone".
+	Provider CallUpsertParamsProvider `json:"provider,omitzero" api:"required"`
 	// The unique identifier for the call from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The status of the call.
@@ -505,13 +537,24 @@ func init() {
 	)
 }
 
+// The name of the phone provider that handled the call (e.g., `openphone`).
+type CallUpsertParamsProvider string
+
+const (
+	CallUpsertParamsProviderOpenphone CallUpsertParamsProvider = "openphone"
+	CallUpsertParamsProviderUser      CallUpsertParamsProvider = "user"
+	CallUpsertParamsProviderZoomPhone CallUpsertParamsProvider = "zoom_phone"
+)
+
 // Parameters for creating a `CallRecording` object.
 //
 // The properties ContentType, ProviderID, URL are required.
 type CallUpsertParamsRecording struct {
 	// The content type of the recording. Note that only `audio/mpeg` is supported at
 	// this time.
-	ContentType string `json:"content_type" api:"required"`
+	//
+	// Any of "audio/mpeg".
+	ContentType string `json:"content_type,omitzero" api:"required"`
 	// The unique identifier for the recording from the provider's system.
 	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
@@ -525,6 +568,12 @@ func (r CallUpsertParamsRecording) MarshalJSON() (data []byte, err error) {
 }
 func (r *CallUpsertParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[CallUpsertParamsRecording](
+		"content_type", "audio/mpeg",
+	)
 }
 
 // A transcript of the call.

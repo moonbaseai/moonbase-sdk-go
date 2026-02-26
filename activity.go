@@ -783,7 +783,9 @@ type ActivityProgramMessageFailed struct {
 	// The type of activity. Always `activity/program_message_failed`.
 	Type constant.ActivityProgramMessageFailed `json:"type" api:"required"`
 	// A code indicating the reason for the failure (e.g., `message_contained_virus`).
-	ReasonCode string `json:"reason_code"`
+	//
+	// Any of "liquid_error", "person_missing_email", "message_contained_virus".
+	ReasonCode ActivityProgramMessageFailedReasonCode `json:"reason_code"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -802,6 +804,15 @@ func (r ActivityProgramMessageFailed) RawJSON() string { return r.JSON.raw }
 func (r *ActivityProgramMessageFailed) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// A code indicating the reason for the failure (e.g., `message_contained_virus`).
+type ActivityProgramMessageFailedReasonCode string
+
+const (
+	ActivityProgramMessageFailedReasonCodeLiquidError           ActivityProgramMessageFailedReasonCode = "liquid_error"
+	ActivityProgramMessageFailedReasonCodePersonMissingEmail    ActivityProgramMessageFailedReasonCode = "person_missing_email"
+	ActivityProgramMessageFailedReasonCodeMessageContainedVirus ActivityProgramMessageFailedReasonCode = "message_contained_virus"
+)
 
 // Represents an event that occurs when a recipient opens a `ProgramMessage`.
 type ActivityProgramMessageOpened struct {
@@ -884,7 +895,9 @@ type ActivityProgramMessageShielded struct {
 	Type constant.ActivityProgramMessageShielded `json:"type" api:"required"`
 	// A code indicating why the message was shielded (e.g.,
 	// `person_previously_unsubscribed`).
-	ReasonCode string `json:"reason_code"`
+	//
+	// Any of "person_previously_unsubscribed", "email_on_unsubscribe_list".
+	ReasonCode ActivityProgramMessageShieldedReasonCode `json:"reason_code"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -903,6 +916,15 @@ func (r ActivityProgramMessageShielded) RawJSON() string { return r.JSON.raw }
 func (r *ActivityProgramMessageShielded) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// A code indicating why the message was shielded (e.g.,
+// `person_previously_unsubscribed`).
+type ActivityProgramMessageShieldedReasonCode string
+
+const (
+	ActivityProgramMessageShieldedReasonCodePersonPreviouslyUnsubscribed ActivityProgramMessageShieldedReasonCode = "person_previously_unsubscribed"
+	ActivityProgramMessageShieldedReasonCodeEmailOnUnsubscribeList       ActivityProgramMessageShieldedReasonCode = "email_on_unsubscribe_list"
+)
 
 // Represents an event that occurs when a recipient unsubscribes after receiving a
 // `ProgramMessage`.
