@@ -114,16 +114,16 @@ func (r *InboxMessageService) Delete(ctx context.Context, id string, opts ...opt
 // collections.
 type Address struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The role of the address in the message. Can be `from`, `reply_to`, `to`, `cc`,
 	// or `bcc`.
 	//
 	// Any of "from", "reply_to", "to", "cc", "bcc".
-	Role AddressRole `json:"role,required"`
+	Role AddressRole `json:"role" api:"required"`
 	// String representing the object’s type. Always `message_address` for this object.
-	Type constant.MessageAddress `json:"type,required"`
+	Type constant.MessageAddress `json:"type" api:"required"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -162,28 +162,28 @@ const (
 // The Email Message object represents a single email within a `Conversation`.
 type EmailMessage struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Structured content that can be rendered in multiple formats, currently
 	// supporting Markdown.
-	Body shared.FormattedText `json:"body,required"`
+	Body shared.FormattedText `json:"body" api:"required"`
 	// `true` if the message appears to be part of a bulk mailing.
-	Bulk bool `json:"bulk,required"`
+	Bulk bool `json:"bulk" api:"required"`
 	// The time the message was received, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// `true` if the message is a draft that has not been sent.
-	Draft bool `json:"draft,required"`
+	Draft bool `json:"draft" api:"required"`
 	// The current lock version of the message for optimistic concurrency control.
-	LockVersion int64 `json:"lock_version,required"`
+	LockVersion int64 `json:"lock_version" api:"required"`
 	// `true` if the message is classified as spam.
-	Spam bool `json:"spam,required"`
+	Spam bool `json:"spam" api:"required"`
 	// The subject line of the email.
-	Subject string `json:"subject,required"`
+	Subject string `json:"subject" api:"required"`
 	// `true` if the message is in the trash.
-	Trash bool `json:"trash,required"`
+	Trash bool `json:"trash" api:"required"`
 	// String representing the object’s type. Always `email_message` for this object.
-	Type constant.EmailMessage `json:"type,required"`
+	Type constant.EmailMessage `json:"type" api:"required"`
 	// `true` if the message has not been read.
-	Unread bool `json:"unread,required"`
+	Unread bool `json:"unread" api:"required"`
 	// A list of `Address` objects associated with the message (sender and recipients).
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -230,19 +230,19 @@ func (r *EmailMessage) UnmarshalJSON(data []byte) error {
 // the file content via the `download_url`.
 type EmailMessageAttachment struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// A temporary, signed URL to download the file content. The URL expires after one
 	// hour.
-	DownloadURL string `json:"download_url,required" format:"uri"`
+	DownloadURL string `json:"download_url" api:"required" format:"uri"`
 	// The original name of the uploaded file, including its extension.
-	Filename string `json:"filename,required"`
+	Filename string `json:"filename" api:"required"`
 	// The size of the file in bytes.
-	Size int64 `json:"size,required"`
+	Size int64 `json:"size" api:"required"`
 	// String representing the object’s type. Always `message_attachment` for this
 	// object.
-	Type constant.MessageAttachment `json:"type,required"`
+	Type constant.MessageAttachment `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -264,9 +264,9 @@ func (r *EmailMessageAttachment) UnmarshalJSON(data []byte) error {
 
 type InboxMessageNewParams struct {
 	// The email body.
-	Body shared.FormattedTextParam `json:"body,omitzero,required"`
+	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
 	// The inbox to use for sending the email.
-	InboxID string `json:"inbox_id,required"`
+	InboxID string `json:"inbox_id" api:"required"`
 	// The ID of the conversation, if responding to an existing conversation.
 	ConversationID param.Opt[string] `json:"conversation_id,omitzero"`
 	// The subject line of the email.
@@ -291,7 +291,7 @@ func (r *InboxMessageNewParams) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageNewParamsBcc struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
@@ -308,7 +308,7 @@ func (r *InboxMessageNewParamsBcc) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageNewParamsCc struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
@@ -325,7 +325,7 @@ func (r *InboxMessageNewParamsCc) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageNewParamsTo struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
@@ -358,7 +358,7 @@ func (r InboxMessageGetParams) URLQuery() (v url.Values, err error) {
 
 type InboxMessageUpdateParams struct {
 	// The current lock version of the draft for optimistic concurrency control.
-	LockVersion int64 `json:"lock_version,required"`
+	LockVersion int64 `json:"lock_version" api:"required"`
 	// The subject line of the email.
 	Subject param.Opt[string] `json:"subject,omitzero"`
 	// A list of the BCC recipients.
@@ -383,7 +383,7 @@ func (r *InboxMessageUpdateParams) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageUpdateParamsBcc struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
@@ -400,7 +400,7 @@ func (r *InboxMessageUpdateParamsBcc) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageUpdateParamsCc struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
@@ -417,7 +417,7 @@ func (r *InboxMessageUpdateParamsCc) UnmarshalJSON(data []byte) error {
 // The property Email is required.
 type InboxMessageUpdateParamsTo struct {
 	// The email address.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// The recipient's name.
 	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj

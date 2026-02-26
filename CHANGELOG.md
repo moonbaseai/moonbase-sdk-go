@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.9 (2026-02-26)
+
+Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
+
+### Bug Fixes
+
+* **types:** correct string fields to enums in activity/call/meeting ([2da8b0d](https://github.com/moonbaseai/moonbase-sdk-go/commit/2da8b0d7838ff36ab3b4ef7e6d9f3c8fa7814617))
+
+
+### Chores
+
+* **internal:** move custom custom `json` tags to `api` ([7a2c48c](https://github.com/moonbaseai/moonbase-sdk-go/commit/7a2c48c427963b3f46501e97ae0140bf670e8ee2))
+
 ## 0.1.0-alpha.8 (2026-02-23)
 
 Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)

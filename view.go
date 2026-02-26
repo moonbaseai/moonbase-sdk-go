@@ -56,19 +56,19 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 // including filters and sorting rules.
 type View struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The name of the view.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `view` for this object.
-	Type constant.View `json:"type,required"`
+	Type constant.View `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The type of view, such as `table` or `board`.
 	//
 	// Any of "table", "board".
-	ViewType ViewViewType `json:"view_type,required"`
+	ViewType ViewViewType `json:"view_type" api:"required"`
 	// The `Collection` this view belongs to.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.

@@ -13,8 +13,8 @@ import (
 
 // A field in a search result
 type SearchResponse struct {
-	Data []SearchResponseData `json:"data,required"`
-	Type constant.List        `json:"type,required"`
+	Data []SearchResponseData `json:"data" api:"required"`
+	Type constant.List        `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -34,7 +34,7 @@ func (r *SearchResponse) UnmarshalJSON(data []byte) error {
 type SearchResponseData struct {
 	// An Item represents a single record or row within a Collection. It holds a set of
 	// `values` corresponding to the Collection's `fields`.
-	Data Item `json:"data,required"`
+	Data Item `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -50,7 +50,7 @@ func (r *SearchResponseData) UnmarshalJSON(data []byte) error {
 }
 
 type SearchParams struct {
-	Query string `query:"query,required" json:"-"`
+	Query string `query:"query" api:"required" json:"-"`
 	paramObj
 }
 

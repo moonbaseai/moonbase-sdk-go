@@ -79,17 +79,17 @@ func (r *TagsetService) ListAutoPaging(ctx context.Context, query TagsetListPara
 // `Inbox`.
 type Tagset struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The name of the tagset.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// A list of `Tag` objects belonging to this tagset.
-	Tags []TagsetTag `json:"tags,required"`
+	Tags []TagsetTag `json:"tags" api:"required"`
 	// String representing the object’s type. Always `tagset` for this object.
-	Type constant.Tagset `json:"type,required"`
+	Type constant.Tagset `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional description of the tagset's purpose.
 	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -116,11 +116,11 @@ func (r *Tagset) UnmarshalJSON(data []byte) error {
 // and filtering.
 type TagsetTag struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The name of the tag.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type,required"`
+	Type constant.Tag `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

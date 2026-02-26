@@ -78,37 +78,37 @@ func (r *InboxConversationService) ListAutoPaging(ctx context.Context, query Inb
 // The Conversation object represents a thread of related messages.
 type InboxConversation struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// `true` if the conversation appears to be part of a bulk mailing.
-	Bulk bool `json:"bulk,required"`
+	Bulk bool `json:"bulk" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// `true` if a new draft reply to this conversation has been started.
-	Draft bool `json:"draft,required"`
+	Draft bool `json:"draft" api:"required"`
 	// Whether the conversation is marked for follow-up.
-	FollowUp bool `json:"follow_up,required"`
+	FollowUp bool `json:"follow_up" api:"required"`
 	// The time of the most recent activity in the conversation, as an ISO 8601
 	// timestamp in UTC.
-	LastMessageAt time.Time `json:"last_message_at,required" format:"date-time"`
+	LastMessageAt time.Time `json:"last_message_at" api:"required" format:"date-time"`
 	// `true` if the conversation is marked as spam.
-	Spam bool `json:"spam,required"`
+	Spam bool `json:"spam" api:"required"`
 	// The current state, which can be `unassigned`, `active`, `closed`, or `waiting`.
 	//
 	// Any of "unassigned", "active", "closed", "waiting".
-	State InboxConversationState `json:"state,required"`
+	State InboxConversationState `json:"state" api:"required"`
 	// The subject line of the conversation.
-	Subject string `json:"subject,required"`
+	Subject string `json:"subject" api:"required"`
 	// A list of `Tag` objects applied to this conversation.
-	Tags []InboxConversationTag `json:"tags,required"`
+	Tags []InboxConversationTag `json:"tags" api:"required"`
 	// `true` if the conversation is in the trash.
-	Trash bool `json:"trash,required"`
+	Trash bool `json:"trash" api:"required"`
 	// String representing the object’s type. Always `inbox_conversation` for this
 	// object.
-	Type constant.InboxConversation `json:"type,required"`
+	Type constant.InboxConversation `json:"type" api:"required"`
 	// `true` if the conversation contains unread messages.
-	Unread bool `json:"unread,required"`
+	Unread bool `json:"unread" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The `Inbox` that this conversations belongs to.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -164,11 +164,11 @@ const (
 // and filtering.
 type InboxConversationTag struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The name of the tag.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type,required"`
+	Type constant.Tag `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

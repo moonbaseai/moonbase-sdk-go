@@ -49,6 +49,6 @@ func (r *CollectionFieldService) Get(ctx context.Context, id string, query Colle
 }
 
 type CollectionFieldGetParams struct {
-	CollectionID string `path:"collection_id,required" json:"-"`
+	CollectionID string `path:"collection_id" api:"required" json:"-"`
 	paramObj
 }

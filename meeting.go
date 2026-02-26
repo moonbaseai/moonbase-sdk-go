@@ -93,12 +93,12 @@ func (r *MeetingService) ListAutoPaging(ctx context.Context, query MeetingListPa
 // exist in your collections.
 type Attendee struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The email address of the attendee.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// String representing the object’s type. Always `meeting_attendee` for this
 	// object.
-	Type constant.MeetingAttendee `json:"type,required"`
+	Type constant.MeetingAttendee `json:"type" api:"required"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -125,25 +125,25 @@ func (r *Attendee) UnmarshalJSON(data []byte) error {
 // participants, timing, and associated content like summaries and recordings.
 type Meeting struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The end time of the meeting, as an ISO 8601 timestamp in UTC.
-	EndAt time.Time `json:"end_at,required" format:"date-time"`
+	EndAt time.Time `json:"end_at" api:"required" format:"date-time"`
 	// The globally unique iCalendar UID for the meeting event.
-	ICalUid string `json:"i_cal_uid,required"`
+	ICalUid string `json:"i_cal_uid" api:"required"`
 	// The unique identifier for the meeting from the external calendar provider (e.g.,
 	// Google Calendar).
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The start time of the meeting, as an ISO 8601 timestamp in UTC.
-	StartAt time.Time `json:"start_at,required" format:"date-time"`
+	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
 	// The IANA time zone in which the meeting is scheduled (e.g.,
 	// `America/Los_Angeles`).
-	TimeZone string `json:"time_zone,required"`
+	TimeZone string `json:"time_zone" api:"required"`
 	// String representing the object’s type. Always `meeting` for this object.
-	Type constant.Meeting `json:"type,required"`
+	Type constant.Meeting `json:"type" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
-	UpdatedAt time.Time `json:"updated_at,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A list of `Attendee` objects for the meeting.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -174,7 +174,7 @@ type Meeting struct {
 	Summary Note `json:"summary"`
 	// The title or subject of the meeting.
 	Title      string            `json:"title"`
-	Transcript MeetingTranscript `json:"transcript,nullable"`
+	Transcript MeetingTranscript `json:"transcript" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -209,7 +209,7 @@ func (r *Meeting) UnmarshalJSON(data []byte) error {
 }
 
 type MeetingTranscript struct {
-	Cues []MeetingTranscriptCue `json:"cues,required"`
+	Cues []MeetingTranscriptCue `json:"cues" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cues        respjson.Field
@@ -225,10 +225,10 @@ func (r *MeetingTranscript) UnmarshalJSON(data []byte) error {
 }
 
 type MeetingTranscriptCue struct {
-	From    float64                     `json:"from,required"`
-	Speaker MeetingTranscriptCueSpeaker `json:"speaker,required"`
-	Text    string                      `json:"text,required"`
-	To      float64                     `json:"to,required"`
+	From    float64                     `json:"from" api:"required"`
+	Speaker MeetingTranscriptCueSpeaker `json:"speaker" api:"required"`
+	Text    string                      `json:"text" api:"required"`
+	To      float64                     `json:"to" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		From        respjson.Field
@@ -267,12 +267,12 @@ func (r *MeetingTranscriptCueSpeaker) UnmarshalJSON(data []byte) error {
 // Represents the organizer of a meeting.
 type Organizer struct {
 	// Unique identifier for the object.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The email address of the organizer.
-	Email string `json:"email,required" format:"email"`
+	Email string `json:"email" api:"required" format:"email"`
 	// String representing the object’s type. Always `meeting_organizer` for this
 	// object.
-	Type constant.MeetingOrganizer `json:"type,required"`
+	Type constant.MeetingOrganizer `json:"type" api:"required"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -334,11 +334,13 @@ func (r *MeetingUpdateParams) UnmarshalJSON(data []byte) error {
 type MeetingUpdateParamsRecording struct {
 	// The content type of the recording. Note that only `video/mp4` is supported at
 	// this time.
-	ContentType string `json:"content_type,required"`
+	//
+	// Any of "video/mp4".
+	ContentType string `json:"content_type,omitzero" api:"required"`
 	// The unique identifier for the recording from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The URL pointing to the recording.
-	URL string `json:"url,required" format:"uri"`
+	URL string `json:"url" api:"required" format:"uri"`
 	paramObj
 }
 
@@ -350,17 +352,23 @@ func (r *MeetingUpdateParamsRecording) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[MeetingUpdateParamsRecording](
+		"content_type", "video/mp4",
+	)
+}
+
 // The meeting transcript.
 //
 // The properties Cues, Provider, ProviderID are required.
 type MeetingUpdateParamsTranscript struct {
 	// A list of cues that identify the text spoken in specific time slices of the
 	// meeting.
-	Cues []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero,required"`
+	Cues []MeetingUpdateParamsTranscriptCue `json:"cues,omitzero" api:"required"`
 	// Identifies the source of the transcript.
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// The unique identifier for the transcript from the provider's system.
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	paramObj
 }
 
@@ -379,13 +387,13 @@ func (r *MeetingUpdateParamsTranscript) UnmarshalJSON(data []byte) error {
 type MeetingUpdateParamsTranscriptCue struct {
 	// The start time of the slice, in fractional seconds from the start of the
 	// meeting.
-	From float64 `json:"from,required"`
+	From float64 `json:"from" api:"required"`
 	// The name of the person speaking.
-	Speaker string `json:"speaker,required"`
+	Speaker string `json:"speaker" api:"required"`
 	// The text spoken during the slice.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The end time of the slice, in fractional seconds from the start of the meeting.
-	To float64 `json:"to,required"`
+	To float64 `json:"to" api:"required"`
 	paramObj
 }
 
