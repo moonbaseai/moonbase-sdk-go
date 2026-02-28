@@ -19,6 +19,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 )
 
+// Manage your collections and items
+//
 // CollectionItemService contains methods and other services that help with
 // interacting with the Moonbase API.
 //

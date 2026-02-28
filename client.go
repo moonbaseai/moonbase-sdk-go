@@ -16,25 +16,40 @@ import (
 // interacting with the Moonbase API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options            []option.RequestOption
-	Funnels            FunnelService
-	Collections        CollectionService
-	Views              ViewService
-	Inboxes            InboxService
+	Options []option.RequestOption
+	Funnels FunnelService
+	// Manage your collections and items
+	Collections CollectionService
+	// Manage your collections and items
+	Views ViewService
+	// Manage your inboxes, conversations, and messages
+	Inboxes InboxService
+	// Manage your inboxes, conversations, and messages
 	InboxConversations InboxConversationService
-	InboxMessages      InboxMessageService
-	Tagsets            TagsetService
-	Programs           ProgramService
-	ProgramTemplates   ProgramTemplateService
-	ProgramMessages    ProgramMessageService
-	Forms              FormService
-	Activities         ActivityService
-	Calls              CallService
-	Files              FileService
-	Meetings           MeetingService
-	Notes              NoteService
-	WebhookEndpoints   WebhookEndpointService
-	AgentSettings      AgentSettingService
+	// Manage your inboxes, conversations, and messages
+	InboxMessages InboxMessageService
+	// Manage your inboxes, conversations, and messages
+	Tagsets TagsetService
+	// Manage your marketing campaigns and forms
+	Programs ProgramService
+	// Manage your marketing campaigns and forms
+	ProgramTemplates ProgramTemplateService
+	// Manage your marketing campaigns and forms
+	ProgramMessages ProgramMessageService
+	// Manage your marketing campaigns and forms
+	Forms FormService
+	// View activities and capture calls
+	Activities ActivityService
+	// View activities and capture calls
+	Calls CallService
+	// Manage your meetings, files, and notes
+	Files FileService
+	// Manage your meetings, files, and notes
+	Meetings MeetingService
+	// Manage your meetings, files, and notes
+	Notes            NoteService
+	WebhookEndpoints WebhookEndpointService
+	AgentSettings    AgentSettingService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,

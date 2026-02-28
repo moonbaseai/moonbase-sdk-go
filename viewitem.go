@@ -17,6 +17,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 )
 
+// Manage your collections and items
+//
 // ViewItemService contains methods and other services that help with interacting
 // with the Moonbase API.
 //

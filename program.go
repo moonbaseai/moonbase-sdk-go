@@ -21,6 +21,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your marketing campaigns and forms
+//
 // ProgramService contains methods and other services that help with interacting
 // with the Moonbase API.
 //
