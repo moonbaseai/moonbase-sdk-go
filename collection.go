@@ -24,6 +24,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your collections and items
+//
 // CollectionService contains methods and other services that help with interacting
 // with the Moonbase API.
 //
@@ -32,8 +34,10 @@ import (
 // the [NewCollectionService] method instead.
 type CollectionService struct {
 	Options []option.RequestOption
-	Fields  CollectionFieldService
-	Items   CollectionItemService
+	// Manage your collections and items
+	Fields CollectionFieldService
+	// Manage your collections and items
+	Items CollectionItemService
 }
 
 // NewCollectionService generates a new service that applies the given options to

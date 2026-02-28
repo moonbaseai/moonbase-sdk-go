@@ -13,6 +13,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
+// Manage your collections and items
+//
 // CollectionFieldService contains methods and other services that help with
 // interacting with the Moonbase API.
 //

@@ -23,6 +23,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// View activities and capture calls
+//
 // ActivityService contains methods and other services that help with interacting
 // with the Moonbase API.
 //
