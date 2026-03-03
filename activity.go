@@ -127,6 +127,8 @@ type ActivityUnion struct {
 	// This field is from variant [ActivityMeetingHeld].
 	Meeting shared.Pointer `json:"meeting"`
 	// This field is from variant [ActivityNoteCreated].
+	RelatedItems []ItemPointer `json:"related_items"`
+	// This field is from variant [ActivityNoteCreated].
 	RelatedMeeting shared.Pointer `json:"related_meeting"`
 	// This field is from variant [ActivityProgramMessageBounced].
 	ProgramMessage shared.Pointer `json:"program_message"`
@@ -160,6 +162,7 @@ type ActivityUnion struct {
 		File                   respjson.Field
 		RelatedItem            respjson.Field
 		Meeting                respjson.Field
+		RelatedItems           respjson.Field
 		RelatedMeeting         respjson.Field
 		ProgramMessage         respjson.Field
 		Recipient              respjson.Field
@@ -636,9 +639,8 @@ type ActivityNoteCreated struct {
 	Note shared.Pointer `json:"note" api:"required"`
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	RelatedItem ItemPointer `json:"related_item" api:"required"`
+	// An array of `Item` this note is related to, if any.
+	RelatedItems []ItemPointer `json:"related_items" api:"required"`
 	// A lightweight reference to another resource.
 	RelatedMeeting shared.Pointer `json:"related_meeting" api:"required"`
 	// The type of activity. Always `activity/note_created`.
@@ -648,7 +650,7 @@ type ActivityNoteCreated struct {
 		ID             respjson.Field
 		Note           respjson.Field
 		OccurredAt     respjson.Field
-		RelatedItem    respjson.Field
+		RelatedItems   respjson.Field
 		RelatedMeeting respjson.Field
 		Type           respjson.Field
 		ExtraFields    map[string]respjson.Field
