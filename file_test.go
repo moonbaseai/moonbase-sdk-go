@@ -99,7 +99,7 @@ func TestFileUploadWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Files.Upload(context.TODO(), moonbase.FileUploadParams{
-		File: io.Reader(bytes.NewBuffer([]byte("some file contents"))),
+		File: io.Reader(bytes.NewBuffer([]byte("Example data"))),
 		Associations: []shared.PointerParam{{
 			ID:   "id",
 			Type: "type",
