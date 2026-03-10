@@ -38,6 +38,8 @@ type Client struct {
 	ProgramMessages ProgramMessageService
 	// Manage your marketing campaigns and forms
 	Forms FormService
+	// Manage your marketing campaigns and forms
+	Unsubscribes UnsubscribeService
 	// View activities and capture calls
 	Activities ActivityService
 	// View activities and capture calls
@@ -85,6 +87,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ProgramTemplates = NewProgramTemplateService(opts...)
 	r.ProgramMessages = NewProgramMessageService(opts...)
 	r.Forms = NewFormService(opts...)
+	r.Unsubscribes = NewUnsubscribeService(opts...)
 	r.Activities = NewActivityService(opts...)
 	r.Calls = NewCallService(opts...)
 	r.Files = NewFileService(opts...)
