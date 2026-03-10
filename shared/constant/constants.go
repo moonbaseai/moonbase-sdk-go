@@ -85,6 +85,7 @@ type ProgramMessage string                     // Always "program_message"
 type ProgramTemplate string                    // Always "program_template"
 type Tag string                                // Always "tag"
 type Tagset string                             // Always "tagset"
+type Unsubscribe string                        // Always "unsubscribe"
 type ValueBoolean string                       // Always "value/boolean"
 type ValueChoice string                        // Always "value/choice"
 type ValueDate string                          // Always "value/date"
@@ -199,6 +200,7 @@ func (c ProgramMessage) Default() ProgramMessage                 { return "progr
 func (c ProgramTemplate) Default() ProgramTemplate               { return "program_template" }
 func (c Tag) Default() Tag                                       { return "tag" }
 func (c Tagset) Default() Tagset                                 { return "tagset" }
+func (c Unsubscribe) Default() Unsubscribe                       { return "unsubscribe" }
 func (c ValueBoolean) Default() ValueBoolean                     { return "value/boolean" }
 func (c ValueChoice) Default() ValueChoice                       { return "value/choice" }
 func (c ValueDate) Default() ValueDate                           { return "value/date" }
@@ -293,6 +295,7 @@ func (c ProgramMessage) MarshalJSON() ([]byte, error)                     { retu
 func (c ProgramTemplate) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Tag) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Tagset) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
+func (c Unsubscribe) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c ValueBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c ValueChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c ValueDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
