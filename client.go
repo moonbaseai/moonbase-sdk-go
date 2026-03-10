@@ -168,6 +168,7 @@ func (r *Client) Delete(ctx context.Context, path string, params any, res any, o
 	return r.Execute(ctx, http.MethodDelete, path, params, res, opts...)
 }
 
+// Returns items that match the search query.
 func (r *Client) Search(ctx context.Context, body SearchParams, opts ...option.RequestOption) (res *SearchResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "search"

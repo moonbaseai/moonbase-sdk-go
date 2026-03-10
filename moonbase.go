@@ -11,7 +11,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
-// A field in a search result
+// A list of search results.
 type SearchResponse struct {
 	Data []SearchResponseData `json:"data" api:"required"`
 	Type constant.List        `json:"type" api:"required"`
@@ -50,6 +50,7 @@ func (r *SearchResponseData) UnmarshalJSON(data []byte) error {
 }
 
 type SearchParams struct {
+	// The search text to match against items.
 	Query string `query:"query" api:"required" json:"-"`
 	paramObj
 }
