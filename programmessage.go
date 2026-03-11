@@ -42,7 +42,7 @@ func (r *ProgramMessageService) Send(ctx context.Context, body ProgramMessageSen
 	opts = slices.Concat(r.Options, opts)
 	path := "program_messages"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Represents a single message sent as part of a `Program`.

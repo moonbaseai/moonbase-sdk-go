@@ -45,11 +45,11 @@ func (r *CollectionItemService) New(ctx context.Context, collectionID string, bo
 	opts = slices.Concat(r.Options, opts)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items", collectionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing item.
@@ -57,15 +57,15 @@ func (r *CollectionItemService) Get(ctx context.Context, id string, query Collec
 	opts = slices.Concat(r.Options, opts)
 	if query.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items/%s", query.CollectionID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an item.
@@ -79,15 +79,15 @@ func (r *CollectionItemService) Update(ctx context.Context, id string, params Co
 	opts = slices.Concat(r.Options, opts)
 	if params.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items/%s", params.CollectionID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of items that are part of the collection.
@@ -97,7 +97,7 @@ func (r *CollectionItemService) List(ctx context.Context, collectionID string, q
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items", collectionID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -123,15 +123,15 @@ func (r *CollectionItemService) Delete(ctx context.Context, id string, body Coll
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("collections/%s/items/%s", body.CollectionID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Returns a list of items in the collection that match the given filters.
@@ -141,7 +141,7 @@ func (r *CollectionItemService) Search(ctx context.Context, collectionID string,
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items/search", collectionID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -172,11 +172,11 @@ func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string,
 	opts = slices.Concat(r.Options, opts)
 	if collectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/items/upsert", collectionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // A search result entry

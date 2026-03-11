@@ -48,7 +48,7 @@ func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...optio
 	opts = slices.Concat(r.Options, opts)
 	path := "calls"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing call.
@@ -56,11 +56,11 @@ func (r *CallService) Get(ctx context.Context, id string, query CallGetParams, o
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("calls/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of calls.
@@ -91,7 +91,7 @@ func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "calls/upsert"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // The Call object represents a phone call that has been logged in the system. It

@@ -48,11 +48,11 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("views/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // A View represents a saved configuration for displaying items in a collection,

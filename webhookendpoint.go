@@ -45,7 +45,7 @@ func (r *WebhookEndpointService) New(ctx context.Context, body WebhookEndpointNe
 	opts = slices.Concat(r.Options, opts)
 	path := "webhook_endpoints"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing endpoint.
@@ -53,11 +53,11 @@ func (r *WebhookEndpointService) Get(ctx context.Context, id string, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an endpoint.
@@ -65,11 +65,11 @@ func (r *WebhookEndpointService) Update(ctx context.Context, id string, body Web
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of endpoints.
@@ -101,11 +101,11 @@ func (r *WebhookEndpointService) Delete(ctx context.Context, id string, opts ...
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // A Webhook Endpoint is an HTTP endpoint that receives webhooks. You can configure
