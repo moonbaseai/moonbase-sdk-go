@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Collections.Get(
+	_, _ = client.Collections.Get(
 		context.Background(),
 		"people",
 		moonbase.CollectionGetParams{},
