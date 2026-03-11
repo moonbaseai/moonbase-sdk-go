@@ -39,15 +39,15 @@ func (r *CollectionFieldService) Get(ctx context.Context, id string, query Colle
 	opts = slices.Concat(r.Options, opts)
 	if query.CollectionID == "" {
 		err = errors.New("missing required collection_id parameter")
-		return
+		return nil, err
 	}
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("collections/%s/fields/%s", query.CollectionID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type CollectionFieldGetParams struct {

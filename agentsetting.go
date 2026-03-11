@@ -38,7 +38,7 @@ func (r *AgentSettingService) Get(ctx context.Context, opts ...option.RequestOpt
 	opts = slices.Concat(r.Options, opts)
 	path := "agent_settings"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type AgentSettingGetResponse struct {

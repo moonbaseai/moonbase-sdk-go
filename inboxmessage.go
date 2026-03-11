@@ -48,7 +48,7 @@ func (r *InboxMessageService) New(ctx context.Context, body InboxMessageNewParam
 	opts = slices.Concat(r.Options, opts)
 	path := "inbox_messages"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing message.
@@ -56,11 +56,11 @@ func (r *InboxMessageService) Get(ctx context.Context, id string, query InboxMes
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("inbox_messages/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing message draft.
@@ -68,11 +68,11 @@ func (r *InboxMessageService) Update(ctx context.Context, id string, body InboxM
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("inbox_messages/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of messages.
@@ -104,11 +104,11 @@ func (r *InboxMessageService) Delete(ctx context.Context, id string, opts ...opt
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("inbox_messages/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // The Address object represents a recipient or sender of a message. It contains an

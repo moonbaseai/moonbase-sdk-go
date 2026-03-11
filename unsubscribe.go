@@ -47,7 +47,7 @@ func (r *UnsubscribeService) New(ctx context.Context, body UnsubscribeNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "unsubscribes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of unsubscribes.
@@ -79,11 +79,11 @@ func (r *UnsubscribeService) Delete(ctx context.Context, email string, opts ...o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if email == "" {
 		err = errors.New("missing required email parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("unsubscribes/%s", email)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 type Unsubscribe struct {

@@ -173,5 +173,5 @@ func (r *Client) Search(ctx context.Context, body SearchParams, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	path := "search"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
