@@ -156,11 +156,9 @@ type Meeting struct {
 	Duration float64 `json:"duration"`
 	// The physical or virtual location of the meeting.
 	Location string `json:"location"`
-	// Any personal notes taken during the meeting. It also includes the AI-generated
-	// pre-meeting briefing.
-	//
-	// **Note:** Only present when requested using the `include` query parameter.
-	Note Note `json:"note"`
+	// The Note object represents a block of text content, often used for meeting notes
+	// or summaries.
+	Note Note `json:"note" api:"nullable"`
 	// The `Organizer` of the meeting.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -170,10 +168,9 @@ type Meeting struct {
 	// A temporary, signed URL to download the meeting recording. The URL expires after
 	// one hour.
 	RecordingURL string `json:"recording_url" format:"uri"`
-	// A summary of the meeting.
-	//
-	// **Note:** Only present when requested using the `include` query parameter.
-	Summary Note `json:"summary"`
+	// The Note object represents a block of text content, often used for meeting notes
+	// or summaries.
+	Summary Note `json:"summary" api:"nullable"`
 	// The title or subject of the meeting.
 	Title      string            `json:"title"`
 	Transcript MeetingTranscript `json:"transcript" api:"nullable"`
