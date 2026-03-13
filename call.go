@@ -127,12 +127,12 @@ type Call struct {
 	EndAt time.Time `json:"end_at" format:"date-time"`
 	// The Note object represents a block of text content, often used for meeting notes
 	// or summaries.
-	Note Note `json:"note"`
+	Note Note `json:"note" api:"nullable"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata"`
 	// The Note object represents a block of text content, often used for meeting notes
 	// or summaries.
-	Summary    Note           `json:"summary"`
+	Summary    Note           `json:"summary" api:"nullable"`
 	Transcript CallTranscript `json:"transcript" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
