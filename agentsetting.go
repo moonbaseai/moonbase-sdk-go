@@ -43,7 +43,7 @@ func (r *AgentSettingService) Get(ctx context.Context, opts ...option.RequestOpt
 
 type AgentSettingGetResponse struct {
 	CreatedAt             time.Time              `json:"created_at" api:"required" format:"date-time"`
-	Type                  constant.AgentSettings `json:"type" api:"required"`
+	Type                  constant.AgentSettings `json:"type" default:"agent_settings"`
 	UpdatedAt             time.Time              `json:"updated_at" api:"required" format:"date-time"`
 	DealSummaryModel      string                 `json:"deal_summary_model"`
 	DealSummaryPrompt     string                 `json:"deal_summary_prompt"`

@@ -377,7 +377,7 @@ type ActivityActivityFileCreated struct {
 	// needed to locate the item.
 	RelatedItem ItemPointer `json:"related_item" api:"required"`
 	// The type of activity. Always `activity/file_created`.
-	Type constant.ActivityFileCreated `json:"type" api:"required"`
+	Type constant.ActivityFileCreated `json:"type" default:"activity/file_created"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -405,7 +405,7 @@ type ActivityCallOccurred struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/call_occurred`.
-	Type constant.ActivityCallOccurred `json:"type" api:"required"`
+	Type constant.ActivityCallOccurred `json:"type" default:"activity/call_occurred"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -433,7 +433,7 @@ type ActivityFormSubmitted struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/form_submitted`.
-	Type constant.ActivityFormSubmitted `json:"type" api:"required"`
+	Type constant.ActivityFormSubmitted `json:"type" default:"activity/form_submitted"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -460,7 +460,7 @@ type ActivityInboxMessageSent struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/inbox_message_sent`.
-	Type constant.ActivityInboxMessageSent `json:"type" api:"required"`
+	Type constant.ActivityInboxMessageSent `json:"type" default:"activity/inbox_message_sent"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -488,7 +488,7 @@ type ActivityItemCreated struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/item_created`.
-	Type constant.ActivityItemCreated `json:"type" api:"required"`
+	Type constant.ActivityItemCreated `json:"type" default:"activity/item_created"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -521,7 +521,7 @@ type ActivityItemMentioned struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/item_mentioned`.
-	Type constant.ActivityItemMentioned `json:"type" api:"required"`
+	Type constant.ActivityItemMentioned `json:"type" default:"activity/item_mentioned"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -557,7 +557,7 @@ type ActivityItemMerged struct {
 	// needed to locate the item.
 	Source ItemPointer `json:"source" api:"required"`
 	// The type of activity. Always `activity/item_merged`.
-	Type constant.ActivityItemMerged `json:"type" api:"required"`
+	Type constant.ActivityItemMerged `json:"type" default:"activity/item_merged"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -586,7 +586,7 @@ type ActivityMeetingHeld struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/meeting_held`.
-	Type constant.ActivityMeetingHeld `json:"type" api:"required"`
+	Type constant.ActivityMeetingHeld `json:"type" default:"activity/meeting_held"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -613,7 +613,7 @@ type ActivityMeetingScheduled struct {
 	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
 	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
 	// The type of activity. Always `activity/meeting_scheduled`.
-	Type constant.ActivityMeetingScheduled `json:"type" api:"required"`
+	Type constant.ActivityMeetingScheduled `json:"type" default:"activity/meeting_scheduled"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -644,7 +644,7 @@ type ActivityNoteCreated struct {
 	// A lightweight reference to another resource.
 	RelatedMeeting shared.Pointer `json:"related_meeting" api:"required"`
 	// The type of activity. Always `activity/note_created`.
-	Type constant.ActivityNoteCreated `json:"type" api:"required"`
+	Type constant.ActivityNoteCreated `json:"type" default:"activity/note_created"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -676,7 +676,7 @@ type ActivityProgramMessageBounced struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_bounced`.
-	Type constant.ActivityProgramMessageBounced `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageBounced `json:"type" default:"activity/program_message_bounced"`
 	// The type of bounce (e.g., `Permanent` for hard bounces, `Temporary` for soft
 	// bounces).
 	BounceType string `json:"bounce_type"`
@@ -715,7 +715,7 @@ type ActivityProgramMessageClicked struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_clicked`.
-	Type constant.ActivityProgramMessageClicked `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageClicked `json:"type" default:"activity/program_message_clicked"`
 	// The text of the link that was clicked.
 	LinkText string `json:"link_text"`
 	// The URL of the link that was clicked.
@@ -753,7 +753,7 @@ type ActivityProgramMessageComplained struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_complained`.
-	Type constant.ActivityProgramMessageComplained `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageComplained `json:"type" default:"activity/program_message_complained"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -785,7 +785,7 @@ type ActivityProgramMessageFailed struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_failed`.
-	Type constant.ActivityProgramMessageFailed `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageFailed `json:"type" default:"activity/program_message_failed"`
 	// A code indicating the reason for the failure (e.g., `message_contained_virus`).
 	//
 	// Any of "liquid_error", "person_missing_email", "message_contained_virus".
@@ -830,7 +830,7 @@ type ActivityProgramMessageOpened struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_opened`.
-	Type constant.ActivityProgramMessageOpened `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageOpened `json:"type" default:"activity/program_message_opened"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
@@ -861,7 +861,7 @@ type ActivityProgramMessageSent struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_sent`.
-	Type constant.ActivityProgramMessageSent `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageSent `json:"type" default:"activity/program_message_sent"`
 	// List of email addresses the message was sent to.
 	RecipientEmails []string `json:"recipient_emails"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -896,7 +896,7 @@ type ActivityProgramMessageShielded struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_shielded`.
-	Type constant.ActivityProgramMessageShielded `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageShielded `json:"type" default:"activity/program_message_shielded"`
 	// A code indicating why the message was shielded (e.g.,
 	// `person_previously_unsubscribed`).
 	//
@@ -943,7 +943,7 @@ type ActivityProgramMessageUnsubscribed struct {
 	// needed to locate the item.
 	Recipient ItemPointer `json:"recipient" api:"required"`
 	// The type of activity. Always `activity/program_message_unsubscribed`.
-	Type constant.ActivityProgramMessageUnsubscribed `json:"type" api:"required"`
+	Type constant.ActivityProgramMessageUnsubscribed `json:"type" default:"activity/program_message_unsubscribed"`
 	// The email address of the person who unsubscribed.
 	Email string `json:"email"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

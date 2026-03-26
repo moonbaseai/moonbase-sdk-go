@@ -99,7 +99,7 @@ type Program struct {
 	// Any of "api", "broadcast".
 	Trigger ProgramTrigger `json:"trigger" api:"required"`
 	// String representing the object’s type. Always `program` for this object.
-	Type constant.Program `json:"type" api:"required"`
+	Type constant.Program `json:"type" default:"program"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A `ProgramActivityMetrics` object summarizing engagement for this program.

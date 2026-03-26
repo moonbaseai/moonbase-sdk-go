@@ -106,7 +106,7 @@ type InboxConversation struct {
 	Trash bool `json:"trash" api:"required"`
 	// String representing the object’s type. Always `inbox_conversation` for this
 	// object.
-	Type constant.InboxConversation `json:"type" api:"required"`
+	Type constant.InboxConversation `json:"type" default:"inbox_conversation"`
 	// `true` if the conversation contains unread messages.
 	Unread bool `json:"unread" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
@@ -170,7 +170,7 @@ type InboxConversationTag struct {
 	// The name of the tag.
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type" api:"required"`
+	Type constant.Tag `json:"type" default:"tag"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

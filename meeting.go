@@ -100,7 +100,7 @@ type Attendee struct {
 	Email string `json:"email" api:"required" format:"email"`
 	// String representing the object’s type. Always `meeting_attendee` for this
 	// object.
-	Type constant.MeetingAttendee `json:"type" api:"required"`
+	Type constant.MeetingAttendee `json:"type" default:"meeting_attendee"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -143,7 +143,7 @@ type Meeting struct {
 	// `America/Los_Angeles`).
 	TimeZone string `json:"time_zone" api:"required"`
 	// String representing the object’s type. Always `meeting` for this object.
-	Type constant.Meeting `json:"type" api:"required"`
+	Type constant.Meeting `json:"type" default:"meeting"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A list of `Attendee` objects for the meeting.
@@ -271,7 +271,7 @@ type Organizer struct {
 	Email string `json:"email" api:"required" format:"email"`
 	// String representing the object’s type. Always `meeting_organizer` for this
 	// object.
-	Type constant.MeetingOrganizer `json:"type" api:"required"`
+	Type constant.MeetingOrganizer `json:"type" default:"meeting_organizer"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.

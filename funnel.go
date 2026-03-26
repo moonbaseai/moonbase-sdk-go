@@ -38,7 +38,7 @@ type Funnel struct {
 	// An ordered list of `FunnelStep` objects that make up the funnel.
 	Steps []FunnelStep `json:"steps" api:"required"`
 	// String representing the object’s type. Always `funnel` for this object.
-	Type constant.Funnel `json:"type" api:"required"`
+	Type constant.Funnel `json:"type" default:"funnel"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -70,7 +70,7 @@ type FunnelStep struct {
 	// Any of "active", "success", "failure".
 	StepType FunnelStepStepType `json:"step_type" api:"required"`
 	// String representing the object’s type. Always `funnel_step` for this object.
-	Type constant.FunnelStep `json:"type" api:"required"`
+	Type constant.FunnelStep `json:"type" default:"funnel_step"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -129,7 +129,7 @@ type FunnelStepParam struct {
 	// String representing the object’s type. Always `funnel_step` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "funnel_step".
-	Type constant.FunnelStep `json:"type" api:"required"`
+	Type constant.FunnelStep `json:"type" default:"funnel_step"`
 	paramObj
 }
 

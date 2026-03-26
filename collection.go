@@ -110,7 +110,7 @@ type BooleanField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/boolean` for this field.
-	Type constant.FieldBoolean `json:"type" api:"required"`
+	Type constant.FieldBoolean `json:"type" default:"field/boolean"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -155,7 +155,7 @@ const (
 // True or false value
 type BooleanValue struct {
 	Data bool                  `json:"data" api:"required"`
-	Type constant.ValueBoolean `json:"type" api:"required"`
+	Type constant.ValueBoolean `json:"type" default:"value/boolean"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -186,7 +186,7 @@ func (r BooleanValue) ToParam() BooleanValueParam {
 type BooleanValueParam struct {
 	Data bool `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/boolean".
-	Type constant.ValueBoolean `json:"type" api:"required"`
+	Type constant.ValueBoolean `json:"type" default:"value/boolean"`
 	paramObj
 }
 
@@ -225,7 +225,7 @@ type ChoiceField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/choice` for this field.
-	Type constant.FieldChoice `json:"type" api:"required"`
+	Type constant.FieldChoice `json:"type" default:"field/choice"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -276,7 +276,7 @@ type ChoiceFieldOption struct {
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `choice_field_option` for this
 	// object.
-	Type constant.ChoiceFieldOption `json:"type" api:"required"`
+	Type constant.ChoiceFieldOption `json:"type" default:"choice_field_option"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -315,7 +315,7 @@ type ChoiceFieldOptionParam struct {
 	//
 	// This field can be elided, and will marshal its zero value as
 	// "choice_field_option".
-	Type constant.ChoiceFieldOption `json:"type" api:"required"`
+	Type constant.ChoiceFieldOption `json:"type" default:"choice_field_option"`
 	paramObj
 }
 
@@ -331,7 +331,7 @@ func (r *ChoiceFieldOptionParam) UnmarshalJSON(data []byte) error {
 type ChoiceValue struct {
 	// An option that must match one of the predefined options for the field.
 	Data ChoiceFieldOption    `json:"data" api:"required"`
-	Type constant.ValueChoice `json:"type" api:"required"`
+	Type constant.ValueChoice `json:"type" default:"value/choice"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -354,7 +354,7 @@ type ChoiceValueParam struct {
 	// An option that must match one of the predefined options for the field.
 	Data ChoiceValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/choice".
-	Type constant.ValueChoice `json:"type" api:"required"`
+	Type constant.ValueChoice `json:"type" default:"value/choice"`
 	paramObj
 }
 
@@ -438,7 +438,7 @@ type Collection struct {
 	// is used in API requests and does not change even if the `name` is updated.
 	Ref string `json:"ref" api:"required"`
 	// String representing the object’s type. Always `collection` for this object.
-	Type constant.Collection `json:"type" api:"required"`
+	Type constant.Collection `json:"type" default:"collection"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the collection's purpose.
@@ -478,7 +478,7 @@ type CollectionPointer struct {
 	// The stable, machine-readable reference identifier of the collection.
 	Ref string `json:"ref" api:"required"`
 	// String representing the object’s type. Always `collection` for this object.
-	Type constant.Collection `json:"type" api:"required"`
+	Type constant.Collection `json:"type" default:"collection"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -516,7 +516,7 @@ type CollectionPointerParam struct {
 	// String representing the object’s type. Always `collection` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "collection".
-	Type constant.Collection `json:"type" api:"required"`
+	Type constant.Collection `json:"type" default:"collection"`
 	paramObj
 }
 
@@ -552,7 +552,7 @@ type DateField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/date` for this field.
-	Type constant.FieldDate `json:"type" api:"required"`
+	Type constant.FieldDate `json:"type" default:"field/date"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -597,7 +597,7 @@ const (
 // Date without time
 type DateValue struct {
 	Data time.Time          `json:"data" api:"required" format:"date"`
-	Type constant.ValueDate `json:"type" api:"required"`
+	Type constant.ValueDate `json:"type" default:"value/date"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -628,7 +628,7 @@ func (r DateValue) ToParam() DateValueParam {
 type DateValueParam struct {
 	Data time.Time `json:"data" api:"required" format:"date"`
 	// This field can be elided, and will marshal its zero value as "value/date".
-	Type constant.ValueDate `json:"type" api:"required"`
+	Type constant.ValueDate `json:"type" default:"value/date"`
 	paramObj
 }
 
@@ -664,7 +664,7 @@ type DatetimeField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/datetime` for this field.
-	Type constant.FieldDatetime `json:"type" api:"required"`
+	Type constant.FieldDatetime `json:"type" default:"field/datetime"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -709,7 +709,7 @@ const (
 // Date and time value
 type DatetimeValue struct {
 	Data time.Time              `json:"data" api:"required" format:"date-time"`
-	Type constant.ValueDatetime `json:"type" api:"required"`
+	Type constant.ValueDatetime `json:"type" default:"value/datetime"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -740,7 +740,7 @@ func (r DatetimeValue) ToParam() DatetimeValueParam {
 type DatetimeValueParam struct {
 	Data time.Time `json:"data" api:"required" format:"date-time"`
 	// This field can be elided, and will marshal its zero value as "value/datetime".
-	Type constant.ValueDatetime `json:"type" api:"required"`
+	Type constant.ValueDatetime `json:"type" default:"value/datetime"`
 	paramObj
 }
 
@@ -776,7 +776,7 @@ type DomainField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/domain` for this field.
-	Type constant.FieldUriDomain `json:"type" api:"required"`
+	Type constant.FieldUriDomain `json:"type" default:"field/uri/domain"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -822,7 +822,7 @@ const (
 type DomainValue struct {
 	// A valid internet domain name, without protocol (e.g., 'https://') or path.
 	Data string                  `json:"data" api:"required"`
-	Type constant.ValueUriDomain `json:"type" api:"required"`
+	Type constant.ValueUriDomain `json:"type" default:"value/uri/domain"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -854,7 +854,7 @@ type DomainValueParam struct {
 	// A valid internet domain name, without protocol (e.g., 'https://') or path.
 	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/uri/domain".
-	Type constant.ValueUriDomain `json:"type" api:"required"`
+	Type constant.ValueUriDomain `json:"type" default:"value/uri/domain"`
 	paramObj
 }
 
@@ -890,7 +890,7 @@ type EmailField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/email` for this field.
-	Type constant.FieldEmail `json:"type" api:"required"`
+	Type constant.FieldEmail `json:"type" default:"field/email"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -936,7 +936,7 @@ const (
 type EmailValue struct {
 	// A valid email address.
 	Data string              `json:"data" api:"required" format:"email"`
-	Type constant.ValueEmail `json:"type" api:"required"`
+	Type constant.ValueEmail `json:"type" default:"value/email"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -968,7 +968,7 @@ type EmailValueParam struct {
 	// A valid email address.
 	Data string `json:"data" api:"required" format:"email"`
 	// This field can be elided, and will marshal its zero value as "value/email".
-	Type constant.ValueEmail `json:"type" api:"required"`
+	Type constant.ValueEmail `json:"type" default:"value/email"`
 	paramObj
 }
 
@@ -1874,7 +1874,7 @@ type FieldValueParamX struct {
 	Data FieldValueParamXData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_x".
-	Type constant.ValueUriSocialX `json:"type" api:"required"`
+	Type constant.ValueUriSocialX `json:"type" default:"value/uri/social_x"`
 	paramObj
 }
 
@@ -1914,7 +1914,7 @@ type FieldValueParamLinkedIn struct {
 	Data FieldValueParamLinkedInData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_linked_in".
-	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" default:"value/uri/social_linked_in"`
 	paramObj
 }
 
@@ -1968,7 +1968,7 @@ type FloatField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/unitless_float` for this field.
-	Type constant.FieldNumberUnitlessFloat `json:"type" api:"required"`
+	Type constant.FieldNumberUnitlessFloat `json:"type" default:"field/number/unitless_float"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -2013,7 +2013,7 @@ const (
 // Floating point number
 type FloatValue struct {
 	Data float64                           `json:"data" api:"required"`
-	Type constant.ValueNumberUnitlessFloat `json:"type" api:"required"`
+	Type constant.ValueNumberUnitlessFloat `json:"type" default:"value/number/unitless_float"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2045,7 +2045,7 @@ type FloatValueParam struct {
 	Data float64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/unitless_float".
-	Type constant.ValueNumberUnitlessFloat `json:"type" api:"required"`
+	Type constant.ValueNumberUnitlessFloat `json:"type" default:"value/number/unitless_float"`
 	paramObj
 }
 
@@ -2061,7 +2061,7 @@ func (r *FloatValueParam) UnmarshalJSON(data []byte) error {
 type FunnelStepValue struct {
 	// A specific funnel step, as configured on the Funnel
 	Data FunnelStep               `json:"data" api:"required"`
-	Type constant.ValueFunnelStep `json:"type" api:"required"`
+	Type constant.ValueFunnelStep `json:"type" default:"value/funnel_step"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2085,7 +2085,7 @@ type FunnelStepValueParam struct {
 	Data FunnelStepValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/funnel_step".
-	Type constant.ValueFunnelStep `json:"type" api:"required"`
+	Type constant.ValueFunnelStep `json:"type" default:"value/funnel_step"`
 	paramObj
 }
 
@@ -2182,7 +2182,7 @@ type GeoField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/geo` for this field.
-	Type constant.FieldGeo `json:"type" api:"required"`
+	Type constant.FieldGeo `json:"type" default:"field/geo"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -2229,7 +2229,7 @@ type GeoValue struct {
 	// A string that represents some geographic location. The exact format may vary
 	// based on context.
 	Data string            `json:"data" api:"required"`
-	Type constant.ValueGeo `json:"type" api:"required"`
+	Type constant.ValueGeo `json:"type" default:"value/geo"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2262,7 +2262,7 @@ type GeoValueParam struct {
 	// based on context.
 	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/geo".
-	Type constant.ValueGeo `json:"type" api:"required"`
+	Type constant.ValueGeo `json:"type" default:"value/geo"`
 	paramObj
 }
 
@@ -2299,7 +2299,7 @@ type IntegerField struct {
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/unitless_integer` for this
 	// field.
-	Type constant.FieldNumberUnitlessInteger `json:"type" api:"required"`
+	Type constant.FieldNumberUnitlessInteger `json:"type" default:"field/number/unitless_integer"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -2344,7 +2344,7 @@ const (
 // Integer value without units
 type IntegerValue struct {
 	Data int64                               `json:"data" api:"required"`
-	Type constant.ValueNumberUnitlessInteger `json:"type" api:"required"`
+	Type constant.ValueNumberUnitlessInteger `json:"type" default:"value/number/unitless_integer"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2376,7 +2376,7 @@ type IntegerValueParam struct {
 	Data int64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/unitless_integer".
-	Type constant.ValueNumberUnitlessInteger `json:"type" api:"required"`
+	Type constant.ValueNumberUnitlessInteger `json:"type" default:"value/number/unitless_integer"`
 	paramObj
 }
 
@@ -2397,7 +2397,7 @@ type Item struct {
 	// needed to identify it.
 	Collection CollectionPointer `json:"collection" api:"required"`
 	// String representing the object’s type. Always `item` for this object.
-	Type constant.Item `json:"type" api:"required"`
+	Type constant.Item `json:"type" default:"item"`
 	// A hash where keys are the `ref` of a `Field` and values are the data stored for
 	// that field.
 	Values map[string]FieldValueUnion `json:"values" api:"required"`
@@ -2426,7 +2426,7 @@ type ItemPointer struct {
 	// A reference to the `Collection` containing this item.
 	Collection CollectionPointer `json:"collection" api:"required"`
 	// String representing the object’s type. Always `item` for this object.
-	Type constant.Item `json:"type" api:"required"`
+	Type constant.Item `json:"type" default:"item"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2464,7 +2464,7 @@ type ItemPointerParam struct {
 	// String representing the object’s type. Always `item` for this object.
 	//
 	// This field can be elided, and will marshal its zero value as "item".
-	Type constant.Item `json:"type" api:"required"`
+	Type constant.Item `json:"type" default:"item"`
 	paramObj
 }
 
@@ -2646,7 +2646,7 @@ type ItemsFilterAndGroupParam struct {
 	// match.
 	Filters []ItemsFilterUnionParam `json:"filters,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "and".
-	Op constant.And `json:"op" api:"required"`
+	Op constant.And `json:"op" default:"and"`
 	paramObj
 }
 
@@ -2663,7 +2663,7 @@ type ItemsFilterNotGroupParam struct {
 	// A nested filter which must NOT match in order for this `not` filter to match.
 	Filter ItemsFilterUnionParam `json:"filter,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "not".
-	Op constant.Not `json:"op" api:"required"`
+	Op constant.Not `json:"op" default:"not"`
 	paramObj
 }
 
@@ -2683,7 +2683,7 @@ type ItemsFilterOrGroupParam struct {
 	// match.
 	Filters []ItemsFilterUnionParam `json:"filters,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "or".
-	Op constant.Or `json:"op" api:"required"`
+	Op constant.Or `json:"op" default:"or"`
 	paramObj
 }
 
@@ -2702,7 +2702,7 @@ type ItemsFilterValueExistsParam struct {
 	// The id or key of the field for which a value must exist.
 	Field string `json:"field" api:"required"`
 	// This field can be elided, and will marshal its zero value as "exists".
-	Op constant.Exists `json:"op" api:"required"`
+	Op constant.Exists `json:"op" default:"exists"`
 	paramObj
 }
 
@@ -2810,7 +2810,7 @@ type MonetaryField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/monetary` for this field.
-	Type constant.FieldNumberMonetary `json:"type" api:"required"`
+	Type constant.FieldNumberMonetary `json:"type" default:"field/number/monetary"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -2857,7 +2857,7 @@ type MonetaryValue struct {
 	// A monetary amount is composed of the amount in the smallest unit of a currency
 	// and an ISO currency code.
 	Data MonetaryValueData            `json:"data" api:"required"`
-	Type constant.ValueNumberMonetary `json:"type" api:"required"`
+	Type constant.ValueNumberMonetary `json:"type" default:"value/number/monetary"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -2914,7 +2914,7 @@ type MonetaryValueParam struct {
 	Data MonetaryValueDataParam `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/monetary".
-	Type constant.ValueNumberMonetary `json:"type" api:"required"`
+	Type constant.ValueNumberMonetary `json:"type" default:"value/number/monetary"`
 	paramObj
 }
 
@@ -2971,7 +2971,7 @@ type MultiLineTextField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/text/multi_line` for this field.
-	Type constant.FieldTextMultiLine `json:"type" api:"required"`
+	Type constant.FieldTextMultiLine `json:"type" default:"field/text/multi_line"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3018,7 +3018,7 @@ type MultiLineTextValue struct {
 	// Text which may contain line breaks, can be up to 65,536 characters long. Do not
 	// use markdown formatting, just plain text.
 	Data string                      `json:"data" api:"required"`
-	Type constant.ValueTextMultiLine `json:"type" api:"required"`
+	Type constant.ValueTextMultiLine `json:"type" default:"value/text/multi_line"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3052,7 +3052,7 @@ type MultiLineTextValueParam struct {
 	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/text/multi_line".
-	Type constant.ValueTextMultiLine `json:"type" api:"required"`
+	Type constant.ValueTextMultiLine `json:"type" default:"value/text/multi_line"`
 	paramObj
 }
 
@@ -3088,7 +3088,7 @@ type PercentageField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/number/percentage` for this field.
-	Type constant.FieldNumberPercentage `json:"type" api:"required"`
+	Type constant.FieldNumberPercentage `json:"type" default:"field/number/percentage"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3135,7 +3135,7 @@ type PercentageValue struct {
 	// A floating-point number representing a percentage value, for example 50.21 for
 	// 50.21% or -1000 for -1000% etc.
 	Data float64                        `json:"data" api:"required"`
-	Type constant.ValueNumberPercentage `json:"type" api:"required"`
+	Type constant.ValueNumberPercentage `json:"type" default:"value/number/percentage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3169,7 +3169,7 @@ type PercentageValueParam struct {
 	Data float64 `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/number/percentage".
-	Type constant.ValueNumberPercentage `json:"type" api:"required"`
+	Type constant.ValueNumberPercentage `json:"type" default:"value/number/percentage"`
 	paramObj
 }
 
@@ -3213,7 +3213,7 @@ type RelationField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/relation` for this field.
-	Type constant.FieldRelation `json:"type" api:"required"`
+	Type constant.FieldRelation `json:"type" default:"field/relation"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3270,7 +3270,7 @@ const (
 type RelationValue struct {
 	// A reference to another Moonbase item.
 	Data ItemPointer            `json:"data" api:"required"`
-	Type constant.ValueRelation `json:"type" api:"required"`
+	Type constant.ValueRelation `json:"type" default:"value/relation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3293,7 +3293,7 @@ type RelationValueParam struct {
 	// A reference to another Moonbase item.
 	Data RelationValueParamDataUnion `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as "value/relation".
-	Type constant.ValueRelation `json:"type" api:"required"`
+	Type constant.ValueRelation `json:"type" default:"value/relation"`
 	paramObj
 }
 
@@ -3382,7 +3382,7 @@ type SingleLineTextField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/text/single_line` for this field.
-	Type constant.FieldTextSingleLine `json:"type" api:"required"`
+	Type constant.FieldTextSingleLine `json:"type" default:"field/text/single_line"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3429,7 +3429,7 @@ type SingleLineTextValue struct {
 	// A single line of text, up to 1024 characters long. It should not contain line
 	// breaks.
 	Data string                       `json:"data" api:"required"`
-	Type constant.ValueTextSingleLine `json:"type" api:"required"`
+	Type constant.ValueTextSingleLine `json:"type" default:"value/text/single_line"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3463,7 +3463,7 @@ type SingleLineTextValueParam struct {
 	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/text/single_line".
-	Type constant.ValueTextSingleLine `json:"type" api:"required"`
+	Type constant.ValueTextSingleLine `json:"type" default:"value/text/single_line"`
 	paramObj
 }
 
@@ -3499,7 +3499,7 @@ type SocialLinkedInField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/social_linked_in` for this field.
-	Type constant.FieldUriSocialLinkedIn `json:"type" api:"required"`
+	Type constant.FieldUriSocialLinkedIn `json:"type" default:"field/uri/social_linked_in"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3545,7 +3545,7 @@ const (
 type SocialLinkedInValue struct {
 	// The social media profile for the LinkedIn platform
 	Data SocialLinkedInValueData         `json:"data" api:"required"`
-	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" default:"value/uri/social_linked_in"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3607,7 +3607,7 @@ type SocialXField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/social_x` for this field.
-	Type constant.FieldUriSocialX `json:"type" api:"required"`
+	Type constant.FieldUriSocialX `json:"type" default:"field/uri/social_x"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3654,7 +3654,7 @@ type SocialXValue struct {
 	// Social media profile information including both the full URL and extracted
 	// username.
 	Data SocialXValueData         `json:"data" api:"required"`
-	Type constant.ValueUriSocialX `json:"type" api:"required"`
+	Type constant.ValueUriSocialX `json:"type" default:"value/uri/social_x"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3720,7 +3720,7 @@ type StageField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/stage` for this field.
-	Type constant.FieldStage `json:"type" api:"required"`
+	Type constant.FieldStage `json:"type" default:"field/stage"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3768,7 +3768,7 @@ type TelephoneNumber struct {
 	// A telephone number in strictly formatted E.164 format. Do not include spaces,
 	// dashes, or parentheses etc.
 	Data string                        `json:"data" api:"required"`
-	Type constant.ValueTelephoneNumber `json:"type" api:"required"`
+	Type constant.ValueTelephoneNumber `json:"type" default:"value/telephone_number"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3802,7 +3802,7 @@ type TelephoneNumberParam struct {
 	Data string `json:"data" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/telephone_number".
-	Type constant.ValueTelephoneNumber `json:"type" api:"required"`
+	Type constant.ValueTelephoneNumber `json:"type" default:"value/telephone_number"`
 	paramObj
 }
 
@@ -3838,7 +3838,7 @@ type TelephoneNumberField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/telephone_number` for this field.
-	Type constant.FieldTelephoneNumber `json:"type" api:"required"`
+	Type constant.FieldTelephoneNumber `json:"type" default:"field/telephone_number"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3904,7 +3904,7 @@ type URLField struct {
 	// If `true`, this field must have a value.
 	Required bool `json:"required" api:"required"`
 	// The data type of the field. Always `field/uri/url` for this field.
-	Type constant.FieldUriURL `json:"type" api:"required"`
+	Type constant.FieldUriURL `json:"type" default:"field/uri/url"`
 	// If `true`, values for this field must be unique across all items in the
 	// collection.
 	Unique bool `json:"unique" api:"required"`
@@ -3952,7 +3952,7 @@ type URLValue struct {
 	// include the protocol, for example 'https://' or 'mailto:support@moonbase.ai'
 	// etc.
 	Data string               `json:"data" api:"required" format:"uri"`
-	Type constant.ValueUriURL `json:"type" api:"required"`
+	Type constant.ValueUriURL `json:"type" default:"value/uri/url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3986,7 +3986,7 @@ type URLValueParam struct {
 	// etc.
 	Data string `json:"data" api:"required" format:"uri"`
 	// This field can be elided, and will marshal its zero value as "value/uri/url".
-	Type constant.ValueUriURL `json:"type" api:"required"`
+	Type constant.ValueUriURL `json:"type" default:"value/uri/url"`
 	paramObj
 }
 
@@ -4749,7 +4749,7 @@ type ValueParamValueUriSocialX struct {
 	Data ValueParamValueUriSocialXData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_x".
-	Type constant.ValueUriSocialX `json:"type" api:"required"`
+	Type constant.ValueUriSocialX `json:"type" default:"value/uri/social_x"`
 	paramObj
 }
 
@@ -4789,7 +4789,7 @@ type ValueParamValueUriSocialLinkedIn struct {
 	Data ValueParamValueUriSocialLinkedInData `json:"data,omitzero" api:"required"`
 	// This field can be elided, and will marshal its zero value as
 	// "value/uri/social_linked_in".
-	Type constant.ValueUriSocialLinkedIn `json:"type" api:"required"`
+	Type constant.ValueUriSocialLinkedIn `json:"type" default:"value/uri/social_linked_in"`
 	paramObj
 }
 

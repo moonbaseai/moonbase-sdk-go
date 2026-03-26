@@ -91,7 +91,7 @@ type Form struct {
 	// `true` if the form is available at a public URL.
 	PagesEnabled bool `json:"pages_enabled" api:"required"`
 	// String representing the object’s type. Always `form` for this object.
-	Type constant.Form `json:"type" api:"required"`
+	Type constant.Form `json:"type" default:"form"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The public URL for the form, if `pages_enabled` is `true`.

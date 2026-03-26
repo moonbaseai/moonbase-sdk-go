@@ -55,7 +55,7 @@ type ProgramMessage struct {
 	// The `ProgramTemplate` used to generate this message.
 	ProgramTemplate ProgramTemplate `json:"program_template" api:"required"`
 	// String representing the object’s type. Always `program_message` for this object.
-	Type constant.ProgramMessage `json:"type" api:"required"`
+	Type constant.ProgramMessage `json:"type" default:"program_message"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
