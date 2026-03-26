@@ -121,7 +121,7 @@ type MoonbaseFile struct {
 	// The size of the file in bytes.
 	Size float64 `json:"size" api:"required"`
 	// String representing the object’s type. Always `file` for this object.
-	Type constant.File `json:"type" api:"required"`
+	Type constant.File `json:"type" default:"file"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

@@ -65,7 +65,7 @@ type View struct {
 	// The name of the view.
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `view` for this object.
-	Type constant.View `json:"type" api:"required"`
+	Type constant.View `json:"type" default:"view"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The type of view, such as `table` or `board`.

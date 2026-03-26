@@ -91,7 +91,7 @@ type ProgramTemplate struct {
 	Subject string `json:"subject" api:"required"`
 	// String representing the object’s type. Always `program_template` for this
 	// object.
-	Type constant.ProgramTemplate `json:"type" api:"required"`
+	Type constant.ProgramTemplate `json:"type" default:"program_template"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The `Program` that uses this template.

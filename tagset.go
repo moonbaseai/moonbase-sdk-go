@@ -89,7 +89,7 @@ type Tagset struct {
 	// A list of `Tag` objects belonging to this tagset.
 	Tags []TagsetTag `json:"tags" api:"required"`
 	// String representing the object’s type. Always `tagset` for this object.
-	Type constant.Tagset `json:"type" api:"required"`
+	Type constant.Tagset `json:"type" default:"tagset"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional description of the tagset's purpose.
@@ -122,7 +122,7 @@ type TagsetTag struct {
 	// The name of the tag.
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type" api:"required"`
+	Type constant.Tag `json:"type" default:"tag"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

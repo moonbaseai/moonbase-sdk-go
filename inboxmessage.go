@@ -125,7 +125,7 @@ type Address struct {
 	// Any of "from", "reply_to", "to", "cc", "bcc".
 	Role AddressRole `json:"role" api:"required"`
 	// String representing the object’s type. Always `message_address` for this object.
-	Type constant.MessageAddress `json:"type" api:"required"`
+	Type constant.MessageAddress `json:"type" default:"message_address"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.
@@ -183,7 +183,7 @@ type EmailMessage struct {
 	// `true` if the message is in the trash.
 	Trash bool `json:"trash" api:"required"`
 	// String representing the object’s type. Always `email_message` for this object.
-	Type constant.EmailMessage `json:"type" api:"required"`
+	Type constant.EmailMessage `json:"type" default:"email_message"`
 	// `true` if the message has not been read.
 	Unread bool `json:"unread" api:"required"`
 	// A list of `Address` objects associated with the message (sender and recipients).
@@ -244,7 +244,7 @@ type EmailMessageAttachment struct {
 	Size int64 `json:"size" api:"required"`
 	// String representing the object’s type. Always `message_attachment` for this
 	// object.
-	Type constant.MessageAttachment `json:"type" api:"required"`
+	Type constant.MessageAttachment `json:"type" default:"message_attachment"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field

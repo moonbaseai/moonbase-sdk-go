@@ -125,7 +125,7 @@ type Endpoint struct {
 	Subscriptions []Subscription `json:"subscriptions" api:"required"`
 	// String representing the object’s type. Always `webhook_endpoint` for this
 	// object.
-	Type constant.WebhookEndpoint `json:"type" api:"required"`
+	Type constant.WebhookEndpoint `json:"type" default:"webhook_endpoint"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The HTTPS URL where webhook events will be sent.
@@ -179,7 +179,7 @@ type Subscription struct {
 	EventType SubscriptionEventType `json:"event_type" api:"required"`
 	// String representing the object’s type. Always `webhook_subscription` for this
 	// object.
-	Type constant.WebhookSubscription `json:"type" api:"required"`
+	Type constant.WebhookSubscription `json:"type" default:"webhook_subscription"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventType   respjson.Field

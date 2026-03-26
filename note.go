@@ -125,7 +125,7 @@ type Note struct {
 	// The current lock version of the note for optimistic concurrency control.
 	LockVersion int64 `json:"lock_version" api:"required"`
 	// String representing the object’s type. Always `note` for this object.
-	Type constant.Note `json:"type" api:"required"`
+	Type constant.Note `json:"type" default:"note"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A reference to an `Item` within a specific `Collection`, providing the context

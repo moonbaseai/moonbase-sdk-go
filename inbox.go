@@ -86,7 +86,7 @@ type Inbox struct {
 	// The display name of the inbox.
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `inbox` for this object.
-	Type constant.Inbox `json:"type" api:"required"`
+	Type constant.Inbox `json:"type" default:"inbox"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	CanRead   bool      `json:"can_read"`

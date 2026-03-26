@@ -118,7 +118,7 @@ type Call struct {
 	// The time the call started, as an ISO 8601 timestamp in UTC.
 	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
 	// String representing the object’s type. Always `call` for this object.
-	Type constant.Call `json:"type" api:"required"`
+	Type constant.Call `json:"type" default:"call"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The time the call was answered, if available, as an ISO 8601 timestamp in UTC.
@@ -183,7 +183,7 @@ type CallParticipant struct {
 	Role string `json:"role" api:"required"`
 	// String representing the object’s type. Always `call_participant` for this
 	// object.
-	Type constant.CallParticipant `json:"type" api:"required"`
+	Type constant.CallParticipant `json:"type" default:"call_participant"`
 	// A lightweight reference to another resource.
 	Organization shared.Pointer `json:"organization"`
 	// A lightweight reference to another resource.

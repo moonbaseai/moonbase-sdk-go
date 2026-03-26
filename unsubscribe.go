@@ -89,7 +89,7 @@ func (r *UnsubscribeService) Delete(ctx context.Context, email string, opts ...o
 type Unsubscribe struct {
 	CreatedAt time.Time            `json:"created_at" api:"required" format:"date-time"`
 	Email     string               `json:"email" api:"required"`
-	Type      constant.Unsubscribe `json:"type" api:"required"`
+	Type      constant.Unsubscribe `json:"type" default:"unsubscribe"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt   respjson.Field
