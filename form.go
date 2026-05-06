@@ -42,6 +42,14 @@ func NewFormService(opts ...option.RequestOption) (r FormService) {
 	return
 }
 
+// Creates a new form with an auto-generated collection and default fields.
+func (r *FormService) New(ctx context.Context, body FormNewParams, opts ...option.RequestOption) (res *Form, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "forms"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Retrieves the details of an existing form.
 func (r *FormService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Form, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -51,6 +59,18 @@ func (r *FormService) Get(ctx context.Context, id string, opts ...option.Request
 	}
 	path := fmt.Sprintf("forms/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Updates an existing form.
+func (r *FormService) Update(ctx context.Context, id string, body FormUpdateParams, opts ...option.RequestOption) (res *Form, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("forms/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return res, err
 }
 
@@ -77,18 +97,35 @@ func (r *FormService) ListAutoPaging(ctx context.Context, query FormListParams, 
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Permanently deletes a form. The backing collection is preserved.
+func (r *FormService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return err
+	}
+	path := fmt.Sprintf("forms/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
 // A Form provides a way to create `Items` in a `Collection`, often via a public
 // URL for external users. Each form submission creates a new item.
 type Form struct {
 	// Unique identifier for the object.
 	ID string `json:"id" api:"required"`
+	// `true` if submissions require a business email address, blocking free and
+	// disposable providers.
+	BusinessEmailRequired bool `json:"business_email_required" api:"required"`
 	// The `Collection` that submissions to this form are saved to.
 	Collection Collection `json:"collection" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The name of the form, used as the title on its public page.
 	Name string `json:"name" api:"required"`
-	// `true` if the form is available at a public URL.
+	// If `true`, a Moonbase Pages hosted page is enabled for this form, providing a
+	// standalone public URL for sharing.
 	PagesEnabled bool `json:"pages_enabled" api:"required"`
 	// String representing the object’s type. Always `form` for this object.
 	Type constant.Form `json:"type" default:"form"`
@@ -96,27 +133,89 @@ type Form struct {
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The public URL for the form, if `pages_enabled` is `true`.
 	PagesURL string `json:"pages_url" format:"uri"`
-	// An optional URL to redirect users to after a successful submission.
-	RedirectURL string `json:"redirect_url" format:"uri"`
+	// Optional URL the user is redirected to after a successful submission. When
+	// unset, no redirect occurs. Stored as a Liquid template; rendered at submission
+	// time with form field values under `submission.<key>` (keyed by the field's
+	// `key`) plus UTM params (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`,
+	// `utm_content`) automatically appended. Use the `uri_encode` filter for URL-safe
+	// values, e.g.
+	// `https://example.com/thanks?email={{ submission.email | uri_encode }}`. The
+	// rendered URL must parse as a valid URL or the submission errors.
+	RedirectURL string `json:"redirect_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID           respjson.Field
-		Collection   respjson.Field
-		CreatedAt    respjson.Field
-		Name         respjson.Field
-		PagesEnabled respjson.Field
-		Type         respjson.Field
-		UpdatedAt    respjson.Field
-		PagesURL     respjson.Field
-		RedirectURL  respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		ID                    respjson.Field
+		BusinessEmailRequired respjson.Field
+		Collection            respjson.Field
+		CreatedAt             respjson.Field
+		Name                  respjson.Field
+		PagesEnabled          respjson.Field
+		Type                  respjson.Field
+		UpdatedAt             respjson.Field
+		PagesURL              respjson.Field
+		RedirectURL           respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r Form) RawJSON() string { return r.JSON.raw }
 func (r *Form) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type FormNewParams struct {
+	// The name of the form, used as the title on its public page.
+	Name string `json:"name" api:"required"`
+	// If `true`, submissions require a business email address. Defaults to `false`.
+	BusinessEmailRequired param.Opt[bool] `json:"business_email_required,omitzero"`
+	// If `true`, enables a Moonbase Pages hosted page for this form, providing a
+	// standalone public URL for sharing. Defaults to `false`.
+	PagesEnabled param.Opt[bool] `json:"pages_enabled,omitzero"`
+	// Optional URL the user is redirected to after a successful submission. Omit to
+	// leave submissions without a redirect. Stored as a Liquid template; rendered at
+	// submission time with form field values under `submission.<key>` (keyed by the
+	// field's `key`) plus UTM params (`utm_source`, `utm_medium`, `utm_campaign`,
+	// `utm_term`, `utm_content`) automatically appended. Use the `uri_encode` filter
+	// for URL-safe values, e.g.
+	// `https://example.com/thanks?email={{ submission.email | uri_encode }}`. The
+	// rendered URL must parse as a valid URL or the submission errors.
+	RedirectURL param.Opt[string] `json:"redirect_url,omitzero"`
+	paramObj
+}
+
+func (r FormNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow FormNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *FormNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type FormUpdateParams struct {
+	// Updated redirect URL, or `null` to clear. Omit to leave the existing value
+	// unchanged. Liquid template rendered at submission time with form field values
+	// under `submission.<key>` (keyed by the field's `key`) plus UTM params
+	// (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`)
+	// automatically appended. Use the `uri_encode` filter for URL-safe values. The
+	// rendered URL must parse as a valid URL or the submission errors.
+	RedirectURL param.Opt[string] `json:"redirect_url,omitzero"`
+	// If `true`, submissions require a business email address.
+	BusinessEmailRequired param.Opt[bool] `json:"business_email_required,omitzero"`
+	// The new name for the form.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// If `true`, a Moonbase Pages hosted page is enabled for this form, providing a
+	// standalone public URL for sharing.
+	PagesEnabled param.Opt[bool] `json:"pages_enabled,omitzero"`
+	paramObj
+}
+
+func (r FormUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow FormUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *FormUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -11,7 +11,6 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 )
 
 func TestCollectionItemNew(t *testing.T) {
@@ -38,11 +37,8 @@ func TestCollectionItemNew(t *testing.T) {
 				},
 				"ceo": {
 					OfRelation: &moonbase.RelationValueParam{
-						Data: moonbase.RelationValueParamDataUnion{
-							OfPointer: &shared.PointerParam{
-								ID:   "1CLJt2v84CdKMEKqwBNXfE",
-								Type: "item",
-							},
+						Data: moonbase.ItemPointerParam{
+							ID: "1CLJt2v84CdKMEKqwBNXfE",
 						},
 					},
 				},
@@ -139,11 +135,10 @@ func TestCollectionItemListWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"collection_id",
 		moonbase.CollectionItemListParams{
-			After:   moonbase.String("after"),
-			Before:  moonbase.String("before"),
-			Include: []string{"string"},
-			Limit:   moonbase.Int(1),
-			Sort:    []string{"string"},
+			After:  moonbase.String("after"),
+			Before: moonbase.String("before"),
+			Limit:  moonbase.Int(1),
+			Sort:   []string{"string"},
 		},
 	)
 	if err != nil {
@@ -172,6 +167,39 @@ func TestCollectionItemDelete(t *testing.T) {
 		"id",
 		moonbase.CollectionItemDeleteParams{
 			CollectionID: "collection_id",
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCollectionItemMerge(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Collections.Items.Merge(
+		context.TODO(),
+		"collection_id",
+		moonbase.CollectionItemMergeParams{
+			Destination: moonbase.ItemPointerParam{
+				ID: "1CLJt2v7opRhSWqVEtHwYT",
+			},
+			Source: moonbase.ItemPointerParam{
+				ID: "1CLJt2v5aNd8G5SGzEaeVU",
+			},
 		},
 	)
 	if err != nil {
@@ -259,8 +287,8 @@ func TestCollectionItemUpsertWithOptionalParams(t *testing.T) {
 					}},
 				},
 				"linked_in": {
-					OfLinkedIn: &moonbase.FieldValueParamLinkedIn{
-						Data: moonbase.FieldValueParamLinkedInData{
+					OfLinkedIn: &moonbase.SocialLinkedInValueParam{
+						Data: moonbase.SocialProfileLinkedInParam{
 							URL:      moonbase.String("https://linkedin.com/company/aperturescience"),
 							Username: moonbase.String("company/moonbaseai"),
 						},

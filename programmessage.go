@@ -76,6 +76,24 @@ func (r *ProgramMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ProgramMessagePointer struct {
+	ID   string                  `json:"id" api:"required"`
+	Type constant.ProgramMessage `json:"type" default:"program_message"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProgramMessagePointer) RawJSON() string { return r.JSON.raw }
+func (r *ProgramMessagePointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ProgramMessageSendParams struct {
 	// The person to send the message to.
 	Person ProgramMessageSendParamsPerson `json:"person,omitzero" api:"required"`

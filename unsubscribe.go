@@ -86,9 +86,10 @@ func (r *UnsubscribeService) Delete(ctx context.Context, email string, opts ...o
 	return err
 }
 
+// A record of an unsubscribed email address.
 type Unsubscribe struct {
 	CreatedAt time.Time            `json:"created_at" api:"required" format:"date-time"`
-	Email     string               `json:"email" api:"required"`
+	Email     string               `json:"email" api:"required" format:"email"`
 	Type      constant.Unsubscribe `json:"type" default:"unsubscribe"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -103,6 +104,24 @@ type Unsubscribe struct {
 // Returns the unmodified JSON received from the API
 func (r Unsubscribe) RawJSON() string { return r.JSON.raw }
 func (r *Unsubscribe) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type UnsubscribePointer struct {
+	ID   string               `json:"id" api:"required"`
+	Type constant.Unsubscribe `json:"type" default:"unsubscribe"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r UnsubscribePointer) RawJSON() string { return r.JSON.raw }
+func (r *UnsubscribePointer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -17,6 +17,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
 // Manage your collections and items
@@ -90,8 +91,9 @@ func (r *CollectionItemService) Update(ctx context.Context, id string, params Co
 	return res, err
 }
 
-// Returns a list of items that are part of the collection.
-func (r *CollectionItemService) List(ctx context.Context, collectionID string, query CollectionItemListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Item], err error) {
+// Returns a paginated list of item pointers in a collection. Use the retrieve
+// endpoint to get full item details including field values.
+func (r *CollectionItemService) List(ctx context.Context, collectionID string, query CollectionItemListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ItemPointer], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -112,8 +114,9 @@ func (r *CollectionItemService) List(ctx context.Context, collectionID string, q
 	return res, nil
 }
 
-// Returns a list of items that are part of the collection.
-func (r *CollectionItemService) ListAutoPaging(ctx context.Context, collectionID string, query CollectionItemListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Item] {
+// Returns a paginated list of item pointers in a collection. Use the retrieve
+// endpoint to get full item details including field values.
+func (r *CollectionItemService) ListAutoPaging(ctx context.Context, collectionID string, query CollectionItemListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[ItemPointer] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, collectionID, query, opts...))
 }
 
@@ -132,6 +135,18 @@ func (r *CollectionItemService) Delete(ctx context.Context, id string, body Coll
 	path := fmt.Sprintf("collections/%s/items/%s", body.CollectionID, id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
+}
+
+// Merges two items into a single item.
+func (r *CollectionItemService) Merge(ctx context.Context, collectionID string, body CollectionItemMergeParams, opts ...option.RequestOption) (res *Item, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if collectionID == "" {
+		err = errors.New("missing required collection_id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("collections/%s/items/merge", collectionID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
 }
 
 // Returns a list of items in the collection that match the given filters.
@@ -179,14 +194,16 @@ func (r *CollectionItemService) Upsert(ctx context.Context, collectionID string,
 	return res, err
 }
 
-// A search result entry
+// A collection search result entry containing an item.
 type CollectionItemSearchResponse struct {
 	// An Item represents a single record or row within a Collection. It holds a set of
 	// `values` corresponding to the Collection's `fields`.
-	Data Item `json:"data" api:"required"`
+	Data Item                  `json:"data" api:"required"`
+	Type constant.SearchResult `json:"type" default:"search_result"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
+		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -264,8 +281,6 @@ type CollectionItemListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Include only specific fields in the returned items. Specify fields by id or key.
-	Include []string `query:"include,omitzero" json:"-"`
 	// Sort items by the specified field ids or keys. Prefix a field with a
 	// hyphen/minus (`-`) to sort in descending order by that field.
 	Sort []string `query:"sort,omitzero" json:"-"`
@@ -284,6 +299,22 @@ func (r CollectionItemListParams) URLQuery() (v url.Values, err error) {
 type CollectionItemDeleteParams struct {
 	CollectionID string `path:"collection_id" api:"required" json:"-"`
 	paramObj
+}
+
+type CollectionItemMergeParams struct {
+	// The destination item pointer. This will be the remaining merged item.
+	Destination ItemPointerParam `json:"destination,omitzero" api:"required"`
+	// The source item pointer. This item will be deleted.
+	Source ItemPointerParam `json:"source,omitzero" api:"required"`
+	paramObj
+}
+
+func (r CollectionItemMergeParams) MarshalJSON() (data []byte, err error) {
+	type shadow CollectionItemMergeParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CollectionItemMergeParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type CollectionItemSearchParams struct {

@@ -18,6 +18,7 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options []option.RequestOption
+	// Manage your collections and items
 	Funnels FunnelService
 	// Manage your collections and items
 	Collections CollectionService
@@ -29,7 +30,7 @@ type Client struct {
 	InboxConversations InboxConversationService
 	// Manage your inboxes, conversations, and messages
 	InboxMessages InboxMessageService
-	// Manage your inboxes, conversations, and messages
+	// Manage your meetings, files, and notes
 	Tagsets TagsetService
 	// Manage your marketing campaigns and forms
 	Programs ProgramService
@@ -177,7 +178,7 @@ func (r *Client) Delete(ctx context.Context, path string, params any, res any, o
 	return r.Execute(ctx, http.MethodDelete, path, params, res, opts...)
 }
 
-// Returns items that match the search query.
+// Returns items and files that match the search query.
 func (r *Client) Search(ctx context.Context, body SearchParams, opts ...option.RequestOption) (res *SearchResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "search"

@@ -13,6 +13,43 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
+func TestCollectionFieldNewWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Collections.Fields.New(
+		context.TODO(),
+		"collection_id",
+		moonbase.CollectionFieldNewParams{
+			OfFieldTextSingleLine: &moonbase.CollectionFieldNewParamsFieldFieldTextSingleLine{
+				Name:        "Lead Source",
+				Cardinality: "one",
+				DefaultValues: []moonbase.SingleLineTextValueParam{{
+					Data: "data",
+				}},
+				Description: moonbase.String("description"),
+				Required:    moonbase.Bool(true),
+				Unique:      moonbase.Bool(true),
+			},
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestCollectionFieldGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -29,6 +66,72 @@ func TestCollectionFieldGet(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.CollectionFieldGetParams{
+			CollectionID: "collection_id",
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCollectionFieldUpdateWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Collections.Fields.Update(
+		context.TODO(),
+		"id",
+		moonbase.CollectionFieldUpdateParams{
+			CollectionID: "collection_id",
+			OfFieldTextSingleLine: &moonbase.CollectionFieldUpdateParamsFieldFieldTextSingleLine{
+				Cardinality: "one",
+				DefaultValues: []moonbase.SingleLineTextValueParam{{
+					Data: "data",
+				}},
+				Description: moonbase.String("description"),
+				Name:        moonbase.String("Source"),
+				Required:    moonbase.Bool(true),
+				Unique:      moonbase.Bool(true),
+			},
+		},
+	)
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestCollectionFieldDelete(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Collections.Fields.Delete(
+		context.TODO(),
+		"id",
+		moonbase.CollectionFieldDeleteParams{
 			CollectionID: "collection_id",
 		},
 	)
