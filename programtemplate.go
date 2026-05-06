@@ -118,6 +118,24 @@ func (r *ProgramTemplate) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ProgramTemplatePointer struct {
+	ID   string                   `json:"id" api:"required"`
+	Type constant.ProgramTemplate `json:"type" default:"program_template"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProgramTemplatePointer) RawJSON() string { return r.JSON.raw }
+func (r *ProgramTemplatePointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ProgramTemplateGetParams struct {
 	// Specifies which related objects to include in the response. Valid option is
 	// `program`.

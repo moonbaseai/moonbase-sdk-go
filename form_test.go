@@ -13,6 +13,33 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
+func TestFormNewWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Forms.New(context.TODO(), moonbase.FormNewParams{
+		Name:                  "Contact Us",
+		BusinessEmailRequired: moonbase.Bool(true),
+		PagesEnabled:          moonbase.Bool(true),
+		RedirectURL:           moonbase.String("https://example.com/thanks"),
+	})
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestFormGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,6 +53,37 @@ func TestFormGet(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Forms.Get(context.TODO(), "id")
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestFormUpdateWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Forms.Update(
+		context.TODO(),
+		"id",
+		moonbase.FormUpdateParams{
+			BusinessEmailRequired: moonbase.Bool(true),
+			Name:                  moonbase.String("Updated Form"),
+			PagesEnabled:          moonbase.Bool(true),
+			RedirectURL:           moonbase.String("redirect_url"),
+		},
+	)
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -52,6 +110,28 @@ func TestFormListWithOptionalParams(t *testing.T) {
 		Before: moonbase.String("before"),
 		Limit:  moonbase.Int(1),
 	})
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestFormDelete(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Forms.Delete(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {

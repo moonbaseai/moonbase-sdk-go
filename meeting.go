@@ -4,6 +4,7 @@ package moonbase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -55,7 +56,7 @@ func (r *MeetingService) Get(ctx context.Context, id string, query MeetingGetPar
 	return res, err
 }
 
-// Adds a transcript or recording to an existing meeting.
+// Adds a transcript, recording, or tags to an existing meeting.
 func (r *MeetingService) Update(ctx context.Context, id string, body MeetingUpdateParams, opts ...option.RequestOption) (res *Meeting, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
@@ -68,7 +69,7 @@ func (r *MeetingService) Update(ctx context.Context, id string, body MeetingUpda
 }
 
 // Returns a list of meetings.
-func (r *MeetingService) List(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Meeting], err error) {
+func (r *MeetingService) List(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) (res *pagination.CursorPage[MeetingPointer], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -86,7 +87,7 @@ func (r *MeetingService) List(ctx context.Context, query MeetingListParams, opts
 }
 
 // Returns a list of meetings.
-func (r *MeetingService) ListAutoPaging(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Meeting] {
+func (r *MeetingService) ListAutoPaging(ctx context.Context, query MeetingListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[MeetingPointer] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
@@ -101,10 +102,12 @@ type Attendee struct {
 	// String representing the object’s type. Always `meeting_attendee` for this
 	// object.
 	Type constant.MeetingAttendee `json:"type" default:"meeting_attendee"`
-	// A lightweight reference to another resource.
-	Organization shared.Pointer `json:"organization"`
-	// A lightweight reference to another resource.
-	Person shared.Pointer `json:"person"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Organization ItemPointer `json:"organization"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Person ItemPointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -139,6 +142,8 @@ type Meeting struct {
 	ProviderID string `json:"provider_id" api:"required"`
 	// The start time of the meeting, as an ISO 8601 timestamp in UTC.
 	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
+	// The tags currently applied to this meeting.
+	Tags []shared.Tag `json:"tags" api:"required"`
 	// The IANA time zone in which the meeting is scheduled (e.g.,
 	// `America/Los_Angeles`).
 	TimeZone string `json:"time_zone" api:"required"`
@@ -182,6 +187,7 @@ type Meeting struct {
 		ICalUid      respjson.Field
 		ProviderID   respjson.Field
 		StartAt      respjson.Field
+		Tags         respjson.Field
 		TimeZone     respjson.Field
 		Type         respjson.Field
 		UpdatedAt    respjson.Field
@@ -207,6 +213,49 @@ func (r *Meeting) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type MeetingPointer struct {
+	ID   string           `json:"id" api:"required"`
+	Type constant.Meeting `json:"type" default:"meeting"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MeetingPointer) RawJSON() string { return r.JSON.raw }
+func (r *MeetingPointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this MeetingPointer to a MeetingPointerParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// MeetingPointerParam.Overrides()
+func (r MeetingPointer) ToParam() MeetingPointerParam {
+	return param.Override[MeetingPointerParam](json.RawMessage(r.RawJSON()))
+}
+
+// The properties ID, Type are required.
+type MeetingPointerParam struct {
+	ID string `json:"id" api:"required"`
+	// This field can be elided, and will marshal its zero value as "meeting".
+	Type constant.Meeting `json:"type" default:"meeting"`
+	paramObj
+}
+
+func (r MeetingPointerParam) MarshalJSON() (data []byte, err error) {
+	type shadow MeetingPointerParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *MeetingPointerParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type MeetingTranscript struct {
 	Cues []MeetingTranscriptCue `json:"cues" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -224,10 +273,10 @@ func (r *MeetingTranscript) UnmarshalJSON(data []byte) error {
 }
 
 type MeetingTranscriptCue struct {
-	From    float64                     `json:"from" api:"required"`
-	Speaker MeetingTranscriptCueSpeaker `json:"speaker" api:"required"`
-	Text    string                      `json:"text" api:"required"`
-	To      float64                     `json:"to" api:"required"`
+	From    float64                  `json:"from" api:"required"`
+	Speaker MeetingTranscriptSpeaker `json:"speaker" api:"required"`
+	Text    string                   `json:"text" api:"required"`
+	To      float64                  `json:"to" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		From        respjson.Field
@@ -245,7 +294,7 @@ func (r *MeetingTranscriptCue) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type MeetingTranscriptCueSpeaker struct {
+type MeetingTranscriptSpeaker struct {
 	AttendeeID string `json:"attendee_id"`
 	Label      string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -258,8 +307,8 @@ type MeetingTranscriptCueSpeaker struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r MeetingTranscriptCueSpeaker) RawJSON() string { return r.JSON.raw }
-func (r *MeetingTranscriptCueSpeaker) UnmarshalJSON(data []byte) error {
+func (r MeetingTranscriptSpeaker) RawJSON() string { return r.JSON.raw }
+func (r *MeetingTranscriptSpeaker) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -272,10 +321,12 @@ type Organizer struct {
 	// String representing the object’s type. Always `meeting_organizer` for this
 	// object.
 	Type constant.MeetingOrganizer `json:"type" default:"meeting_organizer"`
-	// A lightweight reference to another resource.
-	Organization shared.Pointer `json:"organization"`
-	// A lightweight reference to another resource.
-	Person shared.Pointer `json:"person"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Organization ItemPointer `json:"organization"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Person ItemPointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -314,6 +365,9 @@ func (r MeetingGetParams) URLQuery() (v url.Values, err error) {
 type MeetingUpdateParams struct {
 	// A video recording of the meeting.
 	Recording MeetingUpdateParamsRecording `json:"recording,omitzero"`
+	// Optional list of tag pointers to assign to the meeting. If omitted, existing
+	// tags are unchanged. Pass an empty array to clear tags.
+	Tags []shared.TagPointerParam `json:"tags,omitzero"`
 	// The meeting transcript.
 	Transcript MeetingUpdateParamsTranscript `json:"transcript,omitzero"`
 	paramObj
@@ -415,8 +469,8 @@ type MeetingListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
-	Limit  param.Opt[int64]        `query:"limit,omitzero" json:"-"`
-	Filter MeetingListParamsFilter `query:"filter,omitzero" json:"-"`
+	Limit   param.Opt[int64]         `query:"limit,omitzero" json:"-"`
+	ICalUid MeetingListParamsICalUid `query:"i_cal_uid,omitzero" json:"-"`
 	paramObj
 }
 
@@ -428,28 +482,14 @@ func (r MeetingListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-type MeetingListParamsFilter struct {
-	ICalUid MeetingListParamsFilterICalUid `query:"i_cal_uid,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [MeetingListParamsFilter]'s query parameters as
-// `url.Values`.
-func (r MeetingListParamsFilter) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type MeetingListParamsFilterICalUid struct {
+type MeetingListParamsICalUid struct {
 	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [MeetingListParamsFilterICalUid]'s query parameters as
+// URLQuery serializes [MeetingListParamsICalUid]'s query parameters as
 // `url.Values`.
-func (r MeetingListParamsFilterICalUid) URLQuery() (v url.Values, err error) {
+func (r MeetingListParamsICalUid) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

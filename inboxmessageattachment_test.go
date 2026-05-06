@@ -3,8 +3,10 @@
 package moonbase_test
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"io"
 	"os"
 	"testing"
 
@@ -13,7 +15,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestInboxConversationGetWithOptionalParams(t *testing.T) {
+func TestInboxMessageAttachmentNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +27,14 @@ func TestInboxConversationGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.InboxConversations.Get(
+	_, err := client.InboxMessages.Attachments.New(
 		context.TODO(),
-		"id",
-		moonbase.InboxConversationGetParams{
-			Include: []string{"inbox"},
+		"inbox_message_id",
+		moonbase.InboxMessageAttachmentNewParams{
+			MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{
+				File:   io.Reader(bytes.NewBuffer([]byte("Example data"))),
+				FileID: moonbase.String("file_id"),
+			},
 		},
 	)
 	if err != nil {
@@ -41,7 +46,7 @@ func TestInboxConversationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestInboxConversationListWithOptionalParams(t *testing.T) {
+func TestInboxMessageAttachmentDelete(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,14 +58,13 @@ func TestInboxConversationListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.InboxConversations.List(context.TODO(), moonbase.InboxConversationListParams{
-		After:  moonbase.String("after"),
-		Before: moonbase.String("before"),
-		InboxID: moonbase.InboxConversationListParamsInboxID{
-			Eq: moonbase.String("eq"),
+	err := client.InboxMessages.Attachments.Delete(
+		context.TODO(),
+		"id",
+		moonbase.InboxMessageAttachmentDeleteParams{
+			InboxMessageID: "inbox_message_id",
 		},
-		Limit: moonbase.Int(1),
-	})
+	)
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {

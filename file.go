@@ -22,7 +22,6 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
@@ -103,6 +102,24 @@ func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ..
 	return res, err
 }
 
+type FilePointer struct {
+	ID   string        `json:"id" api:"required"`
+	Type constant.File `json:"type" default:"file"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FilePointer) RawJSON() string { return r.JSON.raw }
+func (r *FilePointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // The File object represents a file that has been uploaded to your library.
 type MoonbaseFile struct {
 	// Unique identifier for the object.
@@ -176,7 +193,7 @@ type FileUploadParams struct {
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Link the File to Moonbase items like a person, organization, deal, task, or an
 	// item in a custom collection.
-	Associations []shared.PointerParam `json:"associations,omitzero"`
+	Associations []ItemPointerParam `json:"associations,omitzero"`
 	paramObj
 }
 

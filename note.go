@@ -4,6 +4,7 @@ package moonbase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -117,7 +118,7 @@ type Note struct {
 	// Unique identifier for the object.
 	ID string `json:"id" api:"required"`
 	// A list of items, meetings or calls this note is associated with.
-	Associations []shared.Pointer `json:"associations" api:"required"`
+	Associations []NoteAssociationPointerUnion `json:"associations" api:"required"`
 	// The main content of the note.
 	Body shared.FormattedText `json:"body" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
@@ -158,12 +159,183 @@ func (r *Note) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func NoteAssociationParamPointerOfCall(id string) NoteAssociationParamPointerUnion {
+	var call CallPointerParam
+	call.ID = id
+	return NoteAssociationParamPointerUnion{OfCall: &call}
+}
+
+func NoteAssociationParamPointerOfItem(id string) NoteAssociationParamPointerUnion {
+	var item ItemPointerParam
+	item.ID = id
+	return NoteAssociationParamPointerUnion{OfItem: &item}
+}
+
+func NoteAssociationParamPointerOfMeeting(id string) NoteAssociationParamPointerUnion {
+	var meeting MeetingPointerParam
+	meeting.ID = id
+	return NoteAssociationParamPointerUnion{OfMeeting: &meeting}
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type NoteAssociationParamPointerUnion struct {
+	OfCall    *CallPointerParam    `json:",omitzero,inline"`
+	OfItem    *ItemPointerParam    `json:",omitzero,inline"`
+	OfMeeting *MeetingPointerParam `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u NoteAssociationParamPointerUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfCall, u.OfItem, u.OfMeeting)
+}
+func (u *NoteAssociationParamPointerUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *NoteAssociationParamPointerUnion) asAny() any {
+	if !param.IsOmitted(u.OfCall) {
+		return u.OfCall
+	} else if !param.IsOmitted(u.OfItem) {
+		return u.OfItem
+	} else if !param.IsOmitted(u.OfMeeting) {
+		return u.OfMeeting
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u NoteAssociationParamPointerUnion) GetID() *string {
+	if vt := u.OfCall; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfItem; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfMeeting; vt != nil {
+		return (*string)(&vt.ID)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u NoteAssociationParamPointerUnion) GetType() *string {
+	if vt := u.OfCall; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfItem; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMeeting; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[NoteAssociationParamPointerUnion](
+		"type",
+		apijson.Discriminator[CallPointerParam]("call"),
+		apijson.Discriminator[ItemPointerParam]("item"),
+		apijson.Discriminator[MeetingPointerParam]("meeting"),
+	)
+}
+
+// NoteAssociationPointerUnion contains all possible properties and values from
+// [CallPointer], [ItemPointer], [MeetingPointer].
+//
+// Use the [NoteAssociationPointerUnion.AsAny] method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type NoteAssociationPointerUnion struct {
+	ID string `json:"id"`
+	// Any of "call", "item", "meeting".
+	Type string `json:"type"`
+	// This field is from variant [ItemPointer].
+	Collection CollectionPointer `json:"collection"`
+	JSON       struct {
+		ID         respjson.Field
+		Type       respjson.Field
+		Collection respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+// anyNoteAssociationPointer is implemented by each variant of
+// [NoteAssociationPointerUnion] to add type safety for the return type of
+// [NoteAssociationPointerUnion.AsAny]
+type anyNoteAssociationPointer interface {
+	implNoteAssociationPointerUnion()
+}
+
+func (CallPointer) implNoteAssociationPointerUnion()    {}
+func (ItemPointer) implNoteAssociationPointerUnion()    {}
+func (MeetingPointer) implNoteAssociationPointerUnion() {}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := NoteAssociationPointerUnion.AsAny().(type) {
+//	case moonbase.CallPointer:
+//	case moonbase.ItemPointer:
+//	case moonbase.MeetingPointer:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u NoteAssociationPointerUnion) AsAny() anyNoteAssociationPointer {
+	switch u.Type {
+	case "call":
+		return u.AsCall()
+	case "item":
+		return u.AsItem()
+	case "meeting":
+		return u.AsMeeting()
+	}
+	return nil
+}
+
+func (u NoteAssociationPointerUnion) AsCall() (v CallPointer) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u NoteAssociationPointerUnion) AsItem() (v ItemPointer) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u NoteAssociationPointerUnion) AsMeeting() (v MeetingPointer) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u NoteAssociationPointerUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *NoteAssociationPointerUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type NotePointer struct {
+	ID   string        `json:"id" api:"required"`
+	Type constant.Note `json:"type" default:"note"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r NotePointer) RawJSON() string { return r.JSON.raw }
+func (r *NotePointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type NoteNewParams struct {
 	// The main content of the note.
 	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
 	// Link the Note to Moonbase items (person, organization, deal, task, or an item in
 	// a custom collection), meetings, or calls.
-	Associations []shared.PointerParam `json:"associations,omitzero"`
+	Associations []NoteAssociationParamPointerUnion `json:"associations,omitzero"`
 	paramObj
 }
 

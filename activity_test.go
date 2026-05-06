@@ -51,19 +51,23 @@ func TestActivityListWithOptionalParams(t *testing.T) {
 	_, err := client.Activities.List(context.TODO(), moonbase.ActivityListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
-		Filter: moonbase.ActivityListParamsFilter{
-			ItemID: moonbase.ActivityListParamsFilterItemID{
-				Eq: moonbase.String("eq"),
-			},
-			OccurredAt: moonbase.ActivityListParamsFilterOccurredAt{
-				Gte: moonbase.Time(time.Now()),
-				Lte: moonbase.Time(time.Now()),
-			},
-			Type: moonbase.ActivityListParamsFilterType{
-				In: []string{"activity/call_occurred"},
-			},
+		ConstituentEntityID: moonbase.ActivityListParamsConstituentEntityID{
+			Eq: moonbase.String("eq"),
+		},
+		ConstituentEntityType: moonbase.ActivityListParamsConstituentEntityType{
+			Eq: "call",
+		},
+		ConstituentRelation: moonbase.ActivityListParamsConstituentRelation{
+			Eq: "actor",
 		},
 		Limit: moonbase.Int(1),
+		OccurredAt: moonbase.ActivityListParamsOccurredAt{
+			Gte: moonbase.Time(time.Now()),
+			Lte: moonbase.Time(time.Now()),
+		},
+		Type: moonbase.ActivityListParamsType{
+			Eq: "activity/call_occurred",
+		},
 	})
 	if err != nil {
 		var apierr *moonbase.Error

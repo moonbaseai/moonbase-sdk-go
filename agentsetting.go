@@ -11,6 +11,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apijson"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
@@ -41,13 +42,18 @@ func (r *AgentSettingService) Get(ctx context.Context, opts ...option.RequestOpt
 	return res, err
 }
 
+func (r *AgentSettingService) Update(ctx context.Context, body AgentSettingUpdateParams, opts ...option.RequestOption) (res *AgentSettingUpdateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "agent_settings"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
+	return res, err
+}
+
 type AgentSettingGetResponse struct {
 	CreatedAt             time.Time              `json:"created_at" api:"required" format:"date-time"`
 	Type                  constant.AgentSettings `json:"type" default:"agent_settings"`
 	UpdatedAt             time.Time              `json:"updated_at" api:"required" format:"date-time"`
-	DealSummaryModel      string                 `json:"deal_summary_model"`
 	DealSummaryPrompt     string                 `json:"deal_summary_prompt"`
-	MeetingAgentModel     string                 `json:"meeting_agent_model"`
 	MeetingPrebriefPrompt string                 `json:"meeting_prebrief_prompt"`
 	MeetingSummaryPrompt  string                 `json:"meeting_summary_prompt"`
 	MeetingWebSearch      bool                   `json:"meeting_web_search"`
@@ -57,9 +63,7 @@ type AgentSettingGetResponse struct {
 		CreatedAt             respjson.Field
 		Type                  respjson.Field
 		UpdatedAt             respjson.Field
-		DealSummaryModel      respjson.Field
 		DealSummaryPrompt     respjson.Field
-		MeetingAgentModel     respjson.Field
 		MeetingPrebriefPrompt respjson.Field
 		MeetingSummaryPrompt  respjson.Field
 		MeetingWebSearch      respjson.Field
@@ -72,5 +76,52 @@ type AgentSettingGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r AgentSettingGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *AgentSettingGetResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AgentSettingUpdateResponse struct {
+	CreatedAt             time.Time              `json:"created_at" api:"required" format:"date-time"`
+	Type                  constant.AgentSettings `json:"type" default:"agent_settings"`
+	UpdatedAt             time.Time              `json:"updated_at" api:"required" format:"date-time"`
+	DealSummaryPrompt     string                 `json:"deal_summary_prompt"`
+	MeetingPrebriefPrompt string                 `json:"meeting_prebrief_prompt"`
+	MeetingSummaryPrompt  string                 `json:"meeting_summary_prompt"`
+	MeetingWebSearch      bool                   `json:"meeting_web_search"`
+	OrganizationInfo      string                 `json:"organization_info"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CreatedAt             respjson.Field
+		Type                  respjson.Field
+		UpdatedAt             respjson.Field
+		DealSummaryPrompt     respjson.Field
+		MeetingPrebriefPrompt respjson.Field
+		MeetingSummaryPrompt  respjson.Field
+		MeetingWebSearch      respjson.Field
+		OrganizationInfo      respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AgentSettingUpdateResponse) RawJSON() string { return r.JSON.raw }
+func (r *AgentSettingUpdateResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AgentSettingUpdateParams struct {
+	DealSummaryPrompt     param.Opt[string] `json:"deal_summary_prompt,omitzero"`
+	MeetingPrebriefPrompt param.Opt[string] `json:"meeting_prebrief_prompt,omitzero"`
+	MeetingSummaryPrompt  param.Opt[string] `json:"meeting_summary_prompt,omitzero"`
+	MeetingWebSearch      param.Opt[bool]   `json:"meeting_web_search,omitzero"`
+	OrganizationInfo      param.Opt[string] `json:"organization_info,omitzero"`
+	paramObj
+}
+
+func (r AgentSettingUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow AgentSettingUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AgentSettingUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

@@ -24,11 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	collection, err := client.Collections.Get(
-		context.TODO(),
-		"people",
-		moonbase.CollectionGetParams{},
-	)
+	collection, err := client.Collections.Get(context.TODO(), "people")
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}

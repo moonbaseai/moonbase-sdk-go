@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestInboxGetWithOptionalParams(t *testing.T) {
+func TestInboxGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,13 +25,7 @@ func TestInboxGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Inboxes.Get(
-		context.TODO(),
-		"id",
-		moonbase.InboxGetParams{
-			Include: []string{"tagsets"},
-		},
-	)
+	_, err := client.Inboxes.Get(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -54,10 +48,9 @@ func TestInboxListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Inboxes.List(context.TODO(), moonbase.InboxListParams{
-		After:   moonbase.String("after"),
-		Before:  moonbase.String("before"),
-		Include: []string{"tagsets"},
-		Limit:   moonbase.Int(1),
+		After:  moonbase.String("after"),
+		Before: moonbase.String("before"),
+		Limit:  moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

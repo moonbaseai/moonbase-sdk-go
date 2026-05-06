@@ -65,11 +65,7 @@ func main() {
 	client := moonbase.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MOONBASE_API_KEY")
 	)
-	collection, err := client.Collections.Get(
-		context.TODO(),
-		"people",
-		moonbase.CollectionGetParams{},
-	)
+	collection, err := client.Collections.Get(context.TODO(), "people")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -307,8 +303,8 @@ iter := client.Collections.Items.ListAutoPaging(
 )
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	item := iter.Current()
-	fmt.Printf("%+v\n", item)
+	itemPointer := iter.Current()
+	fmt.Printf("%+v\n", itemPointer)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -347,11 +343,7 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Collections.Get(
-	context.TODO(),
-	"people",
-	moonbase.CollectionGetParams{},
-)
+_, err := client.Collections.Get(context.TODO(), "people")
 if err != nil {
 	var apierr *moonbase.Error
 	if errors.As(err, &apierr) {
@@ -379,7 +371,6 @@ defer cancel()
 client.Collections.Get(
 	ctx,
 	"people",
-	moonbase.CollectionGetParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -401,18 +392,18 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 ```go
 // A file from the file system
 file, err := os.Open("/path/to/file")
-moonbase.FileUploadParams{
-	File: file,
+moonbase.InboxMessageAttachmentNewParams{
+	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
 }
 
 // A file from a string
-moonbase.FileUploadParams{
-	File: strings.NewReader("my file contents"),
+moonbase.InboxMessageAttachmentNewParams{
+	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
 }
 
 // With a custom filename and contentType
-moonbase.FileUploadParams{
-	File: moonbase.File(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
+moonbase.InboxMessageAttachmentNewParams{
+	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
 }
 ```
 
@@ -434,7 +425,6 @@ client := moonbase.NewClient(
 client.Collections.Get(
 	context.TODO(),
 	"people",
-	moonbase.CollectionGetParams{},
 	option.WithMaxRetries(5),
 )
 ```
@@ -450,7 +440,6 @@ var response *http.Response
 collection, err := client.Collections.Get(
 	context.TODO(),
 	"people",
-	moonbase.CollectionGetParams{},
 	option.WithResponseInto(&response),
 )
 if err != nil {

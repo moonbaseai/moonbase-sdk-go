@@ -18,10 +18,11 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
-// Manage your inboxes, conversations, and messages
+// Manage your meetings, files, and notes
 //
 // TagsetService contains methods and other services that help with interacting
 // with the Moonbase API.
@@ -42,6 +43,14 @@ func NewTagsetService(opts ...option.RequestOption) (r TagsetService) {
 	return
 }
 
+// Create a new tagset.
+func (r *TagsetService) New(ctx context.Context, body TagsetNewParams, opts ...option.RequestOption) (res *Tagset, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "tagsets"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Retrieves the details of an existing tagset.
 func (r *TagsetService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Tagset, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -51,6 +60,18 @@ func (r *TagsetService) Get(ctx context.Context, id string, opts ...option.Reque
 	}
 	path := fmt.Sprintf("tagsets/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Updates an existing tagset.
+func (r *TagsetService) Update(ctx context.Context, id string, body TagsetUpdateParams, opts ...option.RequestOption) (res *Tagset, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("tagsets/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return res, err
 }
 
@@ -77,8 +98,21 @@ func (r *TagsetService) ListAutoPaging(ctx context.Context, query TagsetListPara
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// A Tagset is a collection of `Tag` objects that can be applied within a specific
-// `Inbox`.
+// Permanently deletes a tagset.
+func (r *TagsetService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return err
+	}
+	path := fmt.Sprintf("tagsets/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
+// A Tagset is a collection of `Tag` objects whose tags can be applied to
+// conversations, calls, and meetings.
 type Tagset struct {
 	// Unique identifier for the object.
 	ID string `json:"id" api:"required"`
@@ -87,7 +121,7 @@ type Tagset struct {
 	// The name of the tagset.
 	Name string `json:"name" api:"required"`
 	// A list of `Tag` objects belonging to this tagset.
-	Tags []TagsetTag `json:"tags" api:"required"`
+	Tags []shared.Tag `json:"tags" api:"required"`
 	// String representing the object’s type. Always `tagset` for this object.
 	Type constant.Tagset `json:"type" default:"tagset"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
@@ -114,19 +148,12 @@ func (r *Tagset) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A Tag is a label that can be applied to `Conversation` objects for organization
-// and filtering.
-type TagsetTag struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The name of the tag.
-	Name string `json:"name" api:"required"`
-	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type" default:"tag"`
+type TagsetPointer struct {
+	ID   string          `json:"id" api:"required"`
+	Type constant.Tagset `json:"type" default:"tagset"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Name        respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -134,9 +161,111 @@ type TagsetTag struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TagsetTag) RawJSON() string { return r.JSON.raw }
-func (r *TagsetTag) UnmarshalJSON(data []byte) error {
+func (r TagsetPointer) RawJSON() string { return r.JSON.raw }
+func (r *TagsetPointer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type TagsetNewParams struct {
+	// The name of the tagset.
+	Name string `json:"name" api:"required"`
+	// An optional description of the tagset's purpose.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// Optional list of tags to create with this tagset. Tags are ordered by their
+	// position in the list.
+	Tags []TagsetNewParamsTag `json:"tags,omitzero"`
+	paramObj
+}
+
+func (r TagsetNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow TagsetNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TagsetNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating or updating a tag within a tagset.
+//
+// The properties Color, Name are required.
+type TagsetNewParamsTag struct {
+	// The color for the tag.
+	//
+	// Any of "amber", "blue", "cyan", "emerald", "fuchsia", "green", "indigo", "lime",
+	// "lunar", "orange", "pink", "purple", "red", "rose", "sky", "teal", "violet",
+	// "yellow".
+	Color string `json:"color,omitzero" api:"required"`
+	// The name of the tag.
+	Name string `json:"name" api:"required"`
+	// Existing tag identifier. Include to update an existing tag, omit to create a new
+	// tag.
+	ID param.Opt[string] `json:"id,omitzero"`
+	paramObj
+}
+
+func (r TagsetNewParamsTag) MarshalJSON() (data []byte, err error) {
+	type shadow TagsetNewParamsTag
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TagsetNewParamsTag) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[TagsetNewParamsTag](
+		"color", "amber", "blue", "cyan", "emerald", "fuchsia", "green", "indigo", "lime", "lunar", "orange", "pink", "purple", "red", "rose", "sky", "teal", "violet", "yellow",
+	)
+}
+
+type TagsetUpdateParams struct {
+	// An updated description of the tagset.
+	Description param.Opt[string] `json:"description,omitzero"`
+	// The new name of the tagset.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Optional full list of tags for this tagset. If provided, tags are ordered by
+	// array position.
+	Tags []TagsetUpdateParamsTag `json:"tags,omitzero"`
+	paramObj
+}
+
+func (r TagsetUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow TagsetUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TagsetUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating or updating a tag within a tagset.
+//
+// The properties Color, Name are required.
+type TagsetUpdateParamsTag struct {
+	// The color for the tag.
+	//
+	// Any of "amber", "blue", "cyan", "emerald", "fuchsia", "green", "indigo", "lime",
+	// "lunar", "orange", "pink", "purple", "red", "rose", "sky", "teal", "violet",
+	// "yellow".
+	Color string `json:"color,omitzero" api:"required"`
+	// The name of the tag.
+	Name string `json:"name" api:"required"`
+	// Existing tag identifier. Include to update an existing tag, omit to create a new
+	// tag.
+	ID param.Opt[string] `json:"id,omitzero"`
+	paramObj
+}
+
+func (r TagsetUpdateParamsTag) MarshalJSON() (data []byte, err error) {
+	type shadow TagsetUpdateParamsTag
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TagsetUpdateParamsTag) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[TagsetUpdateParamsTag](
+		"color", "amber", "blue", "cyan", "emerald", "fuchsia", "green", "indigo", "lime", "lunar", "orange", "pink", "purple", "red", "rose", "sky", "teal", "violet", "yellow",
+	)
 }
 
 type TagsetListParams struct {

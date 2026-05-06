@@ -160,9 +160,8 @@ const (
 	ProgramTriggerBroadcast ProgramTrigger = "broadcast"
 )
 
-// A `ProgramActivityMetrics` object summarizing engagement for this program.
-//
-// **Note:** Only present when requested using the `include` query parameter.
+// The ProgramActivityMetrics object provides a summary of engagement and delivery
+// statistics for a marketing program.
 type ProgramActivityMetrics struct {
 	// The number of emails that could not be delivered.
 	Bounced int64 `json:"bounced" api:"required"`
@@ -198,6 +197,24 @@ type ProgramActivityMetrics struct {
 // Returns the unmodified JSON received from the API
 func (r ProgramActivityMetrics) RawJSON() string { return r.JSON.raw }
 func (r *ProgramActivityMetrics) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ProgramPointer struct {
+	ID   string           `json:"id" api:"required"`
+	Type constant.Program `json:"type" default:"program"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProgramPointer) RawJSON() string { return r.JSON.raw }
+func (r *ProgramPointer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -13,7 +13,6 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 )
 
 func TestFileGet(t *testing.T) {
@@ -100,9 +99,8 @@ func TestFileUploadWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Files.Upload(context.TODO(), moonbase.FileUploadParams{
 		File: io.Reader(bytes.NewBuffer([]byte("Example data"))),
-		Associations: []shared.PointerParam{{
-			ID:   "id",
-			Type: "type",
+		Associations: []moonbase.ItemPointerParam{{
+			ID: "id",
 		}},
 		Name: moonbase.String("name"),
 	})
