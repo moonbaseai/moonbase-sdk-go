@@ -58,6 +58,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FunnelPointerParam">FunnelPointerParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FunnelStepValueParam">FunnelStepValueParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#GeoValueParam">GeoValueParam</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IdentifierValueParam">IdentifierValueParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IntegerValueParam">IntegerValueParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemPointerParam">ItemPointerParam</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#ItemsFilterUnionParam">ItemsFilterUnionParam</a>
@@ -111,6 +112,8 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FunnelStepValue">FunnelStepValue</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#GeoField">GeoField</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#GeoValue">GeoValue</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IdentifierField">IdentifierField</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IdentifierValue">IdentifierValue</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IntegerField">IntegerField</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#IntegerValue">IntegerValue</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Item">Item</a>

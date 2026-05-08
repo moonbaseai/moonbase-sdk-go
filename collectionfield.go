@@ -111,6 +111,8 @@ type CollectionFieldNewParams struct {
 	// Parameters for creating a multi-line text field.
 	OfFieldTextMultiLine *CollectionFieldNewParamsFieldFieldTextMultiLine `json:",inline"`
 	// This field is a request body variant, only one variant field can be set.
+	OfFieldIdentifier *CollectionFieldNewParamsFieldFieldIdentifier `json:",inline"`
+	// This field is a request body variant, only one variant field can be set.
 	// Parameters for creating an integer field.
 	OfFieldNumberUnitlessInteger *CollectionFieldNewParamsFieldFieldNumberUnitlessInteger `json:",inline"`
 	// This field is a request body variant, only one variant field can be set.
@@ -168,6 +170,7 @@ type CollectionFieldNewParams struct {
 func (u CollectionFieldNewParams) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfFieldTextSingleLine,
 		u.OfFieldTextMultiLine,
+		u.OfFieldIdentifier,
 		u.OfFieldNumberUnitlessInteger,
 		u.OfFieldNumberUnitlessFloat,
 		u.OfFieldNumberMonetary,
@@ -266,6 +269,34 @@ func (r *CollectionFieldNewParamsFieldFieldTextMultiLine) UnmarshalJSON(data []b
 
 func init() {
 	apijson.RegisterFieldValidator[CollectionFieldNewParamsFieldFieldTextMultiLine](
+		"cardinality", "one", "many",
+	)
+}
+
+// The properties Name, Type are required.
+type CollectionFieldNewParamsFieldFieldIdentifier struct {
+	Name        string            `json:"name" api:"required"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	Required    param.Opt[bool]   `json:"required,omitzero"`
+	Unique      param.Opt[bool]   `json:"unique,omitzero"`
+	// Any of "one", "many".
+	Cardinality   string                 `json:"cardinality,omitzero"`
+	DefaultValues []IdentifierValueParam `json:"default_values,omitzero"`
+	// This field can be elided, and will marshal its zero value as "field/identifier".
+	Type constant.FieldIdentifier `json:"type" default:"field/identifier"`
+	paramObj
+}
+
+func (r CollectionFieldNewParamsFieldFieldIdentifier) MarshalJSON() (data []byte, err error) {
+	type shadow CollectionFieldNewParamsFieldFieldIdentifier
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CollectionFieldNewParamsFieldFieldIdentifier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[CollectionFieldNewParamsFieldFieldIdentifier](
 		"cardinality", "one", "many",
 	)
 }
@@ -992,6 +1023,8 @@ type CollectionFieldUpdateParams struct {
 	// Parameters for updating a multi-line text field.
 	OfFieldTextMultiLine *CollectionFieldUpdateParamsFieldFieldTextMultiLine `json:",inline"`
 	// This field is a request body variant, only one variant field can be set.
+	OfFieldIdentifier *CollectionFieldUpdateParamsFieldFieldIdentifier `json:",inline"`
+	// This field is a request body variant, only one variant field can be set.
 	// Parameters for updating an integer field.
 	OfFieldNumberUnitlessInteger *CollectionFieldUpdateParamsFieldFieldNumberUnitlessInteger `json:",inline"`
 	// This field is a request body variant, only one variant field can be set.
@@ -1049,6 +1082,7 @@ type CollectionFieldUpdateParams struct {
 func (u CollectionFieldUpdateParams) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfFieldTextSingleLine,
 		u.OfFieldTextMultiLine,
+		u.OfFieldIdentifier,
 		u.OfFieldNumberUnitlessInteger,
 		u.OfFieldNumberUnitlessFloat,
 		u.OfFieldNumberMonetary,
@@ -1145,6 +1179,34 @@ func (r *CollectionFieldUpdateParamsFieldFieldTextMultiLine) UnmarshalJSON(data 
 
 func init() {
 	apijson.RegisterFieldValidator[CollectionFieldUpdateParamsFieldFieldTextMultiLine](
+		"cardinality", "one", "many",
+	)
+}
+
+// The property Type is required.
+type CollectionFieldUpdateParamsFieldFieldIdentifier struct {
+	Description   param.Opt[string]      `json:"description,omitzero"`
+	Name          param.Opt[string]      `json:"name,omitzero"`
+	Required      param.Opt[bool]        `json:"required,omitzero"`
+	Unique        param.Opt[bool]        `json:"unique,omitzero"`
+	DefaultValues []IdentifierValueParam `json:"default_values,omitzero"`
+	// Any of "one", "many".
+	Cardinality string `json:"cardinality,omitzero"`
+	// This field can be elided, and will marshal its zero value as "field/identifier".
+	Type constant.FieldIdentifier `json:"type" default:"field/identifier"`
+	paramObj
+}
+
+func (r CollectionFieldUpdateParamsFieldFieldIdentifier) MarshalJSON() (data []byte, err error) {
+	type shadow CollectionFieldUpdateParamsFieldFieldIdentifier
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CollectionFieldUpdateParamsFieldFieldIdentifier) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[CollectionFieldUpdateParamsFieldFieldIdentifier](
 		"cardinality", "one", "many",
 	)
 }
