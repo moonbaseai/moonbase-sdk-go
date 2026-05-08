@@ -1,5 +1,101 @@
 # Changelog
 
+## 0.1.0-alpha.10 (2026-05-08)
+
+Full Changelog: [v0.1.0-alpha.9...v0.1.0-alpha.10](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.9...v0.1.0-alpha.10)
+
+### ⚠ BREAKING CHANGES
+
+* **api:** return PartialCollection from collections list, remove include param
+* **api:** return ItemPointer from items list, remove include param
+* **api:** return InboxConversationPointer and EmailMessagePointer from inbox list endpoints, flatten filter params
+* **api:** return MeetingPointer from meetings list, flatten filter param
+* **api:** rename LlmProfile to AgentSettings, remove model fields
+* **api:** add File results to search response, change data to Item | File union
+* **api:** replace Collection core field with kind enum (system, form, custom)
+* **api:** unified activity response with constituents array, restructured activity filters
+
+### Features
+
+* **api:** add agent settings update endpoint ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add attachment create/delete endpoints to inbox_messages ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add collection create and update methods ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add collection field create, update, and delete endpoints ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add default_values support on all field types ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add File results to search response, change data to Item | File union ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add form create, update, and delete endpoints ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add funnels CRUD endpoints with step management ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add identifier field and value types to collection ([4c31ca8](https://github.com/moonbaseai/moonbase-sdk-go/commit/4c31ca843a7a6f2282519498e48ceb1ab7d81fe3))
+* **api:** add merge method to collections.items ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add stage field create/update support via funnel pointer ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add Tag color field and business_email_required to Form ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add tags support on calls and meetings ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** add tagset create, update, and delete endpoints with tag color ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** change related_item to related_items array in note activity ([209bda9](https://github.com/moonbaseai/moonbase-sdk-go/commit/209bda94407c67f755a81997eebba31341812bf6))
+* **api:** make note and summary fields nullable in Call and Meeting models ([ec72de7](https://github.com/moonbaseai/moonbase-sdk-go/commit/ec72de7d8c6f225dddee4d9ed726989dfe56d0f0))
+* **api:** rename LlmProfile to AgentSettings, remove model fields ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** replace Collection core field with kind enum (system, form, custom) ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** return InboxConversationPointer and EmailMessagePointer from inbox list endpoints, flatten filter params ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** return ItemPointer from items list, remove include param ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** return MeetingPointer from meetings list, flatten filter param ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** return PartialCollection from collections list, remove include param ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **api:** unified activity response with constituents array, restructured activity filters ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **go:** add default http client with timeout ([dd09b04](https://github.com/moonbaseai/moonbase-sdk-go/commit/dd09b045fe94fccb342916fbf2024591fd38f553))
+* **internal:** support comma format in multipart form encoding ([0884ce4](https://github.com/moonbaseai/moonbase-sdk-go/commit/0884ce405fdca13097e354820ca4c7e2dd416c87))
+* support setting headers via env ([39f4ec6](https://github.com/moonbaseai/moonbase-sdk-go/commit/39f4ec6882481aef8e38601f02def201d6b74364))
+
+
+### Bug Fixes
+
+* **api:** flatten InboxMessageAttachmentNewParams structure ([8530791](https://github.com/moonbaseai/moonbase-sdk-go/commit/8530791d1355b270e5d834db28f7512e47e3aaff))
+* **go:** avoid panic when http.DefaultTransport is wrapped ([51e4416](https://github.com/moonbaseai/moonbase-sdk-go/commit/51e4416e184a99cb8a2bf9c9dc16237f50b8b041))
+* prevent duplicate ? in query params ([6c4e988](https://github.com/moonbaseai/moonbase-sdk-go/commit/6c4e988a2444ce2b2bccf933668cc9017844fe3f))
+
+
+### Chores
+
+* avoid embedding reflect.Type for dead code elimination ([e1eeb9d](https://github.com/moonbaseai/moonbase-sdk-go/commit/e1eeb9dbbe2add6d8cf46cf4b0171fec34aa2d70))
+* **ci:** add build step ([037e800](https://github.com/moonbaseai/moonbase-sdk-go/commit/037e8000cb2d86adda2e73236f412dd972a7f5dd))
+* **ci:** skip lint on metadata-only changes ([5e1af4b](https://github.com/moonbaseai/moonbase-sdk-go/commit/5e1af4b9af6b638e94f4a2759416656af4e7ae95))
+* **ci:** skip uploading artifacts on stainless-internal branches ([718600f](https://github.com/moonbaseai/moonbase-sdk-go/commit/718600f321612feb139c0e1eade72e24f0ab7b33))
+* **ci:** support opting out of skipping builds on metadata-only commits ([623c064](https://github.com/moonbaseai/moonbase-sdk-go/commit/623c064ed93cfe7a123a5da1dcdccf83f4a22eeb))
+* **client:** fix multipart serialisation of Default() fields ([89aed84](https://github.com/moonbaseai/moonbase-sdk-go/commit/89aed84a4a0ac4766af463989158e9372502da46))
+* **docs:** add missing descriptions ([0387d62](https://github.com/moonbaseai/moonbase-sdk-go/commit/0387d622432ef4662bb87acda5117fe1c69f6025))
+* **internal:** codegen related update ([8c87cc1](https://github.com/moonbaseai/moonbase-sdk-go/commit/8c87cc11cf9f5f005d0b00aa05cae550420dcd5f))
+* **internal:** minor cleanup ([d71daed](https://github.com/moonbaseai/moonbase-sdk-go/commit/d71daed726691b720299ffc1ebda30bda1aeedfd))
+* **internal:** more robust bootstrap script ([1590490](https://github.com/moonbaseai/moonbase-sdk-go/commit/15904906bfbd9fbf3a85c8dfe9d93a934beeece3))
+* **internal:** promote 13 inline schemas to named types ([2d68f5c](https://github.com/moonbaseai/moonbase-sdk-go/commit/2d68f5c4409dbb9e5a655f36504a8168a30d4b62))
+* **internal:** regenerate SDK with no functional changes ([e48f142](https://github.com/moonbaseai/moonbase-sdk-go/commit/e48f14290df999ad2c57b4e50c3db30035265fc8))
+* **internal:** regenerate SDK with no functional changes ([eda3c11](https://github.com/moonbaseai/moonbase-sdk-go/commit/eda3c11088977607d8dcb56786371b61cb0615ac))
+* **internal:** regenerate SDK with no functional changes ([85f7c7e](https://github.com/moonbaseai/moonbase-sdk-go/commit/85f7c7e605967c4c95f979b62eebe9b630a34994))
+* **internal:** support default value struct tag ([482616f](https://github.com/moonbaseai/moonbase-sdk-go/commit/482616f28b9602861f95adf754d90b5b3a3da12a))
+* **internal:** tweak CI branches ([71afb81](https://github.com/moonbaseai/moonbase-sdk-go/commit/71afb8165f48814bb0306ad61059b57acca193a4))
+* **internal:** update gitignore ([0726242](https://github.com/moonbaseai/moonbase-sdk-go/commit/0726242784ac6b7a4b7369a79ac911d48ccd961d))
+* **internal:** use explicit returns ([ddba10d](https://github.com/moonbaseai/moonbase-sdk-go/commit/ddba10d824d78cd16a7386c1686c19ab40071878))
+* **internal:** use explicit returns in more places ([7c82c9a](https://github.com/moonbaseai/moonbase-sdk-go/commit/7c82c9ac20b733bb833c113bfd4cca59fb37e697))
+* redact api-key headers in debug logs ([dec3fa6](https://github.com/moonbaseai/moonbase-sdk-go/commit/dec3fa697f06d263fd30508dce78d2d9ef145072))
+* remove unnecessary error check for url parsing ([ed56224](https://github.com/moonbaseai/moonbase-sdk-go/commit/ed56224d7f0b406ce0b214cf3f12c61f21189792))
+* **test:** do not count install time for mock server timeout ([c0b46e0](https://github.com/moonbaseai/moonbase-sdk-go/commit/c0b46e0e19b05c1c49b29d7a197cccbf25a7a403))
+* **tests:** bump steady to v0.19.4 ([2f0e9ad](https://github.com/moonbaseai/moonbase-sdk-go/commit/2f0e9ad03632fdb61f1e6a052f77d843870860de))
+* **tests:** bump steady to v0.19.5 ([a9ae2c2](https://github.com/moonbaseai/moonbase-sdk-go/commit/a9ae2c2b0ac2f90acb81a4afb17635574c8669f4))
+* **tests:** bump steady to v0.19.6 ([b60f764](https://github.com/moonbaseai/moonbase-sdk-go/commit/b60f764276937a991f7f53bc3afedcc70b98df0a))
+* **tests:** bump steady to v0.19.7 ([40d2002](https://github.com/moonbaseai/moonbase-sdk-go/commit/40d200248718ab777ad7447e4ad7b0054f519cd2))
+* **tests:** bump steady to v0.20.1 ([4e33ffb](https://github.com/moonbaseai/moonbase-sdk-go/commit/4e33ffbd9fab450d4bfec953b1e6cbb976639187))
+* **tests:** bump steady to v0.20.2 ([87e97f5](https://github.com/moonbaseai/moonbase-sdk-go/commit/87e97f541b183924822f467b4a48edc8d03e99f0))
+* **tests:** bump steady to v0.22.1 ([78feac5](https://github.com/moonbaseai/moonbase-sdk-go/commit/78feac52056988c7b2188eaa6343aa80c713ee5b))
+* update docs for api:"required" ([844a66e](https://github.com/moonbaseai/moonbase-sdk-go/commit/844a66e4fe69641c705180d894acd612d96b41ff))
+* update placeholder string ([faa5386](https://github.com/moonbaseai/moonbase-sdk-go/commit/faa538640b5e10d540088603d3c71505a424a344))
+
+
+### Documentation
+
+* **api:** update Search method and parameter documentation ([f6fa473](https://github.com/moonbaseai/moonbase-sdk-go/commit/f6fa47379182efec16a00466a9d53af54903610d))
+
+
+### Refactors
+
+* **tests:** switch from prism to steady ([8b6781c](https://github.com/moonbaseai/moonbase-sdk-go/commit/8b6781c84b0414104670d7ee51273cf94c9d5d21))
+
 ## 0.1.0-alpha.9 (2026-02-26)
 
 Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
