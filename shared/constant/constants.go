@@ -55,6 +55,7 @@ type FieldDate string                          // Always "field/date"
 type FieldDatetime string                      // Always "field/datetime"
 type FieldEmail string                         // Always "field/email"
 type FieldGeo string                           // Always "field/geo"
+type FieldIdentifier string                    // Always "field/identifier"
 type FieldNumberMonetary string                // Always "field/number/monetary"
 type FieldNumberPercentage string              // Always "field/number/percentage"
 type FieldNumberUnitlessFloat string           // Always "field/number/unitless_float"
@@ -98,6 +99,7 @@ type ValueDatetime string                      // Always "value/datetime"
 type ValueEmail string                         // Always "value/email"
 type ValueFunnelStep string                    // Always "value/funnel_step"
 type ValueGeo string                           // Always "value/geo"
+type ValueIdentifier string                    // Always "value/identifier"
 type ValueNumberMonetary string                // Always "value/number/monetary"
 type ValueNumberPercentage string              // Always "value/number/percentage"
 type ValueNumberUnitlessFloat string           // Always "value/number/unitless_float"
@@ -171,6 +173,7 @@ func (c FieldDate) Default() FieldDate                         { return "field/d
 func (c FieldDatetime) Default() FieldDatetime                 { return "field/datetime" }
 func (c FieldEmail) Default() FieldEmail                       { return "field/email" }
 func (c FieldGeo) Default() FieldGeo                           { return "field/geo" }
+func (c FieldIdentifier) Default() FieldIdentifier             { return "field/identifier" }
 func (c FieldNumberMonetary) Default() FieldNumberMonetary     { return "field/number/monetary" }
 func (c FieldNumberPercentage) Default() FieldNumberPercentage { return "field/number/percentage" }
 func (c FieldNumberUnitlessFloat) Default() FieldNumberUnitlessFloat {
@@ -218,6 +221,7 @@ func (c ValueDatetime) Default() ValueDatetime                   { return "value
 func (c ValueEmail) Default() ValueEmail                         { return "value/email" }
 func (c ValueFunnelStep) Default() ValueFunnelStep               { return "value/funnel_step" }
 func (c ValueGeo) Default() ValueGeo                             { return "value/geo" }
+func (c ValueIdentifier) Default() ValueIdentifier               { return "value/identifier" }
 func (c ValueNumberMonetary) Default() ValueNumberMonetary       { return "value/number/monetary" }
 func (c ValueNumberPercentage) Default() ValueNumberPercentage   { return "value/number/percentage" }
 func (c ValueNumberUnitlessFloat) Default() ValueNumberUnitlessFloat {
@@ -275,6 +279,7 @@ func (c FieldDate) MarshalJSON() ([]byte, error)                          { retu
 func (c FieldDatetime) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c FieldEmail) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c FieldGeo) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c FieldIdentifier) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c FieldNumberMonetary) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c FieldNumberPercentage) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c FieldNumberUnitlessFloat) MarshalJSON() ([]byte, error)           { return marshalString(c) }
@@ -318,6 +323,7 @@ func (c ValueDatetime) MarshalJSON() ([]byte, error)                      { retu
 func (c ValueEmail) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c ValueFunnelStep) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ValueGeo) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c ValueIdentifier) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ValueNumberMonetary) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ValueNumberPercentage) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c ValueNumberUnitlessFloat) MarshalJSON() ([]byte, error)           { return marshalString(c) }

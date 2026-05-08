@@ -1289,11 +1289,11 @@ func (r *EmailValueParam) UnmarshalJSON(data []byte) error {
 }
 
 // FieldUnion contains all possible properties and values from
-// [SingleLineTextField], [MultiLineTextField], [IntegerField], [FloatField],
-// [MonetaryField], [PercentageField], [BooleanField], [EmailField], [URLField],
-// [DomainField], [SocialXField], [SocialLinkedInField], [TelephoneNumberField],
-// [GeoField], [DateField], [DatetimeField], [ChoiceField], [StageField],
-// [RelationField].
+// [SingleLineTextField], [MultiLineTextField], [IdentifierField], [IntegerField],
+// [FloatField], [MonetaryField], [PercentageField], [BooleanField], [EmailField],
+// [URLField], [DomainField], [SocialXField], [SocialLinkedInField],
+// [TelephoneNumberField], [GeoField], [DateField], [DatetimeField], [ChoiceField],
+// [StageField], [RelationField].
 //
 // Use the [FieldUnion.AsAny] method to switch on the variant.
 //
@@ -1308,7 +1308,7 @@ type FieldUnion struct {
 	Readonly      bool                     `json:"readonly"`
 	Ref           string                   `json:"ref"`
 	Required      bool                     `json:"required"`
-	// Any of "field/text/single_line", "field/text/multi_line",
+	// Any of "field/text/single_line", "field/text/multi_line", "field/identifier",
 	// "field/number/unitless_integer", "field/number/unitless_float",
 	// "field/number/monetary", "field/number/percentage", "field/boolean",
 	// "field/email", "field/uri/url", "field/uri/domain", "field/uri/social_x",
@@ -1368,6 +1368,7 @@ type anyField interface {
 
 func (SingleLineTextField) implFieldUnion()  {}
 func (MultiLineTextField) implFieldUnion()   {}
+func (IdentifierField) implFieldUnion()      {}
 func (IntegerField) implFieldUnion()         {}
 func (FloatField) implFieldUnion()           {}
 func (MonetaryField) implFieldUnion()        {}
@@ -1391,6 +1392,7 @@ func (RelationField) implFieldUnion()        {}
 //	switch variant := FieldUnion.AsAny().(type) {
 //	case moonbase.SingleLineTextField:
 //	case moonbase.MultiLineTextField:
+//	case moonbase.IdentifierField:
 //	case moonbase.IntegerField:
 //	case moonbase.FloatField:
 //	case moonbase.MonetaryField:
@@ -1417,6 +1419,8 @@ func (u FieldUnion) AsAny() anyField {
 		return u.AsFieldTextSingleLine()
 	case "field/text/multi_line":
 		return u.AsFieldTextMultiLine()
+	case "field/identifier":
+		return u.AsFieldIdentifier()
 	case "field/number/unitless_integer":
 		return u.AsFieldNumberUnitlessInteger()
 	case "field/number/unitless_float":
@@ -1461,6 +1465,11 @@ func (u FieldUnion) AsFieldTextSingleLine() (v SingleLineTextField) {
 }
 
 func (u FieldUnion) AsFieldTextMultiLine() (v MultiLineTextField) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u FieldUnion) AsFieldIdentifier() (v IdentifierField) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1558,22 +1567,23 @@ func (r *FieldUnion) UnmarshalJSON(data []byte) error {
 }
 
 // FieldDefaultValueUnion contains all possible properties and values from
-// [SingleLineTextValue], [MultiLineTextValue], [IntegerValue], [FloatValue],
-// [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue], [URLValue],
-// [DomainValue], [SocialXValue], [SocialLinkedInValue], [TelephoneNumber],
-// [GeoValue], [DateValue], [CurrentDate], [DatetimeValue], [CurrentDatetime],
-// [ChoiceValue], [FunnelStepValue], [RelationValue], [CurrentMember].
+// [SingleLineTextValue], [MultiLineTextValue], [IdentifierValue], [IntegerValue],
+// [FloatValue], [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue],
+// [URLValue], [DomainValue], [SocialXValue], [SocialLinkedInValue],
+// [TelephoneNumber], [GeoValue], [DateValue], [CurrentDate], [DatetimeValue],
+// [CurrentDatetime], [ChoiceValue], [FunnelStepValue], [RelationValue],
+// [CurrentMember].
 //
 // Use the [FieldDefaultValueUnion.AsAny] method to switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type FieldDefaultValueUnion struct {
-	// This field is a union of [string], [string], [int64], [float64],
+	// This field is a union of [string], [string], [string], [int64], [float64],
 	// [MonetaryValueData], [float64], [bool], [string], [string], [string],
 	// [SocialXValueData], [SocialLinkedInValueData], [string], [string], [time.Time],
 	// [time.Time], [ChoiceFieldOption], [FunnelStep], [ItemPointer]
 	Data FieldDefaultValueUnionData `json:"data"`
-	// Any of "value/text/single_line", "value/text/multi_line",
+	// Any of "value/text/single_line", "value/text/multi_line", "value/identifier",
 	// "value/number/unitless_integer", "value/number/unitless_float",
 	// "value/number/monetary", "value/number/percentage", "value/boolean",
 	// "value/email", "value/uri/url", "value/uri/domain", "value/uri/social_x",
@@ -1596,6 +1606,7 @@ type anyFieldDefaultValue interface {
 
 func (SingleLineTextValue) implFieldDefaultValueUnion() {}
 func (MultiLineTextValue) implFieldDefaultValueUnion()  {}
+func (IdentifierValue) implFieldDefaultValueUnion()     {}
 func (IntegerValue) implFieldDefaultValueUnion()        {}
 func (FloatValue) implFieldDefaultValueUnion()          {}
 func (MonetaryValue) implFieldDefaultValueUnion()       {}
@@ -1622,6 +1633,7 @@ func (CurrentMember) implFieldDefaultValueUnion()       {}
 //	switch variant := FieldDefaultValueUnion.AsAny().(type) {
 //	case moonbase.SingleLineTextValue:
 //	case moonbase.MultiLineTextValue:
+//	case moonbase.IdentifierValue:
 //	case moonbase.IntegerValue:
 //	case moonbase.FloatValue:
 //	case moonbase.MonetaryValue:
@@ -1651,6 +1663,8 @@ func (u FieldDefaultValueUnion) AsAny() anyFieldDefaultValue {
 		return u.AsValueTextSingleLine()
 	case "value/text/multi_line":
 		return u.AsValueTextMultiLine()
+	case "value/identifier":
+		return u.AsValueIdentifier()
 	case "value/number/unitless_integer":
 		return u.AsValueNumberUnitlessInteger()
 	case "value/number/unitless_float":
@@ -1701,6 +1715,11 @@ func (u FieldDefaultValueUnion) AsValueTextSingleLine() (v SingleLineTextValue) 
 }
 
 func (u FieldDefaultValueUnion) AsValueTextMultiLine() (v MultiLineTextValue) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u FieldDefaultValueUnion) AsValueIdentifier() (v IdentifierValue) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1899,11 +1918,11 @@ func (r *FieldPointer) UnmarshalJSON(data []byte) error {
 }
 
 // FieldValueUnion contains all possible properties and values from
-// [SingleLineTextValue], [MultiLineTextValue], [IntegerValue], [FloatValue],
-// [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue], [URLValue],
-// [DomainValue], [SocialXValue], [SocialLinkedInValue], [TelephoneNumber],
-// [GeoValue], [DateValue], [DatetimeValue], [ChoiceValue], [FunnelStepValue],
-// [RelationValue], [[]ValueUnion].
+// [SingleLineTextValue], [MultiLineTextValue], [IdentifierValue], [IntegerValue],
+// [FloatValue], [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue],
+// [URLValue], [DomainValue], [SocialXValue], [SocialLinkedInValue],
+// [TelephoneNumber], [GeoValue], [DateValue], [DatetimeValue], [ChoiceValue],
+// [FunnelStepValue], [RelationValue], [[]ValueUnion].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
@@ -1913,7 +1932,7 @@ type FieldValueUnion struct {
 	// This field will be present if the value is a [[]ValueUnion] instead of an
 	// object.
 	OfArrayOfValues []ValueUnion `json:",inline"`
-	// This field is a union of [string], [string], [int64], [float64],
+	// This field is a union of [string], [string], [string], [int64], [float64],
 	// [MonetaryValueData], [float64], [bool], [string], [string], [string],
 	// [SocialXValueData], [SocialLinkedInValueData], [string], [string], [time.Time],
 	// [time.Time], [ChoiceFieldOption], [FunnelStep], [ItemPointer]
@@ -1933,6 +1952,11 @@ func (u FieldValueUnion) AsSingleLineText() (v SingleLineTextValue) {
 }
 
 func (u FieldValueUnion) AsMultiLineText() (v MultiLineTextValue) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u FieldValueUnion) AsIdentifier() (v IdentifierValue) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2104,6 +2128,12 @@ func FieldValueParamOfMultiLineText(data string) FieldValueParamUnion {
 	return FieldValueParamUnion{OfMultiLineText: &variant}
 }
 
+func FieldValueParamOfIdentifier(data string) FieldValueParamUnion {
+	var variant IdentifierValueParam
+	variant.Data = data
+	return FieldValueParamUnion{OfIdentifier: &variant}
+}
+
 func FieldValueParamOfInteger(data int64) FieldValueParamUnion {
 	var variant IntegerValueParam
 	variant.Data = data
@@ -2212,6 +2242,7 @@ func FieldValueParamOfRelation(data ItemPointerParam) FieldValueParamUnion {
 type FieldValueParamUnion struct {
 	OfSingleLineText  *SingleLineTextValueParam `json:",omitzero,inline"`
 	OfMultiLineText   *MultiLineTextValueParam  `json:",omitzero,inline"`
+	OfIdentifier      *IdentifierValueParam     `json:",omitzero,inline"`
 	OfInteger         *IntegerValueParam        `json:",omitzero,inline"`
 	OfFloat           *FloatValueParam          `json:",omitzero,inline"`
 	OfMonetary        *MonetaryValueParam       `json:",omitzero,inline"`
@@ -2236,6 +2267,7 @@ type FieldValueParamUnion struct {
 func (u FieldValueParamUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfSingleLineText,
 		u.OfMultiLineText,
+		u.OfIdentifier,
 		u.OfInteger,
 		u.OfFloat,
 		u.OfMonetary,
@@ -2264,6 +2296,8 @@ func (u *FieldValueParamUnion) asAny() any {
 		return u.OfSingleLineText
 	} else if !param.IsOmitted(u.OfMultiLineText) {
 		return u.OfMultiLineText
+	} else if !param.IsOmitted(u.OfIdentifier) {
+		return u.OfIdentifier
 	} else if !param.IsOmitted(u.OfInteger) {
 		return u.OfInteger
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -2310,6 +2344,8 @@ func (u FieldValueParamUnion) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMultiLineText; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfIdentifier; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfInteger; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfFloat; vt != nil {
@@ -2355,6 +2391,8 @@ func (u FieldValueParamUnion) GetData() (res fieldValueParamUnionData) {
 	if vt := u.OfSingleLineText; vt != nil {
 		res.any = &vt.Data
 	} else if vt := u.OfMultiLineText; vt != nil {
+		res.any = &vt.Data
+	} else if vt := u.OfIdentifier; vt != nil {
 		res.any = &vt.Data
 	} else if vt := u.OfInteger; vt != nil {
 		res.any = &vt.Data
@@ -2802,6 +2840,130 @@ func (r GeoValueParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *GeoValueParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A field that stores opaque external identifiers verbatim.
+type IdentifierField struct {
+	// Unique identifier for the object.
+	ID string `json:"id" api:"required"`
+	// Specifies whether the field can hold a single value (`one`) or multiple values
+	// (`many`).
+	//
+	// Any of "one", "many".
+	Cardinality IdentifierFieldCardinality `json:"cardinality" api:"required"`
+	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
+	CreatedAt     time.Time                `json:"created_at" api:"required" format:"date-time"`
+	DefaultValues []FieldDefaultValueUnion `json:"default_values" api:"required"`
+	// Any of "system", "inverse", "custom".
+	Kind IdentifierFieldKind `json:"kind" api:"required"`
+	// The human-readable name of the field (e.g., "Stripe Id").
+	Name string `json:"name" api:"required"`
+	// If `true`, the value of this field is system-managed and cannot be updated via
+	// the API.
+	Readonly bool `json:"readonly" api:"required"`
+	// A unique, stable, machine-readable identifier for the field within its
+	// collection (e.g., `stripe_id`).
+	Ref string `json:"ref" api:"required"`
+	// If `true`, this field must have a value.
+	Required bool `json:"required" api:"required"`
+	// The data type of the field. Always `field/identifier` for this field.
+	Type constant.FieldIdentifier `json:"type" default:"field/identifier"`
+	// If `true`, values for this field must be unique across all items in the
+	// collection.
+	Unique bool `json:"unique" api:"required"`
+	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
+	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
+	// An optional, longer-form description of the field's purpose.
+	Description string `json:"description"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID            respjson.Field
+		Cardinality   respjson.Field
+		CreatedAt     respjson.Field
+		DefaultValues respjson.Field
+		Kind          respjson.Field
+		Name          respjson.Field
+		Readonly      respjson.Field
+		Ref           respjson.Field
+		Required      respjson.Field
+		Type          respjson.Field
+		Unique        respjson.Field
+		UpdatedAt     respjson.Field
+		Description   respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r IdentifierField) RawJSON() string { return r.JSON.raw }
+func (r *IdentifierField) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Specifies whether the field can hold a single value (`one`) or multiple values
+// (`many`).
+type IdentifierFieldCardinality string
+
+const (
+	IdentifierFieldCardinalityOne  IdentifierFieldCardinality = "one"
+	IdentifierFieldCardinalityMany IdentifierFieldCardinality = "many"
+)
+
+type IdentifierFieldKind string
+
+const (
+	IdentifierFieldKindSystem  IdentifierFieldKind = "system"
+	IdentifierFieldKindInverse IdentifierFieldKind = "inverse"
+	IdentifierFieldKindCustom  IdentifierFieldKind = "custom"
+)
+
+// Identifier string
+type IdentifierValue struct {
+	// An external identifier as text, uo to 255 characters in length.
+	Data string                   `json:"data" api:"required"`
+	Type constant.ValueIdentifier `json:"type" default:"value/identifier"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r IdentifierValue) RawJSON() string { return r.JSON.raw }
+func (r *IdentifierValue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this IdentifierValue to a IdentifierValueParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// IdentifierValueParam.Overrides()
+func (r IdentifierValue) ToParam() IdentifierValueParam {
+	return param.Override[IdentifierValueParam](json.RawMessage(r.RawJSON()))
+}
+
+// Identifier string
+//
+// The properties Data, Type are required.
+type IdentifierValueParam struct {
+	// An external identifier as text, uo to 255 characters in length.
+	Data string `json:"data" api:"required"`
+	// This field can be elided, and will marshal its zero value as "value/identifier".
+	Type constant.ValueIdentifier `json:"type" default:"value/identifier"`
+	paramObj
+}
+
+func (r IdentifierValueParam) MarshalJSON() (data []byte, err error) {
+	type shadow IdentifierValueParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *IdentifierValueParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4869,22 +5031,22 @@ func (r *URLValueParam) UnmarshalJSON(data []byte) error {
 }
 
 // ValueUnion contains all possible properties and values from
-// [SingleLineTextValue], [MultiLineTextValue], [IntegerValue], [FloatValue],
-// [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue], [URLValue],
-// [DomainValue], [SocialXValue], [SocialLinkedInValue], [TelephoneNumber],
-// [GeoValue], [DateValue], [DatetimeValue], [ChoiceValue], [FunnelStepValue],
-// [RelationValue].
+// [SingleLineTextValue], [MultiLineTextValue], [IdentifierValue], [IntegerValue],
+// [FloatValue], [MonetaryValue], [PercentageValue], [BooleanValue], [EmailValue],
+// [URLValue], [DomainValue], [SocialXValue], [SocialLinkedInValue],
+// [TelephoneNumber], [GeoValue], [DateValue], [DatetimeValue], [ChoiceValue],
+// [FunnelStepValue], [RelationValue].
 //
 // Use the [ValueUnion.AsAny] method to switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ValueUnion struct {
-	// This field is a union of [string], [string], [int64], [float64],
+	// This field is a union of [string], [string], [string], [int64], [float64],
 	// [MonetaryValueData], [float64], [bool], [string], [string], [string],
 	// [SocialXValueData], [SocialLinkedInValueData], [string], [string], [time.Time],
 	// [time.Time], [ChoiceFieldOption], [FunnelStep], [ItemPointer]
 	Data ValueUnionData `json:"data"`
-	// Any of "value/text/single_line", "value/text/multi_line",
+	// Any of "value/text/single_line", "value/text/multi_line", "value/identifier",
 	// "value/number/unitless_integer", "value/number/unitless_float",
 	// "value/number/monetary", "value/number/percentage", "value/boolean",
 	// "value/email", "value/uri/url", "value/uri/domain", "value/uri/social_x",
@@ -4907,6 +5069,7 @@ type anyValue interface {
 
 func (SingleLineTextValue) implValueUnion() {}
 func (MultiLineTextValue) implValueUnion()  {}
+func (IdentifierValue) implValueUnion()     {}
 func (IntegerValue) implValueUnion()        {}
 func (FloatValue) implValueUnion()          {}
 func (MonetaryValue) implValueUnion()       {}
@@ -4930,6 +5093,7 @@ func (RelationValue) implValueUnion()       {}
 //	switch variant := ValueUnion.AsAny().(type) {
 //	case moonbase.SingleLineTextValue:
 //	case moonbase.MultiLineTextValue:
+//	case moonbase.IdentifierValue:
 //	case moonbase.IntegerValue:
 //	case moonbase.FloatValue:
 //	case moonbase.MonetaryValue:
@@ -4956,6 +5120,8 @@ func (u ValueUnion) AsAny() anyValue {
 		return u.AsValueTextSingleLine()
 	case "value/text/multi_line":
 		return u.AsValueTextMultiLine()
+	case "value/identifier":
+		return u.AsValueIdentifier()
 	case "value/number/unitless_integer":
 		return u.AsValueNumberUnitlessInteger()
 	case "value/number/unitless_float":
@@ -5000,6 +5166,11 @@ func (u ValueUnion) AsValueTextSingleLine() (v SingleLineTextValue) {
 }
 
 func (u ValueUnion) AsValueTextMultiLine() (v MultiLineTextValue) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ValueUnion) AsValueIdentifier() (v IdentifierValue) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -5164,6 +5335,12 @@ func ValueParamOfValueTextMultiLine(data string) ValueParamUnion {
 	return ValueParamUnion{OfValueTextMultiLine: &valueTextMultiLine}
 }
 
+func ValueParamOfValueIdentifier(data string) ValueParamUnion {
+	var valueIdentifier IdentifierValueParam
+	valueIdentifier.Data = data
+	return ValueParamUnion{OfValueIdentifier: &valueIdentifier}
+}
+
 func ValueParamOfValueNumberUnitlessInteger(data int64) ValueParamUnion {
 	var valueNumberUnitlessInteger IntegerValueParam
 	valueNumberUnitlessInteger.Data = data
@@ -5272,6 +5449,7 @@ func ValueParamOfValueRelation(data ItemPointerParam) ValueParamUnion {
 type ValueParamUnion struct {
 	OfValueTextSingleLine        *SingleLineTextValueParam `json:",omitzero,inline"`
 	OfValueTextMultiLine         *MultiLineTextValueParam  `json:",omitzero,inline"`
+	OfValueIdentifier            *IdentifierValueParam     `json:",omitzero,inline"`
 	OfValueNumberUnitlessInteger *IntegerValueParam        `json:",omitzero,inline"`
 	OfValueNumberUnitlessFloat   *FloatValueParam          `json:",omitzero,inline"`
 	OfValueNumberMonetary        *MonetaryValueParam       `json:",omitzero,inline"`
@@ -5295,6 +5473,7 @@ type ValueParamUnion struct {
 func (u ValueParamUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfValueTextSingleLine,
 		u.OfValueTextMultiLine,
+		u.OfValueIdentifier,
 		u.OfValueNumberUnitlessInteger,
 		u.OfValueNumberUnitlessFloat,
 		u.OfValueNumberMonetary,
@@ -5322,6 +5501,8 @@ func (u *ValueParamUnion) asAny() any {
 		return u.OfValueTextSingleLine
 	} else if !param.IsOmitted(u.OfValueTextMultiLine) {
 		return u.OfValueTextMultiLine
+	} else if !param.IsOmitted(u.OfValueIdentifier) {
+		return u.OfValueIdentifier
 	} else if !param.IsOmitted(u.OfValueNumberUnitlessInteger) {
 		return u.OfValueNumberUnitlessInteger
 	} else if !param.IsOmitted(u.OfValueNumberUnitlessFloat) {
@@ -5365,6 +5546,8 @@ func (u ValueParamUnion) GetType() *string {
 	if vt := u.OfValueTextSingleLine; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfValueTextMultiLine; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfValueIdentifier; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfValueNumberUnitlessInteger; vt != nil {
 		return (*string)(&vt.Type)
@@ -5411,6 +5594,8 @@ func (u ValueParamUnion) GetData() (res valueParamUnionData) {
 	if vt := u.OfValueTextSingleLine; vt != nil {
 		res.any = &vt.Data
 	} else if vt := u.OfValueTextMultiLine; vt != nil {
+		res.any = &vt.Data
+	} else if vt := u.OfValueIdentifier; vt != nil {
 		res.any = &vt.Data
 	} else if vt := u.OfValueNumberUnitlessInteger; vt != nil {
 		res.any = &vt.Data
@@ -5546,6 +5731,7 @@ func init() {
 		"type",
 		apijson.Discriminator[SingleLineTextValueParam]("value/text/single_line"),
 		apijson.Discriminator[MultiLineTextValueParam]("value/text/multi_line"),
+		apijson.Discriminator[IdentifierValueParam]("value/identifier"),
 		apijson.Discriminator[IntegerValueParam]("value/number/unitless_integer"),
 		apijson.Discriminator[FloatValueParam]("value/number/unitless_float"),
 		apijson.Discriminator[MonetaryValueParam]("value/number/monetary"),
