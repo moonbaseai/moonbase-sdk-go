@@ -4,6 +4,7 @@ package moonbase
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -22,6 +23,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// View activities and capture calls
+//
 // CallService contains methods and other services that help with interacting with
 // the Moonbase API.
 //
@@ -46,7 +49,7 @@ func (r *CallService) New(ctx context.Context, body CallNewParams, opts ...optio
 	opts = slices.Concat(r.Options, opts)
 	path := "calls"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing call.
@@ -54,11 +57,11 @@ func (r *CallService) Get(ctx context.Context, id string, query CallGetParams, o
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("calls/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of calls.
@@ -89,7 +92,7 @@ func (r *CallService) Upsert(ctx context.Context, body CallUpsertParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "calls/upsert"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // The Call object represents a phone call that has been logged in the system. It
@@ -115,8 +118,10 @@ type Call struct {
 	ProviderStatus string `json:"provider_status" api:"required"`
 	// The time the call started, as an ISO 8601 timestamp in UTC.
 	StartAt time.Time `json:"start_at" api:"required" format:"date-time"`
+	// The tags currently applied to this call.
+	Tags []shared.Tag `json:"tags" api:"required"`
 	// String representing the object’s type. Always `call` for this object.
-	Type constant.Call `json:"type" api:"required"`
+	Type constant.Call `json:"type" default:"call"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The time the call was answered, if available, as an ISO 8601 timestamp in UTC.
@@ -125,12 +130,12 @@ type Call struct {
 	EndAt time.Time `json:"end_at" format:"date-time"`
 	// The Note object represents a block of text content, often used for meeting notes
 	// or summaries.
-	Note Note `json:"note"`
+	Note Note `json:"note" api:"nullable"`
 	// A hash of additional metadata from the provider.
 	ProviderMetadata map[string]any `json:"provider_metadata"`
 	// The Note object represents a block of text content, often used for meeting notes
 	// or summaries.
-	Summary    Note           `json:"summary"`
+	Summary    Note           `json:"summary" api:"nullable"`
 	Transcript CallTranscript `json:"transcript" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -142,6 +147,7 @@ type Call struct {
 		ProviderID       respjson.Field
 		ProviderStatus   respjson.Field
 		StartAt          respjson.Field
+		Tags             respjson.Field
 		Type             respjson.Field
 		UpdatedAt        respjson.Field
 		AnsweredAt       respjson.Field
@@ -169,6 +175,15 @@ const (
 	CallDirectionOutgoing CallDirection = "outgoing"
 )
 
+// The name of the phone provider that handled the call.
+type CallProvider string
+
+const (
+	CallProviderOpenphone CallProvider = "openphone"
+	CallProviderUser      CallProvider = "user"
+	CallProviderZoomPhone CallProvider = "zoom_phone"
+)
+
 // Represents a participant in a call.
 type CallParticipant struct {
 	// Unique identifier for the object.
@@ -178,14 +193,16 @@ type CallParticipant struct {
 	// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
 	//
 	// Any of "caller", "callee", "other".
-	Role string `json:"role" api:"required"`
+	Role CallParticipantRole `json:"role" api:"required"`
 	// String representing the object’s type. Always `call_participant` for this
 	// object.
-	Type constant.CallParticipant `json:"type" api:"required"`
-	// A lightweight reference to another resource.
-	Organization shared.Pointer `json:"organization"`
-	// A lightweight reference to another resource.
-	Person shared.Pointer `json:"person"`
+	Type constant.CallParticipant `json:"type" default:"call_participant"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Organization ItemPointer `json:"organization"`
+	// A reference to an `Item` within a specific `Collection`, providing the context
+	// needed to locate the item.
+	Person ItemPointer `json:"person"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -205,14 +222,57 @@ func (r *CallParticipant) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The name of the phone provider that handled the call.
-type CallProvider string
+// The role of the participant in the call. Can be `caller`, `callee`, or `other`.
+type CallParticipantRole string
 
 const (
-	CallProviderOpenphone CallProvider = "openphone"
-	CallProviderUser      CallProvider = "user"
-	CallProviderZoomPhone CallProvider = "zoom_phone"
+	CallParticipantRoleCaller CallParticipantRole = "caller"
+	CallParticipantRoleCallee CallParticipantRole = "callee"
+	CallParticipantRoleOther  CallParticipantRole = "other"
 )
+
+type CallPointer struct {
+	ID   string        `json:"id" api:"required"`
+	Type constant.Call `json:"type" default:"call"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CallPointer) RawJSON() string { return r.JSON.raw }
+func (r *CallPointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this CallPointer to a CallPointerParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// CallPointerParam.Overrides()
+func (r CallPointer) ToParam() CallPointerParam {
+	return param.Override[CallPointerParam](json.RawMessage(r.RawJSON()))
+}
+
+// The properties ID, Type are required.
+type CallPointerParam struct {
+	ID string `json:"id" api:"required"`
+	// This field can be elided, and will marshal its zero value as "call".
+	Type constant.Call `json:"type" default:"call"`
+	paramObj
+}
+
+func (r CallPointerParam) MarshalJSON() (data []byte, err error) {
+	type shadow CallPointerParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CallPointerParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type CallTranscript struct {
 	Cues []CallTranscriptCue `json:"cues" api:"required"`
@@ -231,10 +291,10 @@ func (r *CallTranscript) UnmarshalJSON(data []byte) error {
 }
 
 type CallTranscriptCue struct {
-	From    float64                  `json:"from" api:"required"`
-	Speaker CallTranscriptCueSpeaker `json:"speaker" api:"required"`
-	Text    string                   `json:"text" api:"required"`
-	To      float64                  `json:"to" api:"required"`
+	From    float64               `json:"from" api:"required"`
+	Speaker CallTranscriptSpeaker `json:"speaker" api:"required"`
+	Text    string                `json:"text" api:"required"`
+	To      float64               `json:"to" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		From        respjson.Field
@@ -252,7 +312,7 @@ func (r *CallTranscriptCue) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type CallTranscriptCueSpeaker struct {
+type CallTranscriptSpeaker struct {
 	AttendeeID string `json:"attendee_id"`
 	Label      string `json:"label"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -265,8 +325,8 @@ type CallTranscriptCueSpeaker struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CallTranscriptCueSpeaker) RawJSON() string { return r.JSON.raw }
-func (r *CallTranscriptCueSpeaker) UnmarshalJSON(data []byte) error {
+func (r CallTranscriptSpeaker) RawJSON() string { return r.JSON.raw }
+func (r *CallTranscriptSpeaker) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -295,6 +355,8 @@ type CallNewParams struct {
 	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
 	// Any recordings associated with the call.
 	Recordings []CallNewParamsRecording `json:"recordings,omitzero"`
+	// Optional list of tag pointers to assign to the call.
+	Tags []shared.TagPointerParam `json:"tags,omitzero"`
 	// A transcript of the call.
 	Transcript CallNewParamsTranscript `json:"transcript,omitzero"`
 	paramObj
@@ -489,6 +551,9 @@ type CallUpsertParams struct {
 	ProviderMetadata map[string]any `json:"provider_metadata,omitzero"`
 	// Any recordings associated with the call.
 	Recordings []CallUpsertParamsRecording `json:"recordings,omitzero"`
+	// Optional list of tag pointers to assign to the call. If omitted, existing tags
+	// are unchanged. Pass an empty array to clear tags.
+	Tags []shared.TagPointerParam `json:"tags,omitzero"`
 	// A transcript of the call.
 	Transcript CallUpsertParamsTranscript `json:"transcript,omitzero"`
 	paramObj

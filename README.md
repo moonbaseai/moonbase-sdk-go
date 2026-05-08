@@ -37,7 +37,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/moonbaseai/moonbase-sdk-go@v0.1.0-alpha.9'
+go get -u 'github.com/moonbaseai/moonbase-sdk-go@v0.1.0-alpha.10'
 ```
 
 <!-- x-release-please-end -->
@@ -65,11 +65,7 @@ func main() {
 	client := moonbase.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MOONBASE_API_KEY")
 	)
-	collection, err := client.Collections.Get(
-		context.TODO(),
-		"people",
-		moonbase.CollectionGetParams{},
-	)
+	collection, err := client.Collections.Get(context.TODO(), "people")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -83,7 +79,7 @@ func main() {
 The moonbase library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
 semantics from the Go 1.24+ `encoding/json` release for request fields.
 
-Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`json:"...,required"\`</code>. These
+Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`api:"required"\`</code>. These
 fields are always serialized, even their zero values.
 
 Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `moonbase.String(string)`, `moonbase.Int(int64)`, etc.
@@ -307,8 +303,8 @@ iter := client.Collections.Items.ListAutoPaging(
 )
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	item := iter.Current()
-	fmt.Printf("%+v\n", item)
+	itemPointer := iter.Current()
+	fmt.Printf("%+v\n", itemPointer)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -347,11 +343,7 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Collections.Get(
-	context.TODO(),
-	"people",
-	moonbase.CollectionGetParams{},
-)
+_, err := client.Collections.Get(context.TODO(), "people")
 if err != nil {
 	var apierr *moonbase.Error
 	if errors.As(err, &apierr) {
@@ -379,7 +371,6 @@ defer cancel()
 client.Collections.Get(
 	ctx,
 	"people",
-	moonbase.CollectionGetParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -401,17 +392,17 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 ```go
 // A file from the file system
 file, err := os.Open("/path/to/file")
-moonbase.FileUploadParams{
+moonbase.InboxMessageAttachmentNewParams{
 	File: file,
 }
 
 // A file from a string
-moonbase.FileUploadParams{
+moonbase.InboxMessageAttachmentNewParams{
 	File: strings.NewReader("my file contents"),
 }
 
 // With a custom filename and contentType
-moonbase.FileUploadParams{
+moonbase.InboxMessageAttachmentNewParams{
 	File: moonbase.File(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
 }
 ```
@@ -434,7 +425,6 @@ client := moonbase.NewClient(
 client.Collections.Get(
 	context.TODO(),
 	"people",
-	moonbase.CollectionGetParams{},
 	option.WithMaxRetries(5),
 )
 ```
@@ -450,7 +440,6 @@ var response *http.Response
 collection, err := client.Collections.Get(
 	context.TODO(),
 	"people",
-	moonbase.CollectionGetParams{},
 	option.WithResponseInto(&response),
 )
 if err != nil {

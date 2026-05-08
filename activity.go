@@ -19,10 +19,11 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// View activities and capture calls
+//
 // ActivityService contains methods and other services that help with interacting
 // with the Moonbase API.
 //
@@ -43,19 +44,19 @@ func NewActivityService(opts ...option.RequestOption) (r ActivityService) {
 }
 
 // Retrieves the details of an existing activity.
-func (r *ActivityService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *ActivityUnion, err error) {
+func (r *ActivityService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Activity, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("activities/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of activities.
-func (r *ActivityService) List(ctx context.Context, query ActivityListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ActivityUnion], err error) {
+func (r *ActivityService) List(ctx context.Context, query ActivityListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Activity], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -73,891 +74,253 @@ func (r *ActivityService) List(ctx context.Context, query ActivityListParams, op
 }
 
 // Returns a list of activities.
-func (r *ActivityService) ListAutoPaging(ctx context.Context, query ActivityListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[ActivityUnion] {
+func (r *ActivityService) ListAutoPaging(ctx context.Context, query ActivityListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Activity] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// ActivityUnion contains all possible properties and values from
-// [ActivityCallOccurred], [ActivityFormSubmitted], [ActivityInboxMessageSent],
-// [ActivityItemCreated], [ActivityItemMentioned], [ActivityItemMerged],
-// [ActivityActivityFileCreated], [ActivityMeetingHeld],
-// [ActivityMeetingScheduled], [ActivityNoteCreated],
-// [ActivityProgramMessageBounced], [ActivityProgramMessageClicked],
-// [ActivityProgramMessageComplained], [ActivityProgramMessageFailed],
-// [ActivityProgramMessageOpened], [ActivityProgramMessageSent],
-// [ActivityProgramMessageShielded], [ActivityProgramMessageUnsubscribed].
-//
-// Use the [ActivityUnion.AsAny] method to switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ActivityUnion struct {
-	ID string `json:"id"`
-	// This field is from variant [ActivityCallOccurred].
-	Call       shared.Pointer `json:"call"`
-	OccurredAt time.Time      `json:"occurred_at"`
-	// Any of "activity/call_occurred", "activity/form_submitted",
-	// "activity/inbox_message_sent", "activity/item_created",
-	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
+// The Activity object represents a specific event that has occurred, such as a
+// meeting being scheduled or a form being submitted.
+type Activity struct {
+	// Unique identifier for the object.
+	ID string `json:"id" api:"required"`
+	// An array of entities involved along with each entity's relation to the activity.
+	Constituents []Constituent `json:"constituents" api:"required"`
+	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
+	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
+	// The type of activity.
+	//
+	// Any of "activity/call_occurred", "activity/file_created",
+	// "activity/form_submitted", "activity/inbox_message_sent",
+	// "activity/item_created", "activity/item_mentioned", "activity/item_merged",
 	// "activity/meeting_held", "activity/meeting_scheduled", "activity/note_created",
 	// "activity/program_message_bounced", "activity/program_message_clicked",
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
 	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
-	Type string `json:"type"`
-	// This field is from variant [ActivityFormSubmitted].
-	Item ItemPointer `json:"item"`
-	// This field is from variant [ActivityInboxMessageSent].
-	Message shared.Pointer `json:"message"`
-	// This field is from variant [ActivityItemMentioned].
-	Author ItemPointer `json:"author"`
-	// This field is from variant [ActivityItemMentioned].
-	Note shared.Pointer `json:"note"`
-	// This field is from variant [ActivityItemMerged].
-	Destination ItemPointer `json:"destination"`
-	// This field is from variant [ActivityItemMerged].
-	Initiator ItemPointer `json:"initiator"`
-	// This field is from variant [ActivityItemMerged].
-	Source ItemPointer `json:"source"`
-	// This field is from variant [ActivityActivityFileCreated].
-	File shared.Pointer `json:"file"`
-	// This field is from variant [ActivityActivityFileCreated].
-	RelatedItem ItemPointer `json:"related_item"`
-	// This field is from variant [ActivityMeetingHeld].
-	Meeting shared.Pointer `json:"meeting"`
-	// This field is from variant [ActivityNoteCreated].
-	RelatedMeeting shared.Pointer `json:"related_meeting"`
-	// This field is from variant [ActivityProgramMessageBounced].
-	ProgramMessage shared.Pointer `json:"program_message"`
-	// This field is from variant [ActivityProgramMessageBounced].
-	Recipient ItemPointer `json:"recipient"`
-	// This field is from variant [ActivityProgramMessageBounced].
-	BounceType string `json:"bounce_type"`
-	// This field is from variant [ActivityProgramMessageBounced].
-	BouncedRecipientEmails []string `json:"bounced_recipient_emails"`
-	// This field is from variant [ActivityProgramMessageClicked].
-	LinkText string `json:"link_text"`
-	// This field is from variant [ActivityProgramMessageClicked].
-	LinkURLUnsafe string `json:"link_url_unsafe"`
-	ReasonCode    string `json:"reason_code"`
-	// This field is from variant [ActivityProgramMessageSent].
-	RecipientEmails []string `json:"recipient_emails"`
-	// This field is from variant [ActivityProgramMessageUnsubscribed].
-	Email string `json:"email"`
-	JSON  struct {
-		ID                     respjson.Field
-		Call                   respjson.Field
-		OccurredAt             respjson.Field
-		Type                   respjson.Field
-		Item                   respjson.Field
-		Message                respjson.Field
-		Author                 respjson.Field
-		Note                   respjson.Field
-		Destination            respjson.Field
-		Initiator              respjson.Field
-		Source                 respjson.Field
-		File                   respjson.Field
-		RelatedItem            respjson.Field
-		Meeting                respjson.Field
-		RelatedMeeting         respjson.Field
-		ProgramMessage         respjson.Field
-		Recipient              respjson.Field
-		BounceType             respjson.Field
-		BouncedRecipientEmails respjson.Field
-		LinkText               respjson.Field
-		LinkURLUnsafe          respjson.Field
-		ReasonCode             respjson.Field
-		RecipientEmails        respjson.Field
-		Email                  respjson.Field
-		raw                    string
+	Type ActivityType `json:"type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		Constituents respjson.Field
+		OccurredAt   respjson.Field
+		Type         respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
-// anyActivity is implemented by each variant of [ActivityUnion] to add type safety
-// for the return type of [ActivityUnion.AsAny]
-type anyActivity interface {
-	implActivityUnion()
+// Returns the unmodified JSON received from the API
+func (r Activity) RawJSON() string { return r.JSON.raw }
+func (r *Activity) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-func (ActivityCallOccurred) implActivityUnion()               {}
-func (ActivityFormSubmitted) implActivityUnion()              {}
-func (ActivityInboxMessageSent) implActivityUnion()           {}
-func (ActivityItemCreated) implActivityUnion()                {}
-func (ActivityItemMentioned) implActivityUnion()              {}
-func (ActivityItemMerged) implActivityUnion()                 {}
-func (ActivityActivityFileCreated) implActivityUnion()        {}
-func (ActivityMeetingHeld) implActivityUnion()                {}
-func (ActivityMeetingScheduled) implActivityUnion()           {}
-func (ActivityNoteCreated) implActivityUnion()                {}
-func (ActivityProgramMessageBounced) implActivityUnion()      {}
-func (ActivityProgramMessageClicked) implActivityUnion()      {}
-func (ActivityProgramMessageComplained) implActivityUnion()   {}
-func (ActivityProgramMessageFailed) implActivityUnion()       {}
-func (ActivityProgramMessageOpened) implActivityUnion()       {}
-func (ActivityProgramMessageSent) implActivityUnion()         {}
-func (ActivityProgramMessageShielded) implActivityUnion()     {}
-func (ActivityProgramMessageUnsubscribed) implActivityUnion() {}
+// The type of activity.
+type ActivityType string
+
+const (
+	ActivityTypeActivityCallOccurred               ActivityType = "activity/call_occurred"
+	ActivityTypeActivityFileCreated                ActivityType = "activity/file_created"
+	ActivityTypeActivityFormSubmitted              ActivityType = "activity/form_submitted"
+	ActivityTypeActivityInboxMessageSent           ActivityType = "activity/inbox_message_sent"
+	ActivityTypeActivityItemCreated                ActivityType = "activity/item_created"
+	ActivityTypeActivityItemMentioned              ActivityType = "activity/item_mentioned"
+	ActivityTypeActivityItemMerged                 ActivityType = "activity/item_merged"
+	ActivityTypeActivityMeetingHeld                ActivityType = "activity/meeting_held"
+	ActivityTypeActivityMeetingScheduled           ActivityType = "activity/meeting_scheduled"
+	ActivityTypeActivityNoteCreated                ActivityType = "activity/note_created"
+	ActivityTypeActivityProgramMessageBounced      ActivityType = "activity/program_message_bounced"
+	ActivityTypeActivityProgramMessageClicked      ActivityType = "activity/program_message_clicked"
+	ActivityTypeActivityProgramMessageComplained   ActivityType = "activity/program_message_complained"
+	ActivityTypeActivityProgramMessageFailed       ActivityType = "activity/program_message_failed"
+	ActivityTypeActivityProgramMessageOpened       ActivityType = "activity/program_message_opened"
+	ActivityTypeActivityProgramMessageSent         ActivityType = "activity/program_message_sent"
+	ActivityTypeActivityProgramMessageShielded     ActivityType = "activity/program_message_shielded"
+	ActivityTypeActivityProgramMessageUnsubscribed ActivityType = "activity/program_message_unsubscribed"
+)
+
+// The Constituent object represents information about something that was involved
+// in a particular activity.
+type Constituent struct {
+	// A lightweight reference to the entity of `Constituent`, containing information
+	// about what type of entity it is as well as the entity's id.
+	Entity ConstituentEntityPointerUnion `json:"entity" api:"required"`
+	// Any of "actor", "object", "target".
+	Relation ConstituentRelation  `json:"relation" api:"required"`
+	Type     constant.Constituent `json:"type" default:"constituent"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Entity      respjson.Field
+		Relation    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Constituent) RawJSON() string { return r.JSON.raw }
+func (r *Constituent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ConstituentRelation string
+
+const (
+	ConstituentRelationActor  ConstituentRelation = "actor"
+	ConstituentRelationObject ConstituentRelation = "object"
+	ConstituentRelationTarget ConstituentRelation = "target"
+)
+
+// ConstituentEntityPointerUnion contains all possible properties and values from
+// [CallPointer], [CollectionPointer], [ItemPointer], [FilePointer],
+// [MeetingPointer], [EmailMessagePointer], [NotePointer], [ProgramPointer],
+// [ProgramMessagePointer], [ProgramTemplatePointer], [UnsubscribePointer].
+//
+// Use the [ConstituentEntityPointerUnion.AsAny] method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConstituentEntityPointerUnion struct {
+	ID string `json:"id"`
+	// Any of "call", "collection", "item", "file", "meeting", "email_message", "note",
+	// "program", "program_message", "program_template", "unsubscribe".
+	Type string `json:"type"`
+	// This field is from variant [CollectionPointer].
+	Ref string `json:"ref"`
+	// This field is from variant [ItemPointer].
+	Collection CollectionPointer `json:"collection"`
+	JSON       struct {
+		ID         respjson.Field
+		Type       respjson.Field
+		Ref        respjson.Field
+		Collection respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+// anyConstituentEntityPointer is implemented by each variant of
+// [ConstituentEntityPointerUnion] to add type safety for the return type of
+// [ConstituentEntityPointerUnion.AsAny]
+type anyConstituentEntityPointer interface {
+	implConstituentEntityPointerUnion()
+}
+
+func (CallPointer) implConstituentEntityPointerUnion()            {}
+func (CollectionPointer) implConstituentEntityPointerUnion()      {}
+func (ItemPointer) implConstituentEntityPointerUnion()            {}
+func (FilePointer) implConstituentEntityPointerUnion()            {}
+func (MeetingPointer) implConstituentEntityPointerUnion()         {}
+func (EmailMessagePointer) implConstituentEntityPointerUnion()    {}
+func (NotePointer) implConstituentEntityPointerUnion()            {}
+func (ProgramPointer) implConstituentEntityPointerUnion()         {}
+func (ProgramMessagePointer) implConstituentEntityPointerUnion()  {}
+func (ProgramTemplatePointer) implConstituentEntityPointerUnion() {}
+func (UnsubscribePointer) implConstituentEntityPointerUnion()     {}
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := ActivityUnion.AsAny().(type) {
-//	case moonbase.ActivityCallOccurred:
-//	case moonbase.ActivityFormSubmitted:
-//	case moonbase.ActivityInboxMessageSent:
-//	case moonbase.ActivityItemCreated:
-//	case moonbase.ActivityItemMentioned:
-//	case moonbase.ActivityItemMerged:
-//	case moonbase.ActivityActivityFileCreated:
-//	case moonbase.ActivityMeetingHeld:
-//	case moonbase.ActivityMeetingScheduled:
-//	case moonbase.ActivityNoteCreated:
-//	case moonbase.ActivityProgramMessageBounced:
-//	case moonbase.ActivityProgramMessageClicked:
-//	case moonbase.ActivityProgramMessageComplained:
-//	case moonbase.ActivityProgramMessageFailed:
-//	case moonbase.ActivityProgramMessageOpened:
-//	case moonbase.ActivityProgramMessageSent:
-//	case moonbase.ActivityProgramMessageShielded:
-//	case moonbase.ActivityProgramMessageUnsubscribed:
+//	switch variant := ConstituentEntityPointerUnion.AsAny().(type) {
+//	case moonbase.CallPointer:
+//	case moonbase.CollectionPointer:
+//	case moonbase.ItemPointer:
+//	case moonbase.FilePointer:
+//	case moonbase.MeetingPointer:
+//	case moonbase.EmailMessagePointer:
+//	case moonbase.NotePointer:
+//	case moonbase.ProgramPointer:
+//	case moonbase.ProgramMessagePointer:
+//	case moonbase.ProgramTemplatePointer:
+//	case moonbase.UnsubscribePointer:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u ActivityUnion) AsAny() anyActivity {
+func (u ConstituentEntityPointerUnion) AsAny() anyConstituentEntityPointer {
 	switch u.Type {
-	case "activity/call_occurred":
-		return u.AsActivityCallOccurred()
-	case "activity/form_submitted":
-		return u.AsActivityFormSubmitted()
-	case "activity/inbox_message_sent":
-		return u.AsActivityInboxMessageSent()
-	case "activity/item_created":
-		return u.AsActivityItemCreated()
-	case "activity/item_mentioned":
-		return u.AsActivityItemMentioned()
-	case "activity/item_merged":
-		return u.AsActivityItemMerged()
-	case "activity/file_created":
-		return u.AsActivityFileCreated()
-	case "activity/meeting_held":
-		return u.AsActivityMeetingHeld()
-	case "activity/meeting_scheduled":
-		return u.AsActivityMeetingScheduled()
-	case "activity/note_created":
-		return u.AsActivityNoteCreated()
-	case "activity/program_message_bounced":
-		return u.AsActivityProgramMessageBounced()
-	case "activity/program_message_clicked":
-		return u.AsActivityProgramMessageClicked()
-	case "activity/program_message_complained":
-		return u.AsActivityProgramMessageComplained()
-	case "activity/program_message_failed":
-		return u.AsActivityProgramMessageFailed()
-	case "activity/program_message_opened":
-		return u.AsActivityProgramMessageOpened()
-	case "activity/program_message_sent":
-		return u.AsActivityProgramMessageSent()
-	case "activity/program_message_shielded":
-		return u.AsActivityProgramMessageShielded()
-	case "activity/program_message_unsubscribed":
-		return u.AsActivityProgramMessageUnsubscribed()
+	case "call":
+		return u.AsCall()
+	case "collection":
+		return u.AsCollection()
+	case "item":
+		return u.AsItem()
+	case "file":
+		return u.AsFile()
+	case "meeting":
+		return u.AsMeeting()
+	case "email_message":
+		return u.AsEmailMessage()
+	case "note":
+		return u.AsNote()
+	case "program":
+		return u.AsProgram()
+	case "program_message":
+		return u.AsProgramMessage()
+	case "program_template":
+		return u.AsProgramTemplate()
+	case "unsubscribe":
+		return u.AsUnsubscribe()
 	}
 	return nil
 }
 
-func (u ActivityUnion) AsActivityCallOccurred() (v ActivityCallOccurred) {
+func (u ConstituentEntityPointerUnion) AsCall() (v CallPointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityFormSubmitted() (v ActivityFormSubmitted) {
+func (u ConstituentEntityPointerUnion) AsCollection() (v CollectionPointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityInboxMessageSent() (v ActivityInboxMessageSent) {
+func (u ConstituentEntityPointerUnion) AsItem() (v ItemPointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityItemCreated() (v ActivityItemCreated) {
+func (u ConstituentEntityPointerUnion) AsFile() (v FilePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityItemMentioned() (v ActivityItemMentioned) {
+func (u ConstituentEntityPointerUnion) AsMeeting() (v MeetingPointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityItemMerged() (v ActivityItemMerged) {
+func (u ConstituentEntityPointerUnion) AsEmailMessage() (v EmailMessagePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityFileCreated() (v ActivityActivityFileCreated) {
+func (u ConstituentEntityPointerUnion) AsNote() (v NotePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityMeetingHeld() (v ActivityMeetingHeld) {
+func (u ConstituentEntityPointerUnion) AsProgram() (v ProgramPointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityMeetingScheduled() (v ActivityMeetingScheduled) {
+func (u ConstituentEntityPointerUnion) AsProgramMessage() (v ProgramMessagePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityNoteCreated() (v ActivityNoteCreated) {
+func (u ConstituentEntityPointerUnion) AsProgramTemplate() (v ProgramTemplatePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ActivityUnion) AsActivityProgramMessageBounced() (v ActivityProgramMessageBounced) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageClicked() (v ActivityProgramMessageClicked) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageComplained() (v ActivityProgramMessageComplained) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageFailed() (v ActivityProgramMessageFailed) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageOpened() (v ActivityProgramMessageOpened) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageSent() (v ActivityProgramMessageSent) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageShielded() (v ActivityProgramMessageShielded) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ActivityUnion) AsActivityProgramMessageUnsubscribed() (v ActivityProgramMessageUnsubscribed) {
+func (u ConstituentEntityPointerUnion) AsUnsubscribe() (v UnsubscribePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ActivityUnion) RawJSON() string { return u.JSON.raw }
+func (u ConstituentEntityPointerUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ActivityUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `File` is created.
-type ActivityActivityFileCreated struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	File shared.Pointer `json:"file" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	RelatedItem ItemPointer `json:"related_item" api:"required"`
-	// The type of activity. Always `activity/file_created`.
-	Type constant.ActivityFileCreated `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		File        respjson.Field
-		OccurredAt  respjson.Field
-		RelatedItem respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityActivityFileCreated) RawJSON() string { return r.JSON.raw }
-func (r *ActivityActivityFileCreated) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when an incoming or outgoing call is logged.
-type ActivityCallOccurred struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	Call shared.Pointer `json:"call" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/call_occurred`.
-	Type constant.ActivityCallOccurred `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Call        respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityCallOccurred) RawJSON() string { return r.JSON.raw }
-func (r *ActivityCallOccurred) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `Form` is submitted.
-type ActivityFormSubmitted struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Item ItemPointer `json:"item" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/form_submitted`.
-	Type constant.ActivityFormSubmitted `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Item        respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityFormSubmitted) RawJSON() string { return r.JSON.raw }
-func (r *ActivityFormSubmitted) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a message is sent from an `Inbox`.
-type ActivityInboxMessageSent struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	Message shared.Pointer `json:"message" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/inbox_message_sent`.
-	Type constant.ActivityInboxMessageSent `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Message     respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityInboxMessageSent) RawJSON() string { return r.JSON.raw }
-func (r *ActivityInboxMessageSent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when an `Item` is created.
-type ActivityItemCreated struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Item ItemPointer `json:"item" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/item_created`.
-	Type constant.ActivityItemCreated `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Item        respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityItemCreated) RawJSON() string { return r.JSON.raw }
-func (r *ActivityItemCreated) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when an `Item` is mentioned.
-type ActivityItemMentioned struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Author ItemPointer `json:"author" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Item ItemPointer `json:"item" api:"required"`
-	// A lightweight reference to another resource.
-	Note shared.Pointer `json:"note" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/item_mentioned`.
-	Type constant.ActivityItemMentioned `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Author      respjson.Field
-		Item        respjson.Field
-		Note        respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityItemMentioned) RawJSON() string { return r.JSON.raw }
-func (r *ActivityItemMentioned) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when an `Item` is merged into another item.
-type ActivityItemMerged struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Destination ItemPointer `json:"destination" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Initiator ItemPointer `json:"initiator" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Source ItemPointer `json:"source" api:"required"`
-	// The type of activity. Always `activity/item_merged`.
-	Type constant.ActivityItemMerged `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Destination respjson.Field
-		Initiator   respjson.Field
-		OccurredAt  respjson.Field
-		Source      respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityItemMerged) RawJSON() string { return r.JSON.raw }
-func (r *ActivityItemMerged) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `Meeting` has concluded.
-type ActivityMeetingHeld struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	Meeting shared.Pointer `json:"meeting" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/meeting_held`.
-	Type constant.ActivityMeetingHeld `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Meeting     respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityMeetingHeld) RawJSON() string { return r.JSON.raw }
-func (r *ActivityMeetingHeld) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `Meeting` is scheduled.
-type ActivityMeetingScheduled struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	Meeting shared.Pointer `json:"meeting" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// The type of activity. Always `activity/meeting_scheduled`.
-	Type constant.ActivityMeetingScheduled `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Meeting     respjson.Field
-		OccurredAt  respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityMeetingScheduled) RawJSON() string { return r.JSON.raw }
-func (r *ActivityMeetingScheduled) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `Note` is created.
-type ActivityNoteCreated struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// A lightweight reference to another resource.
-	Note shared.Pointer `json:"note" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	RelatedItem ItemPointer `json:"related_item" api:"required"`
-	// A lightweight reference to another resource.
-	RelatedMeeting shared.Pointer `json:"related_meeting" api:"required"`
-	// The type of activity. Always `activity/note_created`.
-	Type constant.ActivityNoteCreated `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		Note           respjson.Field
-		OccurredAt     respjson.Field
-		RelatedItem    respjson.Field
-		RelatedMeeting respjson.Field
-		Type           respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityNoteCreated) RawJSON() string { return r.JSON.raw }
-func (r *ActivityNoteCreated) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `ProgramMessage` bounces.
-type ActivityProgramMessageBounced struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_bounced`.
-	Type constant.ActivityProgramMessageBounced `json:"type" api:"required"`
-	// The type of bounce (e.g., `Permanent` for hard bounces, `Temporary` for soft
-	// bounces).
-	BounceType string `json:"bounce_type"`
-	// List of email addresses that bounced.
-	BouncedRecipientEmails []string `json:"bounced_recipient_emails"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                     respjson.Field
-		OccurredAt             respjson.Field
-		ProgramMessage         respjson.Field
-		Recipient              respjson.Field
-		Type                   respjson.Field
-		BounceType             respjson.Field
-		BouncedRecipientEmails respjson.Field
-		ExtraFields            map[string]respjson.Field
-		raw                    string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageBounced) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageBounced) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a recipient clicks a tracked link in a
-// `ProgramMessage`.
-type ActivityProgramMessageClicked struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_clicked`.
-	Type constant.ActivityProgramMessageClicked `json:"type" api:"required"`
-	// The text of the link that was clicked.
-	LinkText string `json:"link_text"`
-	// The URL of the link that was clicked.
-	LinkURLUnsafe string `json:"link_url_unsafe"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		LinkText       respjson.Field
-		LinkURLUnsafe  respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageClicked) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageClicked) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a recipient marks a `ProgramMessage` as
-// spam.
-type ActivityProgramMessageComplained struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_complained`.
-	Type constant.ActivityProgramMessageComplained `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageComplained) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageComplained) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `ProgramMessage` fails to be delivered
-// for a technical reason.
-type ActivityProgramMessageFailed struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_failed`.
-	Type constant.ActivityProgramMessageFailed `json:"type" api:"required"`
-	// A code indicating the reason for the failure (e.g., `message_contained_virus`).
-	//
-	// Any of "liquid_error", "person_missing_email", "message_contained_virus".
-	ReasonCode ActivityProgramMessageFailedReasonCode `json:"reason_code"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		ReasonCode     respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageFailed) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageFailed) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A code indicating the reason for the failure (e.g., `message_contained_virus`).
-type ActivityProgramMessageFailedReasonCode string
-
-const (
-	ActivityProgramMessageFailedReasonCodeLiquidError           ActivityProgramMessageFailedReasonCode = "liquid_error"
-	ActivityProgramMessageFailedReasonCodePersonMissingEmail    ActivityProgramMessageFailedReasonCode = "person_missing_email"
-	ActivityProgramMessageFailedReasonCodeMessageContainedVirus ActivityProgramMessageFailedReasonCode = "message_contained_virus"
-)
-
-// Represents an event that occurs when a recipient opens a `ProgramMessage`.
-type ActivityProgramMessageOpened struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_opened`.
-	Type constant.ActivityProgramMessageOpened `json:"type" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageOpened) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageOpened) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `ProgramMessage` is successfully sent.
-type ActivityProgramMessageSent struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_sent`.
-	Type constant.ActivityProgramMessageSent `json:"type" api:"required"`
-	// List of email addresses the message was sent to.
-	RecipientEmails []string `json:"recipient_emails"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID              respjson.Field
-		OccurredAt      respjson.Field
-		ProgramMessage  respjson.Field
-		Recipient       respjson.Field
-		Type            respjson.Field
-		RecipientEmails respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageSent) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageSent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Represents an event that occurs when a `ProgramMessage` is prevented from being
-// sent by a delivery protection rule.
-type ActivityProgramMessageShielded struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_shielded`.
-	Type constant.ActivityProgramMessageShielded `json:"type" api:"required"`
-	// A code indicating why the message was shielded (e.g.,
-	// `person_previously_unsubscribed`).
-	//
-	// Any of "person_previously_unsubscribed", "email_on_unsubscribe_list".
-	ReasonCode ActivityProgramMessageShieldedReasonCode `json:"reason_code"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		ReasonCode     respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageShielded) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageShielded) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A code indicating why the message was shielded (e.g.,
-// `person_previously_unsubscribed`).
-type ActivityProgramMessageShieldedReasonCode string
-
-const (
-	ActivityProgramMessageShieldedReasonCodePersonPreviouslyUnsubscribed ActivityProgramMessageShieldedReasonCode = "person_previously_unsubscribed"
-	ActivityProgramMessageShieldedReasonCodeEmailOnUnsubscribeList       ActivityProgramMessageShieldedReasonCode = "email_on_unsubscribe_list"
-)
-
-// Represents an event that occurs when a recipient unsubscribes after receiving a
-// `ProgramMessage`.
-type ActivityProgramMessageUnsubscribed struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The time at which the event occurred, as an ISO 8601 timestamp in UTC.
-	OccurredAt time.Time `json:"occurred_at" api:"required" format:"date-time"`
-	// A lightweight reference to another resource.
-	ProgramMessage shared.Pointer `json:"program_message" api:"required"`
-	// A reference to an `Item` within a specific `Collection`, providing the context
-	// needed to locate the item.
-	Recipient ItemPointer `json:"recipient" api:"required"`
-	// The type of activity. Always `activity/program_message_unsubscribed`.
-	Type constant.ActivityProgramMessageUnsubscribed `json:"type" api:"required"`
-	// The email address of the person who unsubscribed.
-	Email string `json:"email"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID             respjson.Field
-		OccurredAt     respjson.Field
-		ProgramMessage respjson.Field
-		Recipient      respjson.Field
-		Type           respjson.Field
-		Email          respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ActivityProgramMessageUnsubscribed) RawJSON() string { return r.JSON.raw }
-func (r *ActivityProgramMessageUnsubscribed) UnmarshalJSON(data []byte) error {
+func (r *ConstituentEntityPointerUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -973,8 +336,19 @@ type ActivityListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter activities by type, date, or item.
-	Filter ActivityListParamsFilter `query:"filter,omitzero" json:"-"`
+	// Filter activities by which entities were involved. Must be paired with
+	// constituent_entity_type.
+	ConstituentEntityID ActivityListParamsConstituentEntityID `query:"constituent_entity_id,omitzero" json:"-"`
+	// Filter activities by which entities were involved. Must be paired with
+	// constituent_entity_id.
+	ConstituentEntityType ActivityListParamsConstituentEntityType `query:"constituent_entity_type,omitzero" json:"-"`
+	// Filter activities by which entities were involved via specific relations. Must
+	// be paired with constituent_entity_type and constituent_entity_id.
+	ConstituentRelation ActivityListParamsConstituentRelation `query:"constituent_relation,omitzero" json:"-"`
+	// Filter activities by when they occurred.
+	OccurredAt ActivityListParamsOccurredAt `query:"occurred_at,omitzero" json:"-"`
+	// Filter activities by type.
+	Type ActivityListParamsType `query:"type,omitzero" json:"-"`
 	paramObj
 }
 
@@ -986,53 +360,77 @@ func (r ActivityListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Filter activities by type, date, or item.
-type ActivityListParamsFilter struct {
-	ItemID     ActivityListParamsFilterItemID     `query:"item_id,omitzero" json:"-"`
-	OccurredAt ActivityListParamsFilterOccurredAt `query:"occurred_at,omitzero" json:"-"`
-	Type       ActivityListParamsFilterType       `query:"type,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [ActivityListParamsFilter]'s query parameters as
-// `url.Values`.
-func (r ActivityListParamsFilter) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type ActivityListParamsFilterItemID struct {
+// Filter activities by which entities were involved. Must be paired with
+// constituent_entity_type.
+type ActivityListParamsConstituentEntityID struct {
 	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [ActivityListParamsFilterItemID]'s query parameters as
-// `url.Values`.
-func (r ActivityListParamsFilterItemID) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [ActivityListParamsConstituentEntityID]'s query parameters
+// as `url.Values`.
+func (r ActivityListParamsConstituentEntityID) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type ActivityListParamsFilterOccurredAt struct {
+// Filter activities by which entities were involved. Must be paired with
+// constituent_entity_id.
+type ActivityListParamsConstituentEntityType struct {
+	// The type of the entity involved as a constituent of the activity.
+	//
+	// Any of "call", "collection", "email_message", "file", "item", "meeting", "note",
+	// "program", "program_message", "program_template", "unsubscribe".
+	Eq string `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsConstituentEntityType]'s query parameters
+// as `url.Values`.
+func (r ActivityListParamsConstituentEntityType) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter activities by which entities were involved via specific relations. Must
+// be paired with constituent_entity_type and constituent_entity_id.
+type ActivityListParamsConstituentRelation struct {
+	// Any of "actor", "object", "target".
+	Eq string `query:"eq,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [ActivityListParamsConstituentRelation]'s query parameters
+// as `url.Values`.
+func (r ActivityListParamsConstituentRelation) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Filter activities by when they occurred.
+type ActivityListParamsOccurredAt struct {
 	Gte param.Opt[time.Time] `query:"gte,omitzero" format:"date-time" json:"-"`
 	Lte param.Opt[time.Time] `query:"lte,omitzero" format:"date-time" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [ActivityListParamsFilterOccurredAt]'s query parameters as
+// URLQuery serializes [ActivityListParamsOccurredAt]'s query parameters as
 // `url.Values`.
-func (r ActivityListParamsFilterOccurredAt) URLQuery() (v url.Values, err error) {
+func (r ActivityListParamsOccurredAt) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type ActivityListParamsFilterType struct {
+// Filter activities by type.
+type ActivityListParamsType struct {
 	// Any of "activity/call_occurred", "activity/form_submitted",
 	// "activity/inbox_message_sent", "activity/item_created",
 	// "activity/item_mentioned", "activity/item_merged", "activity/file_created",
@@ -1041,13 +439,12 @@ type ActivityListParamsFilterType struct {
 	// "activity/program_message_complained", "activity/program_message_failed",
 	// "activity/program_message_opened", "activity/program_message_sent",
 	// "activity/program_message_shielded", "activity/program_message_unsubscribed".
-	In []string `query:"in,omitzero" json:"-"`
+	Eq string `query:"eq,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [ActivityListParamsFilterType]'s query parameters as
-// `url.Values`.
-func (r ActivityListParamsFilterType) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [ActivityListParamsType]'s query parameters as `url.Values`.
+func (r ActivityListParamsType) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,

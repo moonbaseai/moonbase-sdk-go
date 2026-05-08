@@ -11,6 +11,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 )
 
 func TestMeetingGetWithOptionalParams(t *testing.T) {
@@ -62,6 +63,9 @@ func TestMeetingUpdateWithOptionalParams(t *testing.T) {
 				ProviderID:  "abc123",
 				URL:         "https://example.com/recording.mp4",
 			},
+			Tags: []shared.TagPointerParam{{
+				ID: "1CLJt2vYMiFzRLEp238B7G",
+			}},
 			Transcript: moonbase.MeetingUpdateParamsTranscript{
 				Cues: []moonbase.MeetingUpdateParamsTranscriptCue{{
 					From:    0.71999997,
@@ -103,10 +107,8 @@ func TestMeetingListWithOptionalParams(t *testing.T) {
 	_, err := client.Meetings.List(context.TODO(), moonbase.MeetingListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
-		Filter: moonbase.MeetingListParamsFilter{
-			ICalUid: moonbase.MeetingListParamsFilterICalUid{
-				Eq: moonbase.String("eq"),
-			},
+		ICalUid: moonbase.MeetingListParamsICalUid{
+			Eq: moonbase.String("eq"),
 		},
 		Limit: moonbase.Int(1),
 	})

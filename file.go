@@ -22,10 +22,11 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
-	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your meetings, files, and notes
+//
 // FileService contains methods and other services that help with interacting with
 // the Moonbase API.
 //
@@ -50,11 +51,11 @@ func (r *FileService) Get(ctx context.Context, id string, opts ...option.Request
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("files/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of files that you have uploaded.
@@ -86,11 +87,11 @@ func (r *FileService) Delete(ctx context.Context, id string, opts ...option.Requ
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("files/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Upload a file
@@ -98,7 +99,25 @@ func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "files"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
+}
+
+type FilePointer struct {
+	ID   string        `json:"id" api:"required"`
+	Type constant.File `json:"type" default:"file"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FilePointer) RawJSON() string { return r.JSON.raw }
+func (r *FilePointer) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // The File object represents a file that has been uploaded to your library.
@@ -119,7 +138,7 @@ type MoonbaseFile struct {
 	// The size of the file in bytes.
 	Size float64 `json:"size" api:"required"`
 	// String representing the object’s type. Always `file` for this object.
-	Type constant.File `json:"type" api:"required"`
+	Type constant.File `json:"type" default:"file"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -174,7 +193,7 @@ type FileUploadParams struct {
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Link the File to Moonbase items like a person, organization, deal, task, or an
 	// item in a custom collection.
-	Associations []shared.PointerParam `json:"associations,omitzero"`
+	Associations []ItemPointerParam `json:"associations,omitzero"`
 	paramObj
 }
 

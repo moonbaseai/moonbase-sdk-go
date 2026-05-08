@@ -12,6 +12,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/testutil"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 )
 
 func TestCallNewWithOptionalParams(t *testing.T) {
@@ -36,7 +37,7 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:       moonbase.CallNewParamsProviderOpenphone,
-		ProviderID:     "openphone_id_000000000002",
+		ProviderID:     "openphone_id_000000000006",
 		ProviderStatus: "completed",
 		StartAt:        time.Now(),
 		AnsweredAt:     moonbase.Time(time.Now()),
@@ -51,6 +52,9 @@ func TestCallNewWithOptionalParams(t *testing.T) {
 			ContentType: "audio/mpeg",
 			ProviderID:  "provider_id",
 			URL:         "https://example.com",
+		}},
+		Tags: []shared.TagPointerParam{{
+			ID: "id",
 		}},
 		Transcript: moonbase.CallNewParamsTranscript{
 			Cues: []moonbase.CallNewParamsTranscriptCue{{
@@ -146,7 +150,7 @@ func TestCallUpsertWithOptionalParams(t *testing.T) {
 			Role:  "callee",
 		}},
 		Provider:       moonbase.CallUpsertParamsProviderOpenphone,
-		ProviderID:     "openphone_id_000000000009",
+		ProviderID:     "openphone_id_000000000005",
 		ProviderStatus: "completed",
 		StartAt:        time.Now(),
 		AnsweredAt:     moonbase.Time(time.Now()),
@@ -161,6 +165,9 @@ func TestCallUpsertWithOptionalParams(t *testing.T) {
 			ContentType: "audio/mpeg",
 			ProviderID:  "provider_id",
 			URL:         "https://example.com",
+		}},
+		Tags: []shared.TagPointerParam{{
+			ID: "id",
 		}},
 		Transcript: moonbase.CallUpsertParamsTranscript{
 			Cues: []moonbase.CallUpsertParamsTranscriptCue{{

@@ -22,6 +22,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your marketing campaigns and forms
+//
 // ProgramTemplateService contains methods and other services that help with
 // interacting with the Moonbase API.
 //
@@ -46,11 +48,11 @@ func (r *ProgramTemplateService) Get(ctx context.Context, id string, query Progr
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("program_templates/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of your program templates.
@@ -89,7 +91,7 @@ type ProgramTemplate struct {
 	Subject string `json:"subject" api:"required"`
 	// String representing the object’s type. Always `program_template` for this
 	// object.
-	Type constant.ProgramTemplate `json:"type" api:"required"`
+	Type constant.ProgramTemplate `json:"type" default:"program_template"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The `Program` that uses this template.
@@ -113,6 +115,24 @@ type ProgramTemplate struct {
 // Returns the unmodified JSON received from the API
 func (r ProgramTemplate) RawJSON() string { return r.JSON.raw }
 func (r *ProgramTemplate) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ProgramTemplatePointer struct {
+	ID   string                   `json:"id" api:"required"`
+	Type constant.ProgramTemplate `json:"type" default:"program_template"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProgramTemplatePointer) RawJSON() string { return r.JSON.raw }
+func (r *ProgramTemplatePointer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

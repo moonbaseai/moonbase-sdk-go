@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestInboxConversationGetWithOptionalParams(t *testing.T) {
+func TestUnsubscribeNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,13 +25,9 @@ func TestInboxConversationGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.InboxConversations.Get(
-		context.TODO(),
-		"id",
-		moonbase.InboxConversationGetParams{
-			Include: []string{"inbox"},
-		},
-	)
+	_, err := client.Unsubscribes.New(context.TODO(), moonbase.UnsubscribeNewParams{
+		Email: "yoda@moonbase.ai",
+	})
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -41,7 +37,7 @@ func TestInboxConversationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestInboxConversationListWithOptionalParams(t *testing.T) {
+func TestUnsubscribeListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,14 +49,33 @@ func TestInboxConversationListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.InboxConversations.List(context.TODO(), moonbase.InboxConversationListParams{
+	_, err := client.Unsubscribes.List(context.TODO(), moonbase.UnsubscribeListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
-		InboxID: moonbase.InboxConversationListParamsInboxID{
-			Eq: moonbase.String("eq"),
-		},
-		Limit: moonbase.Int(1),
+		Limit:  moonbase.Int(1),
 	})
+	if err != nil {
+		var apierr *moonbase.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestUnsubscribeDelete(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := moonbase.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Unsubscribes.Delete(context.TODO(), "email")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {

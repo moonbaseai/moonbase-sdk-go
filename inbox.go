@@ -21,6 +21,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your inboxes, conversations, and messages
+//
 // InboxService contains methods and other services that help with interacting with
 // the Moonbase API.
 //
@@ -41,15 +43,15 @@ func NewInboxService(opts ...option.RequestOption) (r InboxService) {
 }
 
 // Retrieves the details of an existing inbox.
-func (r *InboxService) Get(ctx context.Context, id string, query InboxGetParams, opts ...option.RequestOption) (res *Inbox, err error) {
+func (r *InboxService) Get(ctx context.Context, id string, opts ...option.RequestOption) (res *Inbox, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("inboxes/%s", id)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Returns a list of shared inboxes.
@@ -83,25 +85,23 @@ type Inbox struct {
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// The display name of the inbox.
 	Name string `json:"name" api:"required"`
+	// A list of `TagsetPointer` objects referring to the Tagsets associated with this
+	// inbox, which defines the tags available for its conversations.
+	Tagsets []TagsetPointer `json:"tagsets" api:"required"`
 	// String representing the object’s type. Always `inbox` for this object.
-	Type constant.Inbox `json:"type" api:"required"`
+	Type constant.Inbox `json:"type" default:"inbox"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	CanRead   bool      `json:"can_read"`
-	// The list of `Tagset` objects associated with this inbox, which defines the tags
-	// available for its conversations.
-	//
-	// **Note:** Only present when requested using the `include` query parameter.
-	Tagsets []Tagset `json:"tagsets"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		CreatedAt   respjson.Field
 		Name        respjson.Field
+		Tagsets     respjson.Field
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
 		CanRead     respjson.Field
-		Tagsets     respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -111,23 +111,6 @@ type Inbox struct {
 func (r Inbox) RawJSON() string { return r.JSON.raw }
 func (r *Inbox) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-type InboxGetParams struct {
-	// Specifies which related objects to include in the response. Valid option is
-	// `tagsets`.
-	//
-	// Any of "tagsets".
-	Include []string `query:"include,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [InboxGetParams]'s query parameters as `url.Values`.
-func (r InboxGetParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
 }
 
 type InboxListParams struct {
@@ -142,8 +125,6 @@ type InboxListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Any of "tagsets".
-	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
 }
 

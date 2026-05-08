@@ -31,17 +31,17 @@ func TestInboxMessageNewWithOptionalParams(t *testing.T) {
 			Markdown: moonbase.String("This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown)."),
 		},
 		InboxID: "1CLJt2v6KXDyzDuM57pQqo",
-		Bcc: []moonbase.InboxMessageNewParamsBcc{{
+		Bcc: []moonbase.EmailMessageAddressParams{{
 			Email: "steve@example.com",
 			Name:  moonbase.String("Steve"),
 		}},
-		Cc: []moonbase.InboxMessageNewParamsCc{{
+		Cc: []moonbase.EmailMessageAddressParams{{
 			Email: "joe@example.com",
 			Name:  moonbase.String("Joe"),
 		}},
 		ConversationID: moonbase.String("conversation_id"),
 		Subject:        moonbase.String("Test Subject"),
-		To: []moonbase.InboxMessageNewParamsTo{{
+		To: []moonbase.EmailMessageAddressParams{{
 			Email: "bob@example.com",
 			Name:  moonbase.String("Bob"),
 		}, {
@@ -103,19 +103,19 @@ func TestInboxMessageUpdateWithOptionalParams(t *testing.T) {
 		"id",
 		moonbase.InboxMessageUpdateParams{
 			LockVersion: 0,
-			Bcc: []moonbase.InboxMessageUpdateParamsBcc{{
+			Bcc: []moonbase.EmailMessageAddressParams{{
 				Email: "steve@example.com",
 				Name:  moonbase.String("Steve"),
 			}},
 			Body: shared.FormattedTextParam{
 				Markdown: moonbase.String("This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown)."),
 			},
-			Cc: []moonbase.InboxMessageUpdateParamsCc{{
+			Cc: []moonbase.EmailMessageAddressParams{{
 				Email: "joe@example.com",
 				Name:  moonbase.String("Joe"),
 			}},
 			Subject: moonbase.String("Test Subject"),
-			To: []moonbase.InboxMessageUpdateParamsTo{{
+			To: []moonbase.EmailMessageAddressParams{{
 				Email: "bob@example.com",
 				Name:  moonbase.String("Bob"),
 			}, {
@@ -148,16 +148,13 @@ func TestInboxMessageListWithOptionalParams(t *testing.T) {
 	_, err := client.InboxMessages.List(context.TODO(), moonbase.InboxMessageListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
-		Filter: moonbase.InboxMessageListParamsFilter{
-			ConversationID: moonbase.InboxMessageListParamsFilterConversationID{
-				Eq: moonbase.String("eq"),
-			},
-			InboxID: moonbase.InboxMessageListParamsFilterInboxID{
-				Eq: moonbase.String("eq"),
-			},
+		ConversationID: moonbase.InboxMessageListParamsConversationID{
+			Eq: moonbase.String("eq"),
 		},
-		Include: []string{"addresses"},
-		Limit:   moonbase.Int(1),
+		InboxID: moonbase.InboxMessageListParamsInboxID{
+			Eq: moonbase.String("eq"),
+		},
+		Limit: moonbase.Int(1),
 	})
 	if err != nil {
 		var apierr *moonbase.Error

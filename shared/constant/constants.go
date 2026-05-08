@@ -19,7 +19,6 @@ func ValueOf[T Constant[T]]() T {
 }
 
 type ActivityCallOccurred string               // Always "activity/call_occurred"
-type ActivityFileCreated string                // Always "activity/file_created"
 type ActivityFormSubmitted string              // Always "activity/form_submitted"
 type ActivityInboxMessageSent string           // Always "activity/inbox_message_sent"
 type ActivityItemCreated string                // Always "activity/item_created"
@@ -42,15 +41,21 @@ type Call string                               // Always "call"
 type CallParticipant string                    // Always "call_participant"
 type ChoiceFieldOption string                  // Always "choice_field_option"
 type Collection string                         // Always "collection"
+type Constituent string                        // Always "constituent"
+type CurrentDate string                        // Always "current_date"
+type CurrentDatetime string                    // Always "current_datetime"
+type CurrentMember string                      // Always "current_member"
 type EmailMessage string                       // Always "email_message"
 type Error string                              // Always "error"
 type Exists string                             // Always "exists"
+type Field string                              // Always "field"
 type FieldBoolean string                       // Always "field/boolean"
 type FieldChoice string                        // Always "field/choice"
 type FieldDate string                          // Always "field/date"
 type FieldDatetime string                      // Always "field/datetime"
 type FieldEmail string                         // Always "field/email"
 type FieldGeo string                           // Always "field/geo"
+type FieldIdentifier string                    // Always "field/identifier"
 type FieldNumberMonetary string                // Always "field/number/monetary"
 type FieldNumberPercentage string              // Always "field/number/percentage"
 type FieldNumberUnitlessFloat string           // Always "field/number/unitless_float"
@@ -83,8 +88,10 @@ type Or string                                 // Always "or"
 type Program string                            // Always "program"
 type ProgramMessage string                     // Always "program_message"
 type ProgramTemplate string                    // Always "program_template"
+type SearchResult string                       // Always "search_result"
 type Tag string                                // Always "tag"
 type Tagset string                             // Always "tagset"
+type Unsubscribe string                        // Always "unsubscribe"
 type ValueBoolean string                       // Always "value/boolean"
 type ValueChoice string                        // Always "value/choice"
 type ValueDate string                          // Always "value/date"
@@ -92,6 +99,7 @@ type ValueDatetime string                      // Always "value/datetime"
 type ValueEmail string                         // Always "value/email"
 type ValueFunnelStep string                    // Always "value/funnel_step"
 type ValueGeo string                           // Always "value/geo"
+type ValueIdentifier string                    // Always "value/identifier"
 type ValueNumberMonetary string                // Always "value/number/monetary"
 type ValueNumberPercentage string              // Always "value/number/percentage"
 type ValueNumberUnitlessFloat string           // Always "value/number/unitless_float"
@@ -109,7 +117,6 @@ type WebhookEndpoint string                    // Always "webhook_endpoint"
 type WebhookSubscription string                // Always "webhook_subscription"
 
 func (c ActivityCallOccurred) Default() ActivityCallOccurred   { return "activity/call_occurred" }
-func (c ActivityFileCreated) Default() ActivityFileCreated     { return "activity/file_created" }
 func (c ActivityFormSubmitted) Default() ActivityFormSubmitted { return "activity/form_submitted" }
 func (c ActivityInboxMessageSent) Default() ActivityInboxMessageSent {
 	return "activity/inbox_message_sent"
@@ -152,15 +159,21 @@ func (c Call) Default() Call                                   { return "call" }
 func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
 func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
 func (c Collection) Default() Collection                       { return "collection" }
+func (c Constituent) Default() Constituent                     { return "constituent" }
+func (c CurrentDate) Default() CurrentDate                     { return "current_date" }
+func (c CurrentDatetime) Default() CurrentDatetime             { return "current_datetime" }
+func (c CurrentMember) Default() CurrentMember                 { return "current_member" }
 func (c EmailMessage) Default() EmailMessage                   { return "email_message" }
 func (c Error) Default() Error                                 { return "error" }
 func (c Exists) Default() Exists                               { return "exists" }
+func (c Field) Default() Field                                 { return "field" }
 func (c FieldBoolean) Default() FieldBoolean                   { return "field/boolean" }
 func (c FieldChoice) Default() FieldChoice                     { return "field/choice" }
 func (c FieldDate) Default() FieldDate                         { return "field/date" }
 func (c FieldDatetime) Default() FieldDatetime                 { return "field/datetime" }
 func (c FieldEmail) Default() FieldEmail                       { return "field/email" }
 func (c FieldGeo) Default() FieldGeo                           { return "field/geo" }
+func (c FieldIdentifier) Default() FieldIdentifier             { return "field/identifier" }
 func (c FieldNumberMonetary) Default() FieldNumberMonetary     { return "field/number/monetary" }
 func (c FieldNumberPercentage) Default() FieldNumberPercentage { return "field/number/percentage" }
 func (c FieldNumberUnitlessFloat) Default() FieldNumberUnitlessFloat {
@@ -197,8 +210,10 @@ func (c Or) Default() Or                                         { return "or" }
 func (c Program) Default() Program                               { return "program" }
 func (c ProgramMessage) Default() ProgramMessage                 { return "program_message" }
 func (c ProgramTemplate) Default() ProgramTemplate               { return "program_template" }
+func (c SearchResult) Default() SearchResult                     { return "search_result" }
 func (c Tag) Default() Tag                                       { return "tag" }
 func (c Tagset) Default() Tagset                                 { return "tagset" }
+func (c Unsubscribe) Default() Unsubscribe                       { return "unsubscribe" }
 func (c ValueBoolean) Default() ValueBoolean                     { return "value/boolean" }
 func (c ValueChoice) Default() ValueChoice                       { return "value/choice" }
 func (c ValueDate) Default() ValueDate                           { return "value/date" }
@@ -206,6 +221,7 @@ func (c ValueDatetime) Default() ValueDatetime                   { return "value
 func (c ValueEmail) Default() ValueEmail                         { return "value/email" }
 func (c ValueFunnelStep) Default() ValueFunnelStep               { return "value/funnel_step" }
 func (c ValueGeo) Default() ValueGeo                             { return "value/geo" }
+func (c ValueIdentifier) Default() ValueIdentifier               { return "value/identifier" }
 func (c ValueNumberMonetary) Default() ValueNumberMonetary       { return "value/number/monetary" }
 func (c ValueNumberPercentage) Default() ValueNumberPercentage   { return "value/number/percentage" }
 func (c ValueNumberUnitlessFloat) Default() ValueNumberUnitlessFloat {
@@ -227,7 +243,6 @@ func (c WebhookEndpoint) Default() WebhookEndpoint               { return "webho
 func (c WebhookSubscription) Default() WebhookSubscription       { return "webhook_subscription" }
 
 func (c ActivityCallOccurred) MarshalJSON() ([]byte, error)               { return marshalString(c) }
-func (c ActivityFileCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ActivityFormSubmitted) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c ActivityInboxMessageSent) MarshalJSON() ([]byte, error)           { return marshalString(c) }
 func (c ActivityItemCreated) MarshalJSON() ([]byte, error)                { return marshalString(c) }
@@ -250,15 +265,21 @@ func (c Call) MarshalJSON() ([]byte, error)                               { retu
 func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Collection) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
+func (c Constituent) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
+func (c CurrentDate) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
+func (c CurrentDatetime) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c CurrentMember) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c EmailMessage) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c Error) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Exists) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
+func (c Field) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c FieldBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FieldChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c FieldDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c FieldDatetime) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c FieldEmail) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c FieldGeo) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c FieldIdentifier) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c FieldNumberMonetary) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c FieldNumberPercentage) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c FieldNumberUnitlessFloat) MarshalJSON() ([]byte, error)           { return marshalString(c) }
@@ -291,8 +312,10 @@ func (c Or) MarshalJSON() ([]byte, error)                                 { retu
 func (c Program) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c ProgramMessage) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ProgramTemplate) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c SearchResult) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c Tag) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Tagset) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
+func (c Unsubscribe) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c ValueBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c ValueChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c ValueDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -300,6 +323,7 @@ func (c ValueDatetime) MarshalJSON() ([]byte, error)                      { retu
 func (c ValueEmail) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c ValueFunnelStep) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ValueGeo) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c ValueIdentifier) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ValueNumberMonetary) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ValueNumberPercentage) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c ValueNumberUnitlessFloat) MarshalJSON() ([]byte, error)           { return marshalString(c) }

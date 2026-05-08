@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
@@ -16,36 +17,62 @@ import (
 // interacting with the Moonbase API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options            []option.RequestOption
-	Funnels            FunnelService
-	Collections        CollectionService
-	Views              ViewService
-	Inboxes            InboxService
+	Options []option.RequestOption
+	// Manage your collections and items
+	Funnels FunnelService
+	// Manage your collections and items
+	Collections CollectionService
+	// Manage your collections and items
+	Views ViewService
+	// Manage your inboxes, conversations, and messages
+	Inboxes InboxService
+	// Manage your inboxes, conversations, and messages
 	InboxConversations InboxConversationService
-	InboxMessages      InboxMessageService
-	Tagsets            TagsetService
-	Programs           ProgramService
-	ProgramTemplates   ProgramTemplateService
-	ProgramMessages    ProgramMessageService
-	Forms              FormService
-	Activities         ActivityService
-	Calls              CallService
-	Files              FileService
-	Meetings           MeetingService
-	Notes              NoteService
-	WebhookEndpoints   WebhookEndpointService
-	AgentSettings      AgentSettingService
+	// Manage your inboxes, conversations, and messages
+	InboxMessages InboxMessageService
+	// Manage your meetings, files, and notes
+	Tagsets TagsetService
+	// Manage your marketing campaigns and forms
+	Programs ProgramService
+	// Manage your marketing campaigns and forms
+	ProgramTemplates ProgramTemplateService
+	// Manage your marketing campaigns and forms
+	ProgramMessages ProgramMessageService
+	// Manage your marketing campaigns and forms
+	Forms FormService
+	// Manage your marketing campaigns and forms
+	Unsubscribes UnsubscribeService
+	// View activities and capture calls
+	Activities ActivityService
+	// View activities and capture calls
+	Calls CallService
+	// Manage your meetings, files, and notes
+	Files FileService
+	// Manage your meetings, files, and notes
+	Meetings MeetingService
+	// Manage your meetings, files, and notes
+	Notes            NoteService
+	WebhookEndpoints WebhookEndpointService
+	AgentSettings    AgentSettingService
 }
 
 // DefaultClientOptions read from the environment (MOONBASE_API_KEY,
 // MOONBASE_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
-	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentProduction()}
 	if o, ok := os.LookupEnv("MOONBASE_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
 	if o, ok := os.LookupEnv("MOONBASE_API_KEY"); ok {
 		defaults = append(defaults, option.WithAPIKey(o))
+	}
+	if o, ok := os.LookupEnv("MOONBASE_CUSTOM_HEADERS"); ok {
+		for _, line := range strings.Split(o, "\n") {
+			colon := strings.Index(line, ":")
+			if colon >= 0 {
+				defaults = append(defaults, option.WithHeader(strings.TrimSpace(line[:colon]), strings.TrimSpace(line[colon+1:])))
+			}
+		}
 	}
 	return defaults
 }
@@ -70,6 +97,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ProgramTemplates = NewProgramTemplateService(opts...)
 	r.ProgramMessages = NewProgramMessageService(opts...)
 	r.Forms = NewFormService(opts...)
+	r.Unsubscribes = NewUnsubscribeService(opts...)
 	r.Activities = NewActivityService(opts...)
 	r.Calls = NewCallService(opts...)
 	r.Files = NewFileService(opts...)
@@ -150,9 +178,10 @@ func (r *Client) Delete(ctx context.Context, path string, params any, res any, o
 	return r.Execute(ctx, http.MethodDelete, path, params, res, opts...)
 }
 
+// Returns items and files that match the search query.
 func (r *Client) Search(ctx context.Context, body SearchParams, opts ...option.RequestOption) (res *SearchResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "search"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }

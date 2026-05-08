@@ -45,7 +45,7 @@ func (r *WebhookEndpointService) New(ctx context.Context, body WebhookEndpointNe
 	opts = slices.Concat(r.Options, opts)
 	path := "webhook_endpoints"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the details of an existing endpoint.
@@ -53,11 +53,11 @@ func (r *WebhookEndpointService) Get(ctx context.Context, id string, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an endpoint.
@@ -65,11 +65,11 @@ func (r *WebhookEndpointService) Update(ctx context.Context, id string, body Web
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of endpoints.
@@ -101,11 +101,11 @@ func (r *WebhookEndpointService) Delete(ctx context.Context, id string, opts ...
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhook_endpoints/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // A Webhook Endpoint is an HTTP endpoint that receives webhooks. You can configure
@@ -125,7 +125,7 @@ type Endpoint struct {
 	Subscriptions []Subscription `json:"subscriptions" api:"required"`
 	// String representing the object’s type. Always `webhook_endpoint` for this
 	// object.
-	Type constant.WebhookEndpoint `json:"type" api:"required"`
+	Type constant.WebhookEndpoint `json:"type" default:"webhook_endpoint"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The HTTPS URL where webhook events will be sent.
@@ -179,7 +179,7 @@ type Subscription struct {
 	EventType SubscriptionEventType `json:"event_type" api:"required"`
 	// String representing the object’s type. Always `webhook_subscription` for this
 	// object.
-	Type constant.WebhookSubscription `json:"type" api:"required"`
+	Type constant.WebhookSubscription `json:"type" default:"webhook_subscription"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventType   respjson.Field

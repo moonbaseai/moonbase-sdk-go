@@ -13,7 +13,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/option"
 )
 
-func TestTagsetNewWithOptionalParams(t *testing.T) {
+func TestFunnelNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,21 +25,24 @@ func TestTagsetNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Tagsets.New(context.TODO(), moonbase.TagsetNewParams{
-		Name:        "Support",
-		Description: moonbase.String("Tags for our support inbox"),
-		Tags: []moonbase.TagsetNewParamsTag{{
-			Color: "red",
-			Name:  "Bug",
-			ID:    moonbase.String("id"),
+	_, err := client.Funnels.New(context.TODO(), moonbase.FunnelNewParams{
+		Name: "Sales Pipeline",
+		Steps: []moonbase.FunnelNewParamsStep{{
+			Color:    "blue",
+			Name:     "New Lead",
+			StepType: "active",
 		}, {
-			Color: "purple",
-			Name:  "Feature Request",
-			ID:    moonbase.String("id"),
+			Color:    "cyan",
+			Name:     "Qualified",
+			StepType: "active",
 		}, {
-			Color: "amber",
-			Name:  "Billing",
-			ID:    moonbase.String("id"),
+			Color:    "green",
+			Name:     "Won",
+			StepType: "success",
+		}, {
+			Color:    "red",
+			Name:     "Lost",
+			StepType: "failure",
 		}},
 	})
 	if err != nil {
@@ -51,7 +54,7 @@ func TestTagsetNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTagsetGet(t *testing.T) {
+func TestFunnelGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -63,7 +66,7 @@ func TestTagsetGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Tagsets.Get(context.TODO(), "id")
+	_, err := client.Funnels.Get(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {
@@ -73,7 +76,7 @@ func TestTagsetGet(t *testing.T) {
 	}
 }
 
-func TestTagsetUpdateWithOptionalParams(t *testing.T) {
+func TestFunnelUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -85,16 +88,16 @@ func TestTagsetUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Tagsets.Update(
+	_, err := client.Funnels.Update(
 		context.TODO(),
 		"id",
-		moonbase.TagsetUpdateParams{
-			Description: moonbase.String("Updated description"),
-			Name:        moonbase.String("Customer Support"),
-			Tags: []moonbase.TagsetUpdateParamsTag{{
-				Color: "amber",
-				Name:  "name",
-				ID:    moonbase.String("id"),
+		moonbase.FunnelUpdateParams{
+			Name: moonbase.String("Revenue Pipeline"),
+			Steps: []moonbase.FunnelUpdateParamsStep{{
+				Color:    "amber",
+				Name:     "name",
+				StepType: "active",
+				ID:       moonbase.String("id"),
 			}},
 		},
 	)
@@ -107,7 +110,7 @@ func TestTagsetUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTagsetListWithOptionalParams(t *testing.T) {
+func TestFunnelListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -119,7 +122,7 @@ func TestTagsetListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Tagsets.List(context.TODO(), moonbase.TagsetListParams{
+	_, err := client.Funnels.List(context.TODO(), moonbase.FunnelListParams{
 		After:  moonbase.String("after"),
 		Before: moonbase.String("before"),
 		Limit:  moonbase.Int(1),
@@ -133,7 +136,7 @@ func TestTagsetListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTagsetDelete(t *testing.T) {
+func TestFunnelDelete(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -145,7 +148,7 @@ func TestTagsetDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Tagsets.Delete(context.TODO(), "id")
+	err := client.Funnels.Delete(context.TODO(), "id")
 	if err != nil {
 		var apierr *moonbase.Error
 		if errors.As(err, &apierr) {

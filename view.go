@@ -19,6 +19,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your collections and items
+//
 // ViewService contains methods and other services that help with interacting with
 // the Moonbase API.
 //
@@ -27,7 +29,8 @@ import (
 // the [NewViewService] method instead.
 type ViewService struct {
 	Options []option.RequestOption
-	Items   ViewItemService
+	// Manage your collections and items
+	Items ViewItemService
 }
 
 // NewViewService generates a new service that applies the given options to each
@@ -45,11 +48,11 @@ func (r *ViewService) Get(ctx context.Context, id string, query ViewGetParams, o
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("views/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // A View represents a saved configuration for displaying items in a collection,
@@ -62,7 +65,7 @@ type View struct {
 	// The name of the view.
 	Name string `json:"name" api:"required"`
 	// String representing the object’s type. Always `view` for this object.
-	Type constant.View `json:"type" api:"required"`
+	Type constant.View `json:"type" default:"view"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// The type of view, such as `table` or `board`.

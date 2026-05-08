@@ -21,6 +21,8 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your marketing campaigns and forms
+//
 // ProgramService contains methods and other services that help with interacting
 // with the Moonbase API.
 //
@@ -45,11 +47,11 @@ func (r *ProgramService) Get(ctx context.Context, id string, query ProgramGetPar
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("programs/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of your marketing programs.
@@ -97,7 +99,7 @@ type Program struct {
 	// Any of "api", "broadcast".
 	Trigger ProgramTrigger `json:"trigger" api:"required"`
 	// String representing the object’s type. Always `program` for this object.
-	Type constant.Program `json:"type" api:"required"`
+	Type constant.Program `json:"type" default:"program"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// A `ProgramActivityMetrics` object summarizing engagement for this program.
@@ -158,9 +160,8 @@ const (
 	ProgramTriggerBroadcast ProgramTrigger = "broadcast"
 )
 
-// A `ProgramActivityMetrics` object summarizing engagement for this program.
-//
-// **Note:** Only present when requested using the `include` query parameter.
+// The ProgramActivityMetrics object provides a summary of engagement and delivery
+// statistics for a marketing program.
 type ProgramActivityMetrics struct {
 	// The number of emails that could not be delivered.
 	Bounced int64 `json:"bounced" api:"required"`
@@ -196,6 +197,24 @@ type ProgramActivityMetrics struct {
 // Returns the unmodified JSON received from the API
 func (r ProgramActivityMetrics) RawJSON() string { return r.JSON.raw }
 func (r *ProgramActivityMetrics) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ProgramPointer struct {
+	ID   string           `json:"id" api:"required"`
+	Type constant.Program `json:"type" default:"program"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProgramPointer) RawJSON() string { return r.JSON.raw }
+func (r *ProgramPointer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

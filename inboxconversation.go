@@ -18,9 +18,12 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/packages/pagination"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 	"github.com/moonbaseai/moonbase-sdk-go/packages/respjson"
+	"github.com/moonbaseai/moonbase-sdk-go/shared"
 	"github.com/moonbaseai/moonbase-sdk-go/shared/constant"
 )
 
+// Manage your inboxes, conversations, and messages
+//
 // InboxConversationService contains methods and other services that help with
 // interacting with the Moonbase API.
 //
@@ -45,15 +48,15 @@ func (r *InboxConversationService) Get(ctx context.Context, id string, query Inb
 	opts = slices.Concat(r.Options, opts)
 	if id == "" {
 		err = errors.New("missing required id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("inbox_conversations/%s", id)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Returns a list of your conversations.
-func (r *InboxConversationService) List(ctx context.Context, query InboxConversationListParams, opts ...option.RequestOption) (res *pagination.CursorPage[InboxConversation], err error) {
+func (r *InboxConversationService) List(ctx context.Context, query InboxConversationListParams, opts ...option.RequestOption) (res *pagination.CursorPage[InboxConversationListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -71,7 +74,7 @@ func (r *InboxConversationService) List(ctx context.Context, query InboxConversa
 }
 
 // Returns a list of your conversations.
-func (r *InboxConversationService) ListAutoPaging(ctx context.Context, query InboxConversationListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[InboxConversation] {
+func (r *InboxConversationService) ListAutoPaging(ctx context.Context, query InboxConversationListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[InboxConversationListResponse] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
@@ -99,12 +102,12 @@ type InboxConversation struct {
 	// The subject line of the conversation.
 	Subject string `json:"subject" api:"required"`
 	// A list of `Tag` objects applied to this conversation.
-	Tags []InboxConversationTag `json:"tags" api:"required"`
+	Tags []shared.Tag `json:"tags" api:"required"`
 	// `true` if the conversation is in the trash.
 	Trash bool `json:"trash" api:"required"`
 	// String representing the object’s type. Always `inbox_conversation` for this
 	// object.
-	Type constant.InboxConversation `json:"type" api:"required"`
+	Type constant.InboxConversation `json:"type" default:"inbox_conversation"`
 	// `true` if the conversation contains unread messages.
 	Unread bool `json:"unread" api:"required"`
 	// Time at which the object was last updated, as an ISO 8601 timestamp in UTC.
@@ -160,19 +163,12 @@ const (
 	InboxConversationStateWaiting    InboxConversationState = "waiting"
 )
 
-// A Tag is a label that can be applied to `Conversation` objects for organization
-// and filtering.
-type InboxConversationTag struct {
-	// Unique identifier for the object.
-	ID string `json:"id" api:"required"`
-	// The name of the tag.
-	Name string `json:"name" api:"required"`
-	// String representing the object’s type. Always `tag` for this object.
-	Type constant.Tag `json:"type" api:"required"`
+type InboxConversationListResponse struct {
+	ID   string                     `json:"id" api:"required"`
+	Type constant.InboxConversation `json:"type" default:"inbox_conversation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
-		Name        respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -180,8 +176,8 @@ type InboxConversationTag struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r InboxConversationTag) RawJSON() string { return r.JSON.raw }
-func (r *InboxConversationTag) UnmarshalJSON(data []byte) error {
+func (r InboxConversationListResponse) RawJSON() string { return r.JSON.raw }
+func (r *InboxConversationListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -214,13 +210,8 @@ type InboxConversationListParams struct {
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
-	Limit  param.Opt[int64]                  `query:"limit,omitzero" json:"-"`
-	Filter InboxConversationListParamsFilter `query:"filter,omitzero" json:"-"`
-	// Specifies which related objects to include in the response. Valid options are
-	// `inbox`, `messages`, and `messages.addresses`.
-	//
-	// Any of "inbox", "messages", "messages.addresses".
-	Include []string `query:"include,omitzero" json:"-"`
+	Limit   param.Opt[int64]                   `query:"limit,omitzero" json:"-"`
+	InboxID InboxConversationListParamsInboxID `query:"inbox_id,omitzero" json:"-"`
 	paramObj
 }
 
@@ -233,43 +224,14 @@ func (r InboxConversationListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-type InboxConversationListParamsFilter struct {
-	ConversationID InboxConversationListParamsFilterConversationID `query:"conversation_id,omitzero" json:"-"`
-	InboxID        InboxConversationListParamsFilterInboxID        `query:"inbox_id,omitzero" json:"-"`
+type InboxConversationListParamsInboxID struct {
+	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [InboxConversationListParamsFilter]'s query parameters as
+// URLQuery serializes [InboxConversationListParamsInboxID]'s query parameters as
 // `url.Values`.
-func (r InboxConversationListParamsFilter) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type InboxConversationListParamsFilterConversationID struct {
-	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [InboxConversationListParamsFilterConversationID]'s query
-// parameters as `url.Values`.
-func (r InboxConversationListParamsFilterConversationID) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type InboxConversationListParamsFilterInboxID struct {
-	Eq param.Opt[string] `query:"eq,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [InboxConversationListParamsFilterInboxID]'s query
-// parameters as `url.Values`.
-func (r InboxConversationListParamsFilterInboxID) URLQuery() (v url.Values, err error) {
+func (r InboxConversationListParamsInboxID) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
