@@ -217,7 +217,6 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#EmailMessageAddressParams">EmailMessageAddressParams</a>
-- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#MessageAttachmentCreateParams">MessageAttachmentCreateParams</a>
 
 Response Types:
 

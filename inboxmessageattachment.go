@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"slices"
@@ -14,6 +15,7 @@ import (
 	"github.com/moonbaseai/moonbase-sdk-go/internal/apiform"
 	"github.com/moonbaseai/moonbase-sdk-go/internal/requestconfig"
 	"github.com/moonbaseai/moonbase-sdk-go/option"
+	"github.com/moonbaseai/moonbase-sdk-go/packages/param"
 )
 
 // Manage your inboxes, conversations, and messages
@@ -68,14 +70,15 @@ func (r *InboxMessageAttachmentService) Delete(ctx context.Context, id string, b
 }
 
 type InboxMessageAttachmentNewParams struct {
-	MessageAttachmentCreateParams MessageAttachmentCreateParams
+	FileID param.Opt[string] `json:"file_id,omitzero"`
+	File   io.Reader         `json:"file,omitzero" format:"binary"`
 	paramObj
 }
 
 func (r InboxMessageAttachmentNewParams) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r.MessageAttachmentCreateParams, writer)
+	err = apiform.MarshalRoot(r, writer)
 	if err == nil {
 		err = apiform.WriteExtras(writer, r.ExtraFields())
 	}

@@ -31,10 +31,8 @@ func TestInboxMessageAttachmentNewWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"inbox_message_id",
 		moonbase.InboxMessageAttachmentNewParams{
-			MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{
-				File:   io.Reader(bytes.NewBuffer([]byte("Example data"))),
-				FileID: moonbase.String("file_id"),
-			},
+			File:   io.Reader(bytes.NewBuffer([]byte("Example data"))),
+			FileID: moonbase.String("file_id"),
 		},
 	)
 	if err != nil {
