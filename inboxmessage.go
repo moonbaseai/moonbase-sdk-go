@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"slices"
@@ -302,20 +301,6 @@ type MessageAttachment struct {
 // Returns the unmodified JSON received from the API
 func (r MessageAttachment) RawJSON() string { return r.JSON.raw }
 func (r *MessageAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type MessageAttachmentCreateParams struct {
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	File   io.Reader         `json:"file,omitzero" format:"binary"`
-	paramObj
-}
-
-func (r MessageAttachmentCreateParams) MarshalJSON() (data []byte, err error) {
-	type shadow MessageAttachmentCreateParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *MessageAttachmentCreateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -393,17 +393,17 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 // A file from the file system
 file, err := os.Open("/path/to/file")
 moonbase.InboxMessageAttachmentNewParams{
-	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
+	File: file,
 }
 
 // A file from a string
 moonbase.InboxMessageAttachmentNewParams{
-	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
+	File: strings.NewReader("my file contents"),
 }
 
 // With a custom filename and contentType
 moonbase.InboxMessageAttachmentNewParams{
-	MessageAttachmentCreateParams: moonbase.MessageAttachmentCreateParams{},
+	File: moonbase.File(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
 }
 ```
 
