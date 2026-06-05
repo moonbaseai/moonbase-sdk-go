@@ -64,7 +64,7 @@ func TestMeetingUpdateWithOptionalParams(t *testing.T) {
 				URL:         "https://example.com/recording.mp4",
 			},
 			Tags: []shared.TagPointerParam{{
-				ID: "1CLJt2vYMiFzRLEp238B7G",
+				ID: "1CLJt2vJy3SZLhqYW8rQoN",
 			}},
 			Transcript: moonbase.MeetingUpdateParamsTranscript{
 				Cues: []moonbase.MeetingUpdateParamsTranscriptCue{{
