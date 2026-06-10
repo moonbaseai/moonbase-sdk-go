@@ -106,6 +106,19 @@ func (r *CollectionService) ListAutoPaging(ctx context.Context, query Collection
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Permanently deletes a collection.
+func (r *CollectionService) Delete(ctx context.Context, id string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if id == "" {
+		err = errors.New("missing required id parameter")
+		return err
+	}
+	path := fmt.Sprintf("collections/%s", id)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
 // A field that stores true or false values.
 type BooleanField struct {
 	// Unique identifier for the object.
