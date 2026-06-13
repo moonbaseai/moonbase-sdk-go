@@ -305,28 +305,79 @@ func (r *MessageAttachment) UnmarshalJSON(data []byte) error {
 }
 
 type InboxMessageNewParams struct {
+
+	//
+	// Request body variants
+	//
+
+	// This field is a request body variant, only one variant field can be set.
+	// Parameters for creating a draft in a new conversation.
+	OfEmailMessageNewConversationCreates *InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams `json:",inline"`
+	// This field is a request body variant, only one variant field can be set.
+	// Parameters for creating a draft reply in an existing conversation.
+	OfEmailMessageReplyCreates *InboxMessageNewParamsBodyEmailMessageReplyCreateParams `json:",inline"`
+
+	paramObj
+}
+
+func (u InboxMessageNewParams) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfEmailMessageNewConversationCreates, u.OfEmailMessageReplyCreates)
+}
+func (r *InboxMessageNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating a draft in a new conversation.
+//
+// The properties Body, InboxID, Subject, To are required.
+type InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams struct {
 	// The email body.
 	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
 	// The inbox to use for sending the email.
 	InboxID string `json:"inbox_id" api:"required"`
-	// The ID of the conversation, if responding to an existing conversation.
-	ConversationID param.Opt[string] `json:"conversation_id,omitzero"`
 	// The subject line of the email.
-	Subject param.Opt[string] `json:"subject,omitzero"`
+	Subject string `json:"subject" api:"required"`
+	// A list of recipients.
+	To []EmailMessageAddressParams `json:"to,omitzero" api:"required"`
 	// A list of the BCC recipients.
 	Bcc []EmailMessageAddressParams `json:"bcc,omitzero"`
 	// A list of the CC recipients.
 	Cc []EmailMessageAddressParams `json:"cc,omitzero"`
-	// A list of recipients.
+	paramObj
+}
+
+func (r InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Parameters for creating a draft reply in an existing conversation.
+//
+// The properties Body, ConversationID, InboxID are required.
+type InboxMessageNewParamsBodyEmailMessageReplyCreateParams struct {
+	// The email body.
+	Body shared.FormattedTextParam `json:"body,omitzero" api:"required"`
+	// The ID of the conversation to reply to.
+	ConversationID string `json:"conversation_id" api:"required"`
+	// The inbox to use for sending the email.
+	InboxID string `json:"inbox_id" api:"required"`
+	// A list of the BCC recipients.
+	Bcc []EmailMessageAddressParams `json:"bcc,omitzero"`
+	// A list of the CC recipients.
+	Cc []EmailMessageAddressParams `json:"cc,omitzero"`
+	// A list of recipients. If omitted, recipients are derived from the conversation.
 	To []EmailMessageAddressParams `json:"to,omitzero"`
 	paramObj
 }
 
-func (r InboxMessageNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow InboxMessageNewParams
+func (r InboxMessageNewParamsBodyEmailMessageReplyCreateParams) MarshalJSON() (data []byte, err error) {
+	type shadow InboxMessageNewParamsBodyEmailMessageReplyCreateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *InboxMessageNewParams) UnmarshalJSON(data []byte) error {
+func (r *InboxMessageNewParamsBodyEmailMessageReplyCreateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
