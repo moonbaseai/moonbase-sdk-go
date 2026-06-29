@@ -472,7 +472,7 @@ type Collection struct {
 	// A list of saved `View` objects for presenting the collection's data.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Views []View `json:"views"`
+	Views []CollectionView `json:"views"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -505,6 +505,37 @@ const (
 	CollectionKindForm   CollectionKind = "form"
 	CollectionKindCustom CollectionKind = "custom"
 )
+
+type CollectionView struct {
+	ID string `json:"id" api:"required"`
+	// A lightweight reference to a `Collection`, containing the minimal information
+	// needed to identify it.
+	Collection CollectionPointer `json:"collection" api:"required"`
+	CreatedAt  time.Time         `json:"created_at" api:"required" format:"date-time"`
+	Name       string            `json:"name" api:"required"`
+	Type       constant.View     `json:"type" default:"view"`
+	UpdatedAt  time.Time         `json:"updated_at" api:"required" format:"date-time"`
+	// Any of "table", "board".
+	ViewType string `json:"view_type" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Collection  respjson.Field
+		CreatedAt   respjson.Field
+		Name        respjson.Field
+		Type        respjson.Field
+		UpdatedAt   respjson.Field
+		ViewType    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CollectionView) RawJSON() string { return r.JSON.raw }
+func (r *CollectionView) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A lightweight reference to a `Collection`, containing the minimal information
 // needed to identify it.
@@ -3185,6 +3216,73 @@ func (r *ItemPointerParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// ItemsFilterUnion contains all possible properties and values from
+// [ItemsFilterValueMatches], [ItemsFilterValueExists], [ItemsFilterAndGroup],
+// [ItemsFilterOrGroup], [ItemsFilterNotGroup].
+//
+// Use the [ItemsFilterUnion.AsAny] method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ItemsFilterUnion struct {
+	Field string `json:"field"`
+	// Any of nil, "exists", "and", "or", "not".
+	Op string `json:"op"`
+	// This field is from variant [ItemsFilterValueMatches].
+	Value   ItemsFilterValueMatchesValueUnion `json:"value"`
+	Filters []ItemsFilterUnion                `json:"filters"`
+	// This field is from variant [ItemsFilterNotGroup].
+	Filter ItemsFilterUnion `json:"filter"`
+	JSON   struct {
+		Field   respjson.Field
+		Op      respjson.Field
+		Value   respjson.Field
+		Filters respjson.Field
+		Filter  respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (u ItemsFilterUnion) AsItemsFilterValueMatches() (v ItemsFilterValueMatches) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterUnion) AsExists() (v ItemsFilterValueExists) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterUnion) AsAnd() (v ItemsFilterAndGroup) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterUnion) AsOr() (v ItemsFilterOrGroup) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterUnion) AsNot() (v ItemsFilterNotGroup) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ItemsFilterUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ItemsFilterUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterUnion to a ItemsFilterUnionParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterUnionParam.Overrides()
+func (r ItemsFilterUnion) ToParam() ItemsFilterUnionParam {
+	return param.Override[ItemsFilterUnionParam](json.RawMessage(r.RawJSON()))
+}
+
 func ItemsFilterParamOfItemsFilterValueMatches[T string | float64 | bool](field string, op ItemsFilterValueMatchesOp, value T) ItemsFilterUnionParam {
 	var variant ItemsFilterValueMatchesParam
 	variant.Field = field
@@ -3200,41 +3298,41 @@ func ItemsFilterParamOfItemsFilterValueMatches[T string | float64 | bool](field 
 	return ItemsFilterUnionParam{OfItemsFilterValueMatches: &variant}
 }
 
-func ItemsFilterParamOfItemsFilterValueExists(field string) ItemsFilterUnionParam {
-	var variant ItemsFilterValueExistsParam
-	variant.Field = field
-	return ItemsFilterUnionParam{OfItemsFilterValueExists: &variant}
+func ItemsFilterParamOfExists(field string) ItemsFilterUnionParam {
+	var exists ItemsFilterValueExistsParam
+	exists.Field = field
+	return ItemsFilterUnionParam{OfExists: &exists}
 }
 
-func ItemsFilterParamOfItemsFilterAndGroup(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
-	var variant ItemsFilterAndGroupParam
-	variant.Filters = filters
-	return ItemsFilterUnionParam{OfItemsFilterAndGroup: &variant}
+func ItemsFilterParamOfAnd(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
+	var and ItemsFilterAndGroupParam
+	and.Filters = filters
+	return ItemsFilterUnionParam{OfAnd: &and}
 }
 
-func ItemsFilterParamOfItemsFilterOrGroup(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
-	var variant ItemsFilterOrGroupParam
-	variant.Filters = filters
-	return ItemsFilterUnionParam{OfItemsFilterOrGroup: &variant}
+func ItemsFilterParamOfOr(filters []ItemsFilterUnionParam) ItemsFilterUnionParam {
+	var or ItemsFilterOrGroupParam
+	or.Filters = filters
+	return ItemsFilterUnionParam{OfOr: &or}
 }
 
-func ItemsFilterParamOfItemsFilterNotGroup[
+func ItemsFilterParamOfNot[
 	T ItemsFilterValueMatchesParam | ItemsFilterValueExistsParam | ItemsFilterAndGroupParam | ItemsFilterOrGroupParam | ItemsFilterNotGroupParam,
 ](filter T) ItemsFilterUnionParam {
-	var variant ItemsFilterNotGroupParam
+	var not ItemsFilterNotGroupParam
 	switch v := any(filter).(type) {
 	case ItemsFilterValueMatchesParam:
-		variant.Filter.OfItemsFilterValueMatches = &v
+		not.Filter.OfItemsFilterValueMatches = &v
 	case ItemsFilterValueExistsParam:
-		variant.Filter.OfItemsFilterValueExists = &v
+		not.Filter.OfExists = &v
 	case ItemsFilterAndGroupParam:
-		variant.Filter.OfItemsFilterAndGroup = &v
+		not.Filter.OfAnd = &v
 	case ItemsFilterOrGroupParam:
-		variant.Filter.OfItemsFilterOrGroup = &v
+		not.Filter.OfOr = &v
 	case ItemsFilterNotGroupParam:
-		variant.Filter.OfItemsFilterNotGroup = &v
+		not.Filter.OfNot = &v
 	}
-	return ItemsFilterUnionParam{OfItemsFilterNotGroup: &variant}
+	return ItemsFilterUnionParam{OfNot: &not}
 }
 
 // Only one field can be non-zero.
@@ -3242,19 +3340,19 @@ func ItemsFilterParamOfItemsFilterNotGroup[
 // Use [param.IsOmitted] to confirm if a field is set.
 type ItemsFilterUnionParam struct {
 	OfItemsFilterValueMatches *ItemsFilterValueMatchesParam `json:",omitzero,inline"`
-	OfItemsFilterValueExists  *ItemsFilterValueExistsParam  `json:",omitzero,inline"`
-	OfItemsFilterAndGroup     *ItemsFilterAndGroupParam     `json:",omitzero,inline"`
-	OfItemsFilterOrGroup      *ItemsFilterOrGroupParam      `json:",omitzero,inline"`
-	OfItemsFilterNotGroup     *ItemsFilterNotGroupParam     `json:",omitzero,inline"`
+	OfExists                  *ItemsFilterValueExistsParam  `json:",omitzero,inline"`
+	OfAnd                     *ItemsFilterAndGroupParam     `json:",omitzero,inline"`
+	OfOr                      *ItemsFilterOrGroupParam      `json:",omitzero,inline"`
+	OfNot                     *ItemsFilterNotGroupParam     `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ItemsFilterUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfItemsFilterValueMatches,
-		u.OfItemsFilterValueExists,
-		u.OfItemsFilterAndGroup,
-		u.OfItemsFilterOrGroup,
-		u.OfItemsFilterNotGroup)
+		u.OfExists,
+		u.OfAnd,
+		u.OfOr,
+		u.OfNot)
 }
 func (u *ItemsFilterUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -3263,14 +3361,14 @@ func (u *ItemsFilterUnionParam) UnmarshalJSON(data []byte) error {
 func (u *ItemsFilterUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfItemsFilterValueMatches) {
 		return u.OfItemsFilterValueMatches
-	} else if !param.IsOmitted(u.OfItemsFilterValueExists) {
-		return u.OfItemsFilterValueExists
-	} else if !param.IsOmitted(u.OfItemsFilterAndGroup) {
-		return u.OfItemsFilterAndGroup
-	} else if !param.IsOmitted(u.OfItemsFilterOrGroup) {
-		return u.OfItemsFilterOrGroup
-	} else if !param.IsOmitted(u.OfItemsFilterNotGroup) {
-		return u.OfItemsFilterNotGroup
+	} else if !param.IsOmitted(u.OfExists) {
+		return u.OfExists
+	} else if !param.IsOmitted(u.OfAnd) {
+		return u.OfAnd
+	} else if !param.IsOmitted(u.OfOr) {
+		return u.OfOr
+	} else if !param.IsOmitted(u.OfNot) {
+		return u.OfNot
 	}
 	return nil
 }
@@ -3285,7 +3383,7 @@ func (u ItemsFilterUnionParam) GetValue() *ItemsFilterValueMatchesValueUnionPara
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u ItemsFilterUnionParam) GetFilter() *ItemsFilterUnionParam {
-	if vt := u.OfItemsFilterNotGroup; vt != nil {
+	if vt := u.OfNot; vt != nil {
 		return &vt.Filter
 	}
 	return nil
@@ -3295,7 +3393,7 @@ func (u ItemsFilterUnionParam) GetFilter() *ItemsFilterUnionParam {
 func (u ItemsFilterUnionParam) GetField() *string {
 	if vt := u.OfItemsFilterValueMatches; vt != nil {
 		return (*string)(&vt.Field)
-	} else if vt := u.OfItemsFilterValueExists; vt != nil {
+	} else if vt := u.OfExists; vt != nil {
 		return (*string)(&vt.Field)
 	}
 	return nil
@@ -3305,13 +3403,13 @@ func (u ItemsFilterUnionParam) GetField() *string {
 func (u ItemsFilterUnionParam) GetOp() *string {
 	if vt := u.OfItemsFilterValueMatches; vt != nil {
 		return (*string)(&vt.Op)
-	} else if vt := u.OfItemsFilterValueExists; vt != nil {
+	} else if vt := u.OfExists; vt != nil {
 		return (*string)(&vt.Op)
-	} else if vt := u.OfItemsFilterAndGroup; vt != nil {
+	} else if vt := u.OfAnd; vt != nil {
 		return (*string)(&vt.Op)
-	} else if vt := u.OfItemsFilterOrGroup; vt != nil {
+	} else if vt := u.OfOr; vt != nil {
 		return (*string)(&vt.Op)
-	} else if vt := u.OfItemsFilterNotGroup; vt != nil {
+	} else if vt := u.OfNot; vt != nil {
 		return (*string)(&vt.Op)
 	}
 	return nil
@@ -3319,9 +3417,9 @@ func (u ItemsFilterUnionParam) GetOp() *string {
 
 // Returns a pointer to the underlying variant's Filters property, if present.
 func (u ItemsFilterUnionParam) GetFilters() []ItemsFilterUnionParam {
-	if vt := u.OfItemsFilterAndGroup; vt != nil {
+	if vt := u.OfAnd; vt != nil {
 		return vt.Filters
-	} else if vt := u.OfItemsFilterOrGroup; vt != nil {
+	} else if vt := u.OfOr; vt != nil {
 		return vt.Filters
 	}
 	return nil
@@ -3348,6 +3446,36 @@ func init() {
 }
 
 // Include only items that match ALL of the filters in `filters`.
+type ItemsFilterAndGroup struct {
+	// An array of filters, ALL of which must be satisfied for this `and` filter to
+	// match.
+	Filters []ItemsFilterUnion `json:"filters" api:"required"`
+	Op      constant.And       `json:"op" default:"and"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Filters     respjson.Field
+		Op          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemsFilterAndGroup) RawJSON() string { return r.JSON.raw }
+func (r *ItemsFilterAndGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterAndGroup to a ItemsFilterAndGroupParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterAndGroupParam.Overrides()
+func (r ItemsFilterAndGroup) ToParam() ItemsFilterAndGroupParam {
+	return param.Override[ItemsFilterAndGroupParam](json.RawMessage(r.RawJSON()))
+}
+
+// Include only items that match ALL of the filters in `filters`.
 //
 // The properties Filters, Op are required.
 type ItemsFilterAndGroupParam struct {
@@ -3367,6 +3495,37 @@ func (r *ItemsFilterAndGroupParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Include only items that do NOT match the nested `filter`.
+type ItemsFilterNotGroup struct {
+	// A nested filter which must NOT match in order for this `not` filter to match.
+	Filter ItemsFilterUnion `json:"filter" api:"required"`
+	Op     constant.Not     `json:"op" default:"not"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Filter      respjson.Field
+		Op          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemsFilterNotGroup) RawJSON() string { return r.JSON.raw }
+func (r *ItemsFilterNotGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterNotGroup to a ItemsFilterNotGroupParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterNotGroupParam.Overrides()
+func (r ItemsFilterNotGroup) ToParam() ItemsFilterNotGroupParam {
+	return param.Override[ItemsFilterNotGroupParam](json.RawMessage(r.RawJSON()))
+}
+
+// Include only items that do NOT match the nested `filter`.
+//
 // The properties Filter, Op are required.
 type ItemsFilterNotGroupParam struct {
 	// A nested filter which must NOT match in order for this `not` filter to match.
@@ -3382,6 +3541,36 @@ func (r ItemsFilterNotGroupParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *ItemsFilterNotGroupParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Include only items that match ANY of the filters in `filters`.
+type ItemsFilterOrGroup struct {
+	// An array of filters, ANY of which must be satisfied for this `or` filter to
+	// match.
+	Filters []ItemsFilterUnion `json:"filters" api:"required"`
+	Op      constant.Or        `json:"op" default:"or"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Filters     respjson.Field
+		Op          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemsFilterOrGroup) RawJSON() string { return r.JSON.raw }
+func (r *ItemsFilterOrGroup) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterOrGroup to a ItemsFilterOrGroupParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterOrGroupParam.Overrides()
+func (r ItemsFilterOrGroup) ToParam() ItemsFilterOrGroupParam {
+	return param.Override[ItemsFilterOrGroupParam](json.RawMessage(r.RawJSON()))
 }
 
 // Include only items that match ANY of the filters in `filters`.
@@ -3405,10 +3594,41 @@ func (r *ItemsFilterOrGroupParam) UnmarshalJSON(data []byte) error {
 }
 
 // Include only items that have a value in the given `field`.
+type ItemsFilterValueExists struct {
+	// The id or key of the field for which a value must exist, or a path to the field
+	// for which a value must exist.
+	Field string          `json:"field" api:"required"`
+	Op    constant.Exists `json:"op" default:"exists"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Field       respjson.Field
+		Op          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemsFilterValueExists) RawJSON() string { return r.JSON.raw }
+func (r *ItemsFilterValueExists) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterValueExists to a ItemsFilterValueExistsParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterValueExistsParam.Overrides()
+func (r ItemsFilterValueExists) ToParam() ItemsFilterValueExistsParam {
+	return param.Override[ItemsFilterValueExistsParam](json.RawMessage(r.RawJSON()))
+}
+
+// Include only items that have a value in the given `field`.
 //
 // The properties Field, Op are required.
 type ItemsFilterValueExistsParam struct {
-	// The id or key of the field for which a value must exist.
+	// The id or key of the field for which a value must exist, or a path to the field
+	// for which a value must exist.
 	Field string `json:"field" api:"required"`
 	// This field can be elided, and will marshal its zero value as "exists".
 	Op constant.Exists `json:"op" default:"exists"`
@@ -3425,10 +3645,112 @@ func (r *ItemsFilterValueExistsParam) UnmarshalJSON(data []byte) error {
 
 // Include only items with a value in the given `field` that satisfies the `op`
 // condition.
+type ItemsFilterValueMatches struct {
+	// The id or key of the field in which values are matched, or a path to the field
+	// in which values are matched.
+	Field string `json:"field" api:"required"`
+	// The matching operator for this filter.
+	//
+	// Any of "starts_with", "ends_with", "contains", "not_contains", "eq", "not_eq",
+	// "gt", "lt", "gte", "lte".
+	Op ItemsFilterValueMatchesOp `json:"op" api:"required"`
+	// The value to match against. Use ISO8601 format for dates and datetime fields.
+	// For date fields, the time portion of the date-time will be ignored. For currency
+	// fields, the amount should be in the smallest unit of currency (eg: cents for
+	// USD).
+	Value ItemsFilterValueMatchesValueUnion `json:"value" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Field       respjson.Field
+		Op          respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ItemsFilterValueMatches) RawJSON() string { return r.JSON.raw }
+func (r *ItemsFilterValueMatches) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this ItemsFilterValueMatches to a ItemsFilterValueMatchesParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// ItemsFilterValueMatchesParam.Overrides()
+func (r ItemsFilterValueMatches) ToParam() ItemsFilterValueMatchesParam {
+	return param.Override[ItemsFilterValueMatchesParam](json.RawMessage(r.RawJSON()))
+}
+
+// The matching operator for this filter.
+type ItemsFilterValueMatchesOp string
+
+const (
+	ItemsFilterValueMatchesOpStartsWith  ItemsFilterValueMatchesOp = "starts_with"
+	ItemsFilterValueMatchesOpEndsWith    ItemsFilterValueMatchesOp = "ends_with"
+	ItemsFilterValueMatchesOpContains    ItemsFilterValueMatchesOp = "contains"
+	ItemsFilterValueMatchesOpNotContains ItemsFilterValueMatchesOp = "not_contains"
+	ItemsFilterValueMatchesOpEq          ItemsFilterValueMatchesOp = "eq"
+	ItemsFilterValueMatchesOpNotEq       ItemsFilterValueMatchesOp = "not_eq"
+	ItemsFilterValueMatchesOpGt          ItemsFilterValueMatchesOp = "gt"
+	ItemsFilterValueMatchesOpLt          ItemsFilterValueMatchesOp = "lt"
+	ItemsFilterValueMatchesOpGte         ItemsFilterValueMatchesOp = "gte"
+	ItemsFilterValueMatchesOpLte         ItemsFilterValueMatchesOp = "lte"
+)
+
+// ItemsFilterValueMatchesValueUnion contains all possible properties and values
+// from [string], [float64], [bool].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString OfFloat OfBool]
+type ItemsFilterValueMatchesValueUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	JSON   struct {
+		OfString respjson.Field
+		OfFloat  respjson.Field
+		OfBool   respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u ItemsFilterValueMatchesValueUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterValueMatchesValueUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ItemsFilterValueMatchesValueUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ItemsFilterValueMatchesValueUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ItemsFilterValueMatchesValueUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Include only items with a value in the given `field` that satisfies the `op`
+// condition.
 //
 // The properties Field, Op, Value are required.
 type ItemsFilterValueMatchesParam struct {
-	// The id or key of the field in which values are matched.
+	// The id or key of the field in which values are matched, or a path to the field
+	// in which values are matched.
 	Field string `json:"field" api:"required"`
 	// The matching operator for this filter.
 	//
@@ -3450,22 +3772,6 @@ func (r ItemsFilterValueMatchesParam) MarshalJSON() (data []byte, err error) {
 func (r *ItemsFilterValueMatchesParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// The matching operator for this filter.
-type ItemsFilterValueMatchesOp string
-
-const (
-	ItemsFilterValueMatchesOpStartsWith  ItemsFilterValueMatchesOp = "starts_with"
-	ItemsFilterValueMatchesOpEndsWith    ItemsFilterValueMatchesOp = "ends_with"
-	ItemsFilterValueMatchesOpContains    ItemsFilterValueMatchesOp = "contains"
-	ItemsFilterValueMatchesOpNotContains ItemsFilterValueMatchesOp = "not_contains"
-	ItemsFilterValueMatchesOpEq          ItemsFilterValueMatchesOp = "eq"
-	ItemsFilterValueMatchesOpNotEq       ItemsFilterValueMatchesOp = "not_eq"
-	ItemsFilterValueMatchesOpGt          ItemsFilterValueMatchesOp = "gt"
-	ItemsFilterValueMatchesOpLt          ItemsFilterValueMatchesOp = "lt"
-	ItemsFilterValueMatchesOpGte         ItemsFilterValueMatchesOp = "gte"
-	ItemsFilterValueMatchesOpLte         ItemsFilterValueMatchesOp = "lte"
-)
 
 // Only one field can be non-zero.
 //

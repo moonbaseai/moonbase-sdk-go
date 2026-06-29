@@ -231,7 +231,7 @@ func TestCollectionItemSearchWithOptionalParams(t *testing.T) {
 			Before: moonbase.String("before"),
 			Limit:  moonbase.Int(1),
 			Filter: moonbase.ItemsFilterUnionParam{
-				OfItemsFilterAndGroup: &moonbase.ItemsFilterAndGroupParam{
+				OfAnd: &moonbase.ItemsFilterAndGroupParam{
 					Filters: []moonbase.ItemsFilterUnionParam{},
 				},
 			},
