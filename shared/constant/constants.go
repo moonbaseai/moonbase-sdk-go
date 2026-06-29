@@ -49,6 +49,7 @@ type EmailMessage string                       // Always "email_message"
 type Error string                              // Always "error"
 type Exists string                             // Always "exists"
 type Field string                              // Always "field"
+type FieldStatistic string                     // Always "field_statistic"
 type FieldBoolean string                       // Always "field/boolean"
 type FieldChoice string                        // Always "field/choice"
 type FieldDate string                          // Always "field/date"
@@ -76,6 +77,7 @@ type FunnelStep string                         // Always "funnel_step"
 type Inbox string                              // Always "inbox"
 type InboxConversation string                  // Always "inbox_conversation"
 type Item string                               // Always "item"
+type ItemCount string                          // Always "item_count"
 type List string                               // Always "list"
 type Meeting string                            // Always "meeting"
 type MeetingAttendee string                    // Always "meeting_attendee"
@@ -167,6 +169,7 @@ func (c EmailMessage) Default() EmailMessage                   { return "email_m
 func (c Error) Default() Error                                 { return "error" }
 func (c Exists) Default() Exists                               { return "exists" }
 func (c Field) Default() Field                                 { return "field" }
+func (c FieldStatistic) Default() FieldStatistic               { return "field_statistic" }
 func (c FieldBoolean) Default() FieldBoolean                   { return "field/boolean" }
 func (c FieldChoice) Default() FieldChoice                     { return "field/choice" }
 func (c FieldDate) Default() FieldDate                         { return "field/date" }
@@ -198,6 +201,7 @@ func (c FunnelStep) Default() FunnelStep                         { return "funne
 func (c Inbox) Default() Inbox                                   { return "inbox" }
 func (c InboxConversation) Default() InboxConversation           { return "inbox_conversation" }
 func (c Item) Default() Item                                     { return "item" }
+func (c ItemCount) Default() ItemCount                           { return "item_count" }
 func (c List) Default() List                                     { return "list" }
 func (c Meeting) Default() Meeting                               { return "meeting" }
 func (c MeetingAttendee) Default() MeetingAttendee               { return "meeting_attendee" }
@@ -273,6 +277,7 @@ func (c EmailMessage) MarshalJSON() ([]byte, error)                       { retu
 func (c Error) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Exists) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Field) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
+func (c FieldStatistic) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c FieldBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FieldChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c FieldDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -300,6 +305,7 @@ func (c FunnelStep) MarshalJSON() ([]byte, error)                         { retu
 func (c Inbox) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c InboxConversation) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Item) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c ItemCount) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c List) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Meeting) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c MeetingAttendee) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
