@@ -27,7 +27,7 @@ func TestInboxMessageNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.InboxMessages.New(context.TODO(), moonbase.InboxMessageNewParams{
-		OfEmailMessageNewConversationCreates: &moonbase.InboxMessageNewParamsBodyEmailMessageNewConversationCreateParams{
+		OfEmailMessageNewConversationCreates: &moonbase.InboxMessageNewParamsMessageEmailMessageNewConversationCreateParams{
 			Body: shared.FormattedTextParam{
 				Markdown: moonbase.String("This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown)."),
 			},
@@ -103,26 +103,28 @@ func TestInboxMessageUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.InboxMessageUpdateParams{
-			LockVersion: 0,
-			Bcc: []moonbase.EmailMessageAddressParams{{
-				Email: "steve@example.com",
-				Name:  moonbase.String("Steve"),
-			}},
-			Body: shared.FormattedTextParam{
-				Markdown: moonbase.String("This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown)."),
+			OfEmailMessageUpdates: &moonbase.InboxMessageUpdateParamsMessageEmailMessageUpdateParams{
+				LockVersion: 0,
+				Bcc: []moonbase.EmailMessageAddressParams{{
+					Email: "steve@example.com",
+					Name:  moonbase.String("Steve"),
+				}},
+				Body: shared.FormattedTextParam{
+					Markdown: moonbase.String("This is the body of the message. It supports [markdown](https://en.wikipedia.org/wiki/Markdown)."),
+				},
+				Cc: []moonbase.EmailMessageAddressParams{{
+					Email: "joe@example.com",
+					Name:  moonbase.String("Joe"),
+				}},
+				Subject: moonbase.String("Test Subject"),
+				To: []moonbase.EmailMessageAddressParams{{
+					Email: "bob@example.com",
+					Name:  moonbase.String("Bob"),
+				}, {
+					Email: "jack@example.com",
+					Name:  moonbase.String("name"),
+				}},
 			},
-			Cc: []moonbase.EmailMessageAddressParams{{
-				Email: "joe@example.com",
-				Name:  moonbase.String("Joe"),
-			}},
-			Subject: moonbase.String("Test Subject"),
-			To: []moonbase.EmailMessageAddressParams{{
-				Email: "bob@example.com",
-				Name:  moonbase.String("Bob"),
-			}, {
-				Email: "jack@example.com",
-				Name:  moonbase.String("name"),
-			}},
 		},
 	)
 	if err != nil {
