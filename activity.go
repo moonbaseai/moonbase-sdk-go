@@ -174,7 +174,7 @@ const (
 
 // ConstituentEntityPointerUnion contains all possible properties and values from
 // [CallPointer], [CollectionPointer], [ItemPointer], [FilePointer],
-// [MeetingPointer], [EmailMessagePointer], [NotePointer], [ProgramPointer],
+// [MeetingPointer], [MessagePointer], [NotePointer], [ProgramPointer],
 // [ProgramMessagePointer], [ProgramTemplatePointer], [UnsubscribePointer].
 //
 // Use the [ConstituentEntityPointerUnion.AsAny] method to switch on the variant.
@@ -182,7 +182,7 @@ const (
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ConstituentEntityPointerUnion struct {
 	ID string `json:"id"`
-	// Any of "call", "collection", "item", "file", "meeting", "email_message", "note",
+	// Any of "call", "collection", "item", "file", "meeting", "message", "note",
 	// "program", "program_message", "program_template", "unsubscribe".
 	Type string `json:"type"`
 	// This field is from variant [CollectionPointer].
@@ -210,7 +210,7 @@ func (CollectionPointer) implConstituentEntityPointerUnion()      {}
 func (ItemPointer) implConstituentEntityPointerUnion()            {}
 func (FilePointer) implConstituentEntityPointerUnion()            {}
 func (MeetingPointer) implConstituentEntityPointerUnion()         {}
-func (EmailMessagePointer) implConstituentEntityPointerUnion()    {}
+func (MessagePointer) implConstituentEntityPointerUnion()         {}
 func (NotePointer) implConstituentEntityPointerUnion()            {}
 func (ProgramPointer) implConstituentEntityPointerUnion()         {}
 func (ProgramMessagePointer) implConstituentEntityPointerUnion()  {}
@@ -225,7 +225,7 @@ func (UnsubscribePointer) implConstituentEntityPointerUnion()     {}
 //	case moonbase.ItemPointer:
 //	case moonbase.FilePointer:
 //	case moonbase.MeetingPointer:
-//	case moonbase.EmailMessagePointer:
+//	case moonbase.MessagePointer:
 //	case moonbase.NotePointer:
 //	case moonbase.ProgramPointer:
 //	case moonbase.ProgramMessagePointer:
@@ -246,8 +246,8 @@ func (u ConstituentEntityPointerUnion) AsAny() anyConstituentEntityPointer {
 		return u.AsFile()
 	case "meeting":
 		return u.AsMeeting()
-	case "email_message":
-		return u.AsEmailMessage()
+	case "message":
+		return u.AsMessage()
 	case "note":
 		return u.AsNote()
 	case "program":
@@ -287,7 +287,7 @@ func (u ConstituentEntityPointerUnion) AsMeeting() (v MeetingPointer) {
 	return
 }
 
-func (u ConstituentEntityPointerUnion) AsEmailMessage() (v EmailMessagePointer) {
+func (u ConstituentEntityPointerUnion) AsMessage() (v MessagePointer) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -381,7 +381,7 @@ func (r ActivityListParamsConstituentEntityID) URLQuery() (v url.Values, err err
 type ActivityListParamsConstituentEntityType struct {
 	// The type of the entity involved as a constituent of the activity.
 	//
-	// Any of "call", "collection", "email_message", "file", "item", "meeting", "note",
+	// Any of "call", "collection", "file", "item", "meeting", "message", "note",
 	// "program", "program_message", "program_template", "unsubscribe".
 	Eq string `query:"eq,omitzero" json:"-"`
 	paramObj

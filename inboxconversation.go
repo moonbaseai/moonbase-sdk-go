@@ -116,10 +116,10 @@ type InboxConversation struct {
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
 	Inbox Inbox `json:"inbox"`
-	// The `EmailMessage` objects that belong to this conversation.
+	// The `Message` objects that belong to this conversation.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
-	Messages []EmailMessage `json:"messages"`
+	Messages []any `json:"messages"`
 	// If the conversation is snoozed, this is the time it will reappear in the inbox,
 	// as an ISO 8601 timestamp in UTC.
 	UnsnoozeAt time.Time `json:"unsnooze_at" format:"date-time"`
