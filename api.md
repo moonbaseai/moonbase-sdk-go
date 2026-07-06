@@ -273,9 +273,14 @@ Methods:
 
 # Tagsets
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#TagsetAssociationUnionParam">TagsetAssociationUnionParam</a>
+
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Tagset">Tagset</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#TagsetAssociationUnion">TagsetAssociationUnion</a>
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#TagsetPointer">TagsetPointer</a>
 
 Methods:
@@ -327,13 +332,14 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Form">Form</a>
+- <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormListResponse">FormListResponse</a>
 
 Methods:
 
 - <code title="post /forms">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormNewParams">FormNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Form">Form</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /forms/{id}">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Form">Form</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="patch /forms/{id}">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormUpdateParams">FormUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Form">Form</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /forms">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormListParams">FormListParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination#CursorPage">CursorPage</a>[<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#Form">Form</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /forms">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormListParams">FormListParams</a>) (\*<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go/packages/pagination#CursorPage">CursorPage</a>[<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go">moonbase</a>.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormListResponse">FormListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /forms/{id}">client.Forms.<a href="https://pkg.go.dev/github.com/moonbaseai/moonbase-sdk-go#FormService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, id <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 # Unsubscribes

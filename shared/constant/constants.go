@@ -39,6 +39,7 @@ type AgentSettings string                      // Always "agent_settings"
 type And string                                // Always "and"
 type Call string                               // Always "call"
 type CallParticipant string                    // Always "call_participant"
+type Calls string                              // Always "calls"
 type ChoiceFieldOption string                  // Always "choice_field_option"
 type Collection string                         // Always "collection"
 type Constituent string                        // Always "constituent"
@@ -83,6 +84,7 @@ type List string                               // Always "list"
 type Meeting string                            // Always "meeting"
 type MeetingAttendee string                    // Always "meeting_attendee"
 type MeetingOrganizer string                   // Always "meeting_organizer"
+type Meetings string                           // Always "meetings"
 type Message string                            // Always "message"
 type MessageAttachment string                  // Always "message_attachment"
 type Not string                                // Always "not"
@@ -164,6 +166,7 @@ func (c AgentSettings) Default() AgentSettings                 { return "agent_s
 func (c And) Default() And                                     { return "and" }
 func (c Call) Default() Call                                   { return "call" }
 func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
+func (c Calls) Default() Calls                                 { return "calls" }
 func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
 func (c Collection) Default() Collection                       { return "collection" }
 func (c Constituent) Default() Constituent                     { return "constituent" }
@@ -212,6 +215,7 @@ func (c List) Default() List                                     { return "list"
 func (c Meeting) Default() Meeting                               { return "meeting" }
 func (c MeetingAttendee) Default() MeetingAttendee               { return "meeting_attendee" }
 func (c MeetingOrganizer) Default() MeetingOrganizer             { return "meeting_organizer" }
+func (c Meetings) Default() Meetings                             { return "meetings" }
 func (c Message) Default() Message                               { return "message" }
 func (c MessageAttachment) Default() MessageAttachment           { return "message_attachment" }
 func (c Not) Default() Not                                       { return "not" }
@@ -281,6 +285,7 @@ func (c AgentSettings) MarshalJSON() ([]byte, error)                      { retu
 func (c And) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Call) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c Calls) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Collection) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Constituent) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
@@ -325,6 +330,7 @@ func (c List) MarshalJSON() ([]byte, error)                               { retu
 func (c Meeting) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c MeetingAttendee) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c MeetingOrganizer) MarshalJSON() ([]byte, error)                   { return marshalString(c) }
+func (c Meetings) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c Message) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c MessageAttachment) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Not) MarshalJSON() ([]byte, error)                                { return marshalString(c) }

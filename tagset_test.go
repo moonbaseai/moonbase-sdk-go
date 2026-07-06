@@ -26,7 +26,10 @@ func TestTagsetNewWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Tagsets.New(context.TODO(), moonbase.TagsetNewParams{
-		Name:        "Support",
+		Name: "Support",
+		Associations: []moonbase.TagsetAssociationUnionParam{{
+			OfCalls: &moonbase.TagsetAssociationCallsParam{},
+		}},
 		Description: moonbase.String("Tags for our support inbox"),
 		Tags: []moonbase.TagsetNewParamsTag{{
 			Color: "red",
@@ -89,6 +92,9 @@ func TestTagsetUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"id",
 		moonbase.TagsetUpdateParams{
+			Associations: []moonbase.TagsetAssociationUnionParam{{
+				OfCalls: &moonbase.TagsetAssociationCallsParam{},
+			}},
 			Description: moonbase.String("Updated description"),
 			Name:        moonbase.String("Customer Support"),
 			Tags: []moonbase.TagsetUpdateParamsTag{{
