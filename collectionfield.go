@@ -383,13 +383,13 @@ func init() {
 
 // Parameters for creating a monetary field.
 //
-// The properties Name, Type are required.
+// The properties DefaultUnit, Name, Type are required.
 type CollectionFieldNewParamsFieldFieldNumberMonetary struct {
+	// The default currency for the field, as a 3-letter uppercase ISO 4217 code (e.g.,
+	// `USD`, `EUR`, `GBP`).
+	DefaultUnit string `json:"default_unit" api:"required"`
 	// The human-readable name for the field.
 	Name string `json:"name" api:"required"`
-	// The default currency for the field, as a 3-letter ISO 4217 code (e.g., `USD`,
-	// `EUR`, `GBP`).
-	DefaultUnit param.Opt[string] `json:"default_unit,omitzero"`
 	// An optional description of the field's purpose.
 	Description param.Opt[string] `json:"description,omitzero"`
 	// If `true`, items must have a value for this field. Defaults to `false`.
