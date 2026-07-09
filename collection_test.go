@@ -28,6 +28,7 @@ func TestCollectionNewWithOptionalParams(t *testing.T) {
 	_, err := client.Collections.New(context.TODO(), moonbase.CollectionNewParams{
 		Name:        "Leads",
 		Description: moonbase.String("Inbound leads from marketing"),
+		IconName:    moonbase.String("users"),
 	})
 	if err != nil {
 		var apierr *moonbase.Error
@@ -77,6 +78,7 @@ func TestCollectionUpdateWithOptionalParams(t *testing.T) {
 		"id",
 		moonbase.CollectionUpdateParams{
 			Description: moonbase.String("Qualified inbound leads"),
+			IconName:    moonbase.String("flag"),
 			Name:        moonbase.String("Hot Leads"),
 		},
 	)

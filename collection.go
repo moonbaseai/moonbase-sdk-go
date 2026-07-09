@@ -469,6 +469,9 @@ type Collection struct {
 	UpdatedAt time.Time `json:"updated_at" api:"required" format:"date-time"`
 	// An optional, longer-form description of the collection's purpose.
 	Description string `json:"description"`
+	// The collection's icon, as a Phosphor icon name in kebab-case (e.g. `users`,
+	// `chart-bar`). Only present when an icon is set.
+	IconName string `json:"icon_name"`
 	// A list of saved `View` objects for presenting the collection's data.
 	//
 	// **Note:** Only present when requested using the `include` query parameter.
@@ -484,6 +487,7 @@ type Collection struct {
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
 		Description respjson.Field
+		IconName    respjson.Field
 		Views       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -6083,6 +6087,7 @@ type CollectionListResponse struct {
 	Type        constant.Collection        `json:"type" default:"collection"`
 	UpdatedAt   time.Time                  `json:"updated_at" api:"required" format:"date-time"`
 	Description string                     `json:"description"`
+	IconName    string                     `json:"icon_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -6093,6 +6098,7 @@ type CollectionListResponse struct {
 		Type        respjson.Field
 		UpdatedAt   respjson.Field
 		Description respjson.Field
+		IconName    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -6118,6 +6124,9 @@ type CollectionNewParams struct {
 	Name string `json:"name" api:"required"`
 	// An optional, longer-form description of the collection's purpose.
 	Description param.Opt[string] `json:"description,omitzero"`
+	// An optional icon for the collection, as a Phosphor icon name in kebab-case (e.g.
+	// `users`, `chart-bar`).
+	IconName param.Opt[string] `json:"icon_name,omitzero"`
 	paramObj
 }
 
@@ -6130,6 +6139,9 @@ func (r *CollectionNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type CollectionUpdateParams struct {
+	// The collection's icon, as a Phosphor icon name in kebab-case (e.g. `users`,
+	// `chart-bar`), or `null` to clear it.
+	IconName param.Opt[string] `json:"icon_name,omitzero"`
 	// An optional, longer-form description of the collection's purpose.
 	Description param.Opt[string] `json:"description,omitzero"`
 	// The user-facing name of the collection.
