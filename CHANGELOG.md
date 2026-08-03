@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.0-alpha.11 (2026-08-03)
+
+Full Changelog: [v0.1.0-alpha.10...v0.1.0-alpha.11](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.10...v0.1.0-alpha.11)
+
+### Features
+
+* **api:** add associations field and types to tagsets ([ebcacfe](https://github.com/moonbaseai/moonbase-sdk-go/commit/ebcacfeff36366e6c802dc22a68ca798aa6c1001))
+* **api:** add channel field to InboxConversation ([b723b7f](https://github.com/moonbaseai/moonbase-sdk-go/commit/b723b7fc3d6f34e4f86f249296c7598a4ab17dfd))
+* **api:** add delete method to collections ([17fb994](https://github.com/moonbaseai/moonbase-sdk-go/commit/17fb994291111d1da34425428c52402179a64983))
+* **api:** add icon_name field to collections ([937e42e](https://github.com/moonbaseai/moonbase-sdk-go/commit/937e42ef35f3a6c2da1d5f34a82c7833402e4e3e))
+* **api:** add ItemsFilter types, View fields/aggregates, relation path sorting ([9457033](https://github.com/moonbaseai/moonbase-sdk-go/commit/9457033024dc9d35683798816020549efad91d58))
+* **api:** add Slack message support to inbox_message, change Address to AddressUnion ([21579b1](https://github.com/moonbaseai/moonbase-sdk-go/commit/21579b1e3c8ad82da604601b6f8c3693826c7470))
+* **client:** optimize json encoder for internal types ([8518188](https://github.com/moonbaseai/moonbase-sdk-go/commit/8518188ed0c3c25c7225128b98b413d9db42c786))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([89d7008](https://github.com/moonbaseai/moonbase-sdk-go/commit/89d70081e8bf7d44eb98a58aaa800d217f0ecd18))
+
+
+### Bug Fixes
+
+* **types:** make default_unit required in collection field monetary params ([9c515e2](https://github.com/moonbaseai/moonbase-sdk-go/commit/9c515e2cae7d25fc2846baa35d07063027f8e5e5))
+* **types:** restructure inbox message params to union with new/reply variants ([04d4930](https://github.com/moonbaseai/moonbase-sdk-go/commit/04d49305c9d63ae1518d9deffbbe33c7c7d78f63))
+
+
+### Documentation
+
+* **api:** add file size limits to upload documentation ([1327ffe](https://github.com/moonbaseai/moonbase-sdk-go/commit/1327ffe9a70b6a71d5cc52f41a66ea97fe96535c))
+
 ## 0.1.0-alpha.10 (2026-05-08)
 
 Full Changelog: [v0.1.0-alpha.9...v0.1.0-alpha.10](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.9...v0.1.0-alpha.10)
