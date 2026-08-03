@@ -84,6 +84,11 @@ type InboxConversation struct {
 	ID string `json:"id" api:"required"`
 	// `true` if the conversation appears to be part of a bulk mailing.
 	Bulk bool `json:"bulk" api:"required"`
+	// The communication channel of the conversation, which can be `email`, `chat`, or
+	// `slack`.
+	//
+	// Any of "email", "chat", "slack".
+	Channel InboxConversationChannel `json:"channel" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
 	// `true` if a new draft reply to this conversation has been started.
@@ -127,6 +132,7 @@ type InboxConversation struct {
 	JSON struct {
 		ID            respjson.Field
 		Bulk          respjson.Field
+		Channel       respjson.Field
 		CreatedAt     respjson.Field
 		Draft         respjson.Field
 		FollowUp      respjson.Field
@@ -152,6 +158,16 @@ func (r InboxConversation) RawJSON() string { return r.JSON.raw }
 func (r *InboxConversation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The communication channel of the conversation, which can be `email`, `chat`, or
+// `slack`.
+type InboxConversationChannel string
+
+const (
+	InboxConversationChannelEmail InboxConversationChannel = "email"
+	InboxConversationChannelChat  InboxConversationChannel = "chat"
+	InboxConversationChannelSlack InboxConversationChannel = "slack"
+)
 
 // The current state, which can be `unassigned`, `active`, `closed`, or `waiting`.
 type InboxConversationState string
