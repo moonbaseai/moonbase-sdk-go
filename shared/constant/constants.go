@@ -39,6 +39,7 @@ type AgentSettings string                      // Always "agent_settings"
 type And string                                // Always "and"
 type Call string                               // Always "call"
 type CallParticipant string                    // Always "call_participant"
+type Calls string                              // Always "calls"
 type ChoiceFieldOption string                  // Always "choice_field_option"
 type Collection string                         // Always "collection"
 type Constituent string                        // Always "constituent"
@@ -46,9 +47,11 @@ type CurrentDate string                        // Always "current_date"
 type CurrentDatetime string                    // Always "current_datetime"
 type CurrentMember string                      // Always "current_member"
 type EmailMessage string                       // Always "email_message"
+type EmailMessageAddress string                // Always "email_message_address"
 type Error string                              // Always "error"
 type Exists string                             // Always "exists"
 type Field string                              // Always "field"
+type FieldStatistic string                     // Always "field_statistic"
 type FieldBoolean string                       // Always "field/boolean"
 type FieldChoice string                        // Always "field/choice"
 type FieldDate string                          // Always "field/date"
@@ -76,11 +79,13 @@ type FunnelStep string                         // Always "funnel_step"
 type Inbox string                              // Always "inbox"
 type InboxConversation string                  // Always "inbox_conversation"
 type Item string                               // Always "item"
+type ItemCount string                          // Always "item_count"
 type List string                               // Always "list"
 type Meeting string                            // Always "meeting"
 type MeetingAttendee string                    // Always "meeting_attendee"
 type MeetingOrganizer string                   // Always "meeting_organizer"
-type MessageAddress string                     // Always "message_address"
+type Meetings string                           // Always "meetings"
+type Message string                            // Always "message"
 type MessageAttachment string                  // Always "message_attachment"
 type Not string                                // Always "not"
 type Note string                               // Always "note"
@@ -89,6 +94,10 @@ type Program string                            // Always "program"
 type ProgramMessage string                     // Always "program_message"
 type ProgramTemplate string                    // Always "program_template"
 type SearchResult string                       // Always "search_result"
+type SlackChannel string                       // Always "slack_channel"
+type SlackMessage string                       // Always "slack_message"
+type SlackMessageChannelAddress string         // Always "slack_message_channel_address"
+type SlackMessageUserAddress string            // Always "slack_message_user_address"
 type Tag string                                // Always "tag"
 type Tagset string                             // Always "tagset"
 type Unsubscribe string                        // Always "unsubscribe"
@@ -157,6 +166,7 @@ func (c AgentSettings) Default() AgentSettings                 { return "agent_s
 func (c And) Default() And                                     { return "and" }
 func (c Call) Default() Call                                   { return "call" }
 func (c CallParticipant) Default() CallParticipant             { return "call_participant" }
+func (c Calls) Default() Calls                                 { return "calls" }
 func (c ChoiceFieldOption) Default() ChoiceFieldOption         { return "choice_field_option" }
 func (c Collection) Default() Collection                       { return "collection" }
 func (c Constituent) Default() Constituent                     { return "constituent" }
@@ -164,9 +174,11 @@ func (c CurrentDate) Default() CurrentDate                     { return "current
 func (c CurrentDatetime) Default() CurrentDatetime             { return "current_datetime" }
 func (c CurrentMember) Default() CurrentMember                 { return "current_member" }
 func (c EmailMessage) Default() EmailMessage                   { return "email_message" }
+func (c EmailMessageAddress) Default() EmailMessageAddress     { return "email_message_address" }
 func (c Error) Default() Error                                 { return "error" }
 func (c Exists) Default() Exists                               { return "exists" }
 func (c Field) Default() Field                                 { return "field" }
+func (c FieldStatistic) Default() FieldStatistic               { return "field_statistic" }
 func (c FieldBoolean) Default() FieldBoolean                   { return "field/boolean" }
 func (c FieldChoice) Default() FieldChoice                     { return "field/choice" }
 func (c FieldDate) Default() FieldDate                         { return "field/date" }
@@ -198,11 +210,13 @@ func (c FunnelStep) Default() FunnelStep                         { return "funne
 func (c Inbox) Default() Inbox                                   { return "inbox" }
 func (c InboxConversation) Default() InboxConversation           { return "inbox_conversation" }
 func (c Item) Default() Item                                     { return "item" }
+func (c ItemCount) Default() ItemCount                           { return "item_count" }
 func (c List) Default() List                                     { return "list" }
 func (c Meeting) Default() Meeting                               { return "meeting" }
 func (c MeetingAttendee) Default() MeetingAttendee               { return "meeting_attendee" }
 func (c MeetingOrganizer) Default() MeetingOrganizer             { return "meeting_organizer" }
-func (c MessageAddress) Default() MessageAddress                 { return "message_address" }
+func (c Meetings) Default() Meetings                             { return "meetings" }
+func (c Message) Default() Message                               { return "message" }
 func (c MessageAttachment) Default() MessageAttachment           { return "message_attachment" }
 func (c Not) Default() Not                                       { return "not" }
 func (c Note) Default() Note                                     { return "note" }
@@ -211,19 +225,27 @@ func (c Program) Default() Program                               { return "progr
 func (c ProgramMessage) Default() ProgramMessage                 { return "program_message" }
 func (c ProgramTemplate) Default() ProgramTemplate               { return "program_template" }
 func (c SearchResult) Default() SearchResult                     { return "search_result" }
-func (c Tag) Default() Tag                                       { return "tag" }
-func (c Tagset) Default() Tagset                                 { return "tagset" }
-func (c Unsubscribe) Default() Unsubscribe                       { return "unsubscribe" }
-func (c ValueBoolean) Default() ValueBoolean                     { return "value/boolean" }
-func (c ValueChoice) Default() ValueChoice                       { return "value/choice" }
-func (c ValueDate) Default() ValueDate                           { return "value/date" }
-func (c ValueDatetime) Default() ValueDatetime                   { return "value/datetime" }
-func (c ValueEmail) Default() ValueEmail                         { return "value/email" }
-func (c ValueFunnelStep) Default() ValueFunnelStep               { return "value/funnel_step" }
-func (c ValueGeo) Default() ValueGeo                             { return "value/geo" }
-func (c ValueIdentifier) Default() ValueIdentifier               { return "value/identifier" }
-func (c ValueNumberMonetary) Default() ValueNumberMonetary       { return "value/number/monetary" }
-func (c ValueNumberPercentage) Default() ValueNumberPercentage   { return "value/number/percentage" }
+func (c SlackChannel) Default() SlackChannel                     { return "slack_channel" }
+func (c SlackMessage) Default() SlackMessage                     { return "slack_message" }
+func (c SlackMessageChannelAddress) Default() SlackMessageChannelAddress {
+	return "slack_message_channel_address"
+}
+func (c SlackMessageUserAddress) Default() SlackMessageUserAddress {
+	return "slack_message_user_address"
+}
+func (c Tag) Default() Tag                                     { return "tag" }
+func (c Tagset) Default() Tagset                               { return "tagset" }
+func (c Unsubscribe) Default() Unsubscribe                     { return "unsubscribe" }
+func (c ValueBoolean) Default() ValueBoolean                   { return "value/boolean" }
+func (c ValueChoice) Default() ValueChoice                     { return "value/choice" }
+func (c ValueDate) Default() ValueDate                         { return "value/date" }
+func (c ValueDatetime) Default() ValueDatetime                 { return "value/datetime" }
+func (c ValueEmail) Default() ValueEmail                       { return "value/email" }
+func (c ValueFunnelStep) Default() ValueFunnelStep             { return "value/funnel_step" }
+func (c ValueGeo) Default() ValueGeo                           { return "value/geo" }
+func (c ValueIdentifier) Default() ValueIdentifier             { return "value/identifier" }
+func (c ValueNumberMonetary) Default() ValueNumberMonetary     { return "value/number/monetary" }
+func (c ValueNumberPercentage) Default() ValueNumberPercentage { return "value/number/percentage" }
 func (c ValueNumberUnitlessFloat) Default() ValueNumberUnitlessFloat {
 	return "value/number/unitless_float"
 }
@@ -263,6 +285,7 @@ func (c AgentSettings) MarshalJSON() ([]byte, error)                      { retu
 func (c And) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Call) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c CallParticipant) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c Calls) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c ChoiceFieldOption) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Collection) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Constituent) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
@@ -270,9 +293,11 @@ func (c CurrentDate) MarshalJSON() ([]byte, error)                        { retu
 func (c CurrentDatetime) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c CurrentMember) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c EmailMessage) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
+func (c EmailMessageAddress) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c Error) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Exists) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Field) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
+func (c FieldStatistic) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c FieldBoolean) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FieldChoice) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c FieldDate) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -300,11 +325,13 @@ func (c FunnelStep) MarshalJSON() ([]byte, error)                         { retu
 func (c Inbox) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c InboxConversation) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Item) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c ItemCount) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c List) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Meeting) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c MeetingAttendee) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c MeetingOrganizer) MarshalJSON() ([]byte, error)                   { return marshalString(c) }
-func (c MessageAddress) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
+func (c Meetings) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
+func (c Message) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c MessageAttachment) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
 func (c Not) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Note) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
@@ -313,6 +340,10 @@ func (c Program) MarshalJSON() ([]byte, error)                            { retu
 func (c ProgramMessage) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ProgramTemplate) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c SearchResult) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
+func (c SlackChannel) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
+func (c SlackMessage) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
+func (c SlackMessageChannelAddress) MarshalJSON() ([]byte, error)         { return marshalString(c) }
+func (c SlackMessageUserAddress) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c Tag) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c Tagset) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Unsubscribe) MarshalJSON() ([]byte, error)                        { return marshalString(c) }

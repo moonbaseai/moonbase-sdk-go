@@ -75,7 +75,7 @@ func (r *FormService) Update(ctx context.Context, id string, body FormUpdatePara
 }
 
 // Returns a list of your forms.
-func (r *FormService) List(ctx context.Context, query FormListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Form], err error) {
+func (r *FormService) List(ctx context.Context, query FormListParams, opts ...option.RequestOption) (res *pagination.CursorPage[FormListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -93,7 +93,7 @@ func (r *FormService) List(ctx context.Context, query FormListParams, opts ...op
 }
 
 // Returns a list of your forms.
-func (r *FormService) ListAutoPaging(ctx context.Context, query FormListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Form] {
+func (r *FormService) ListAutoPaging(ctx context.Context, query FormListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[FormListResponse] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
@@ -119,9 +119,11 @@ type Form struct {
 	// disposable providers.
 	BusinessEmailRequired bool `json:"business_email_required" api:"required"`
 	// The `Collection` that submissions to this form are saved to.
-	Collection Collection `json:"collection" api:"required"`
+	Collection CollectionPointer `json:"collection" api:"required"`
 	// Time at which the object was created, as an ISO 8601 timestamp in UTC.
 	CreatedAt time.Time `json:"created_at" api:"required" format:"date-time"`
+	// The HTML snippet for embedding the form on your website.
+	HTMLEmbed string `json:"html_embed" api:"required"`
 	// The name of the form, used as the title on its public page.
 	Name string `json:"name" api:"required"`
 	// If `true`, a Moonbase Pages hosted page is enabled for this form, providing a
@@ -148,6 +150,7 @@ type Form struct {
 		BusinessEmailRequired respjson.Field
 		Collection            respjson.Field
 		CreatedAt             respjson.Field
+		HTMLEmbed             respjson.Field
 		Name                  respjson.Field
 		PagesEnabled          respjson.Field
 		Type                  respjson.Field
@@ -162,6 +165,44 @@ type Form struct {
 // Returns the unmodified JSON received from the API
 func (r Form) RawJSON() string { return r.JSON.raw }
 func (r *Form) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Information about the most essential attributes of a Form (does not include the
+// embed HTML).
+type FormListResponse struct {
+	ID                    string `json:"id" api:"required"`
+	BusinessEmailRequired bool   `json:"business_email_required" api:"required"`
+	// A lightweight reference to a `Collection`, containing the minimal information
+	// needed to identify it.
+	Collection   CollectionPointer `json:"collection" api:"required"`
+	CreatedAt    time.Time         `json:"created_at" api:"required" format:"date-time"`
+	Name         string            `json:"name" api:"required"`
+	PagesEnabled bool              `json:"pages_enabled" api:"required"`
+	Type         constant.Form     `json:"type" default:"form"`
+	UpdatedAt    time.Time         `json:"updated_at" api:"required" format:"date-time"`
+	PagesURL     string            `json:"pages_url" format:"uri"`
+	RedirectURL  string            `json:"redirect_url"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                    respjson.Field
+		BusinessEmailRequired respjson.Field
+		Collection            respjson.Field
+		CreatedAt             respjson.Field
+		Name                  respjson.Field
+		PagesEnabled          respjson.Field
+		Type                  respjson.Field
+		UpdatedAt             respjson.Field
+		PagesURL              respjson.Field
+		RedirectURL           respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r FormListResponse) RawJSON() string { return r.JSON.raw }
+func (r *FormListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

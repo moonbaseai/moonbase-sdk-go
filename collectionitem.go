@@ -281,8 +281,9 @@ type CollectionItemListParams struct {
 	// Maximum number of items to return per page. Must be between 1 and 100. Defaults
 	// to 20 if not specified.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Sort items by the specified field ids or keys. Prefix a field with a
-	// hyphen/minus (`-`) to sort in descending order by that field.
+	// Sort items returned by the specified fields, specified directly by (`name`) or
+	// through relations (`organization.name`, `deals.owner.email`). Prefix with a
+	// hyphen/minus (`-`) to sort in descending order.
 	Sort []string `query:"sort,omitzero" json:"-"`
 	paramObj
 }
@@ -334,8 +335,9 @@ type CollectionItemSearchParams struct {
 	Filter ItemsFilterUnionParam `json:"filter,omitzero"`
 	// Include only specific fields in the returned items. Specify fields by id or key.
 	Include []string `json:"include,omitzero"`
-	// Sort items by the specified field ids or keys. Prefix a field with a
-	// hyphen/minus (`-`) to sort in descending order by that field.
+	// Sort items returned by the specified fields, specified directly by (`name`) or
+	// through relations (`organization.name`, `deals.owner.email`). Prefix with a
+	// hyphen/minus (`-`) to sort in descending order.
 	Sort []string `json:"sort,omitzero"`
 	paramObj
 }

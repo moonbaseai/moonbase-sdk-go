@@ -94,7 +94,7 @@ func (r *FileService) Delete(ctx context.Context, id string, opts ...option.Requ
 	return err
 }
 
-// Upload a file
+// Uploads a file to your library. The file must be 5 MB or smaller.
 func (r *FileService) Upload(ctx context.Context, body FileUploadParams, opts ...option.RequestOption) (res *MoonbaseFile, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "files"
@@ -187,7 +187,8 @@ func (r FileListParams) URLQuery() (v url.Values, err error) {
 }
 
 type FileUploadParams struct {
-	// The File object to be uploaded.
+	// The raw file content to upload in a multipart/form-data request. Must be 5 MB or
+	// smaller.
 	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// The display name of the file.
 	Name param.Opt[string] `json:"name,omitzero"`
