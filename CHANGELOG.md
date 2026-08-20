@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.12 (2026-08-20)
+
+Full Changelog: [v0.1.0-alpha.11...v0.1.0-alpha.12](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.11...v0.1.0-alpha.12)
+
+### Chores
+
+* **internal:** allow the mock server port to be set with STAINLESS_MOCK_PORT ([4ec58f7](https://github.com/moonbaseai/moonbase-sdk-go/commit/4ec58f7bd6df819125b20359c46b8ad1c9ccc560))
+
 ## 0.1.0-alpha.11 (2026-08-03)
 
 Full Changelog: [v0.1.0-alpha.10...v0.1.0-alpha.11](https://github.com/moonbaseai/moonbase-sdk-go/compare/v0.1.0-alpha.10...v0.1.0-alpha.11)
